@@ -1,0 +1,55 @@
+Eigen is a versatile and widely-used C++ template library 
+for linear algebra, providing numerous classes, functions, and types. 
+Below is a list of some of the most commonly used `Eigen::` components:
+
+# Core Types and Classes
+1. Eigen::Matrix: A fixed-size or dynamic-size matrix.
+2. Eigen::MatrixXd: A dynamic-size matrix of doubles.
+3. Eigen::MatrixXf: A dynamic-size matrix of floats.
+4. Eigen::VectorXd: A dynamic-size vector of doubles.
+5. Eigen::VectorXf: A dynamic-size vector of floats.
+6. Eigen::Array: A fixed-size or dynamic-size array, similar to `Matrix` but with element-wise operations.
+7. Eigen::ArrayXXd: A dynamic-size array of doubles.
+8. Eigen::ArrayXXf: A dynamic-size array of floats.
+
+# Dense Storage Types
+1. Eigen::DenseBase: Base class for dense matrices and arrays.
+2. Eigen::Ref: Provides a way to reference an existing block of data without copying it.
+
+# Sparse Storage Types
+1. Eigen::SparseMatrix: A sparse matrix representation.
+2. Eigen::SparseVector: A sparse vector representation.
+
+# Decomposition Types
+1. Eigen::EigenSolver: Solves eigenvalue problems for general matrices.
+2. Eigen::SelfAdjointEigenSolver: Solves eigenvalue problems for self-adjoint matrices.
+3. Eigen::JacobiSVD: Singular value decomposition.
+4. Eigen::HouseholderQR: QR decomposition using Householder reflections.
+5. Eigen::LLT: Cholesky decomposition for positive definite matrices.
+6. Eigen::LDLT: Cholesky decomposition for positive semi-definite matrices.
+
+# Geometry Types
+1. Eigen::Quaternion: Represents quaternions, used for 3D rotations.
+2. Eigen::AngleAxis: Represents 3D rotations using an angle and an axis.
+3. Eigen::Transform: Represents affine transformations.
+
+# Numerical Types
+1. Eigen::NumTraits: Provides numeric traits such as epsilon, infinity, etc.
+2. Eigen::Index: Used for indexing within Eigen structures (typically `int` or `std::ptrdiff_t`).
+
+# Utility Functions and Macros
+1. Eigen::Map: Allows mapping existing arrays as Eigen objects without copying.
+2. Eigen::VectorwiseOp: Facilitates operations along a specific dimension (row-wise or column-wise).
+3. Eigen::IOFormat: Controls the output format of matrices and arrays when printing.
+4. Eigen::MatrixBase: Base class for all dense matrices and vectors.
+5. Eigen::PermutationMatrix: Represents a permutation matrix.
+
+# Special Matrices and Operations
+1. Eigen::DiagonalMatrix: Represents a diagonal matrix.
+2. Eigen::IdentityMatrix: Represents an identity matrix.
+3. Eigen::TriangularView: Provides views of triangular parts of a matrix (upper or lower).
+4. Eigen::SelfAdjointView: Provides views of self-adjoint parts of a matrix.
+
+# Additional Modules and Types
+1. Eigen::FFT: Fast Fourier Transform operations.
+2. Eigen::Spline: Spline interpolation.
