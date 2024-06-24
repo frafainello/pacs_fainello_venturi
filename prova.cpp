@@ -128,13 +128,35 @@ Values HeatEquation(const Eigen::SparseMatrix<double>& stiffnessMatrix, const st
     Values rhs(stiffnessMatrix.rows());
     rhs.setOnes();
 
+    // // Apply null Dirichlet boundary conditions
+    // for (int idx : boundaryIndices) {
+    //     modifiedStiffnessMatrix.row(idx).setZero();
+    //     modifiedStiffnessMatrix.col(idx).setZero();
+
+    //     modifiedStiffnessMatrix.coeffRef(idx, idx) = 1.0;
+
+    //     rhs[idx] = 0.0;
+    // }
     // Apply null Dirichlet boundary conditions
     for (int idx : boundaryIndices) {
-        modifiedStiffnessMatrix.row(idx).setZero();
-        modifiedStiffnessMatrix.col(idx).setZero();
+        // Zero out the row
+        for (Eigen::SparseMatrix<double>::InnerIterator it(modifiedStiffnessMatrix, idx); it; ++it) {
+            it.valueRef() = 0.0;
+        }
 
+        // Zero out the column
+        for (int k = 0; k < modifiedStiffnessMatrix.outerSize(); ++k) {
+            for (Eigen::SparseMatrix<double>::InnerIterator it(modifiedStiffnessMatrix, k); it; ++it) {
+                if (it.row() == idx) {
+                    it.valueRef() = 0.0;
+                }
+            }
+        }
+
+        // Set diagonal element to 1
         modifiedStiffnessMatrix.coeffRef(idx, idx) = 1.0;
 
+        // Set corresponding rhs element to 0
         rhs[idx] = 0.0;
     }
 
@@ -270,8 +292,8 @@ int main() {
     std::cout << massMatrix << std::endl;
 
     // Solve the Eikonal Equation
-    // Values forcingTerm = Values::Constant(mesh.numNodes, 1.0);
-    std::vector<int> boundaryIndices = {0, 2, 3};
+    Values forcingTerm = Values::Constant(mesh.numNodes, 1.0);
+    std::vector<int> boundaryIndices = {0, 2};
     Values initial_conditions = HeatEquation(stiffnessMatrix, boundaryIndices);
     // Values initial_conditions = Values::Constant(mesh.numNodes, 5.0);
     std::cout << "initial_conditions:" << std::endl;
