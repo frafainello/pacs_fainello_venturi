@@ -193,9 +193,10 @@ public:
   already set.
   */
   void updateGlobalGradientMatrix(GlobalMatrix &globalGradientMatrix) const {
+    // vedi se riesci a non usare il ciclo sulle coordinate (quindi il for su i)
     for (auto i = 0u; i < N; ++i) {
       for (auto j = 0u; j < N + 1; ++j) {
-      globalGradientMatrix.coeffRef(i, globalNodeNumbers_(j)) += localGradient_(i, j);
+      globalGradientMatrix.coeffRef(globalNodeNumbers_(j), i) += localGradient_(i, j);
       // std::cout << "i: " << i << " j: " << j << " globalNodeNumbers_(i): " << globalNodeNumbers_(i) << " localGradient_(i, j): " << localGradient_(i, j) << std::endl;
       // std::cout << "globalGradientMatrix.coeffRef(i, globalNodeNumbers_(i)): " << globalGradientMatrix.coeffRef(i, globalNodeNumbers_(i)) << std::endl;
       }

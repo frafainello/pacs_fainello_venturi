@@ -7,6 +7,7 @@
 #include <Eigen/Dense>
 
 using Values = Eigen::Matrix<double, Eigen::Dynamic, 1>;
+using Gradients = Eigen::Matrix<double, Eigen::Dynamic, 3>;
 
 //  ================== MESH ==================
 struct MeshData {
@@ -65,64 +66,10 @@ MeshData readMesh(const std::string& filename) {
 }
 
 //  ================== INITIAL CONDITION ==================
-Values solveHeatEquation(const Eigen::SparseMatrix<double>& stiffnessMatrix, 
-                        const Values& forcingTerm) {
-                        // const Mesh& mesh, 
-                        // const std::vector<int>& boundaryIndices, 
-                        // const Values& boundaryValues,
-                        
-    // std::cout << "entered in solveHeatEquation:" << std::endl;
-    
-    // // Print forcingTerm
-    // std::cout << "forcingTerm:" << std::endl;
-    // std::cout << "Rows:" << forcingTerm.rows() << std::endl;
-    // std::cout << "Cols:" << forcingTerm.cols() << std::endl;
-    // std::cout << forcingTerm << std::endl;
-    
-    Values w = Values::Zero(forcingTerm.size());
-    
-    // // Print w
-    // std::cout << "w:" << std::endl;
-    // std::cout << "Rows:" << w.rows() << std::endl;
-    // std::cout << "Cols:" << w.cols() << std::endl;
-    // std::cout << w << std::endl;
-
-    // // Applying boundary conditions: MODIFY ACCORDINGLY THE STIFFNESS MATRIX
-    // // Set the rows and columns for boundary nodes to zero and set the diagonal to 1
-    // Eigen::SparseMatrix<double> modifiedStiffnessMatrix = stiffnessMatrix;
-    // for (int idx : boundaryIndices) {
-    //     for (int k = 0; k < modifiedStiffnessMatrix.outerSize(); ++k) {
-    //         for (Eigen::SparseMatrix<double>::InnerIterator it(modifiedStiffnessMatrix, k); it; ++it) {
-    //             if (it.row() == idx || it.col() == idx) {
-    //                 it.valueRef() = (it.row() == idx && it.col() == idx) ? 1.0 : 0.0;
-    //             }
-    //         }
-    //     }
-    //     w(idx) = boundaryValues(idx);
-    // }
-
-    // Set up the solver using Eigen's Conjugate Gradient solver
-    Eigen::ConjugateGradient<Eigen::SparseMatrix<double>, Eigen::Lower|Eigen::Upper> solver;
-    solver.compute(stiffnessMatrix);
-    
-    if (solver.info() != Eigen::Success) {
-        std::cerr << "Decomposition failed!" << std::endl;
-        throw std::runtime_error("Matrix decomposition failed in solveHeatEquation.");
-    }
-
-    // Solve the linear system
-    w = solver.solve(forcingTerm);
-
-    if (solver.info() != Eigen::Success) {
-        std::cerr << "Solving failed!" << std::endl;
-        throw std::runtime_error("Solver failed in solveHeatEquation.");
-    }
-
-    return w;
-}
 
 Values HeatEquation(const Eigen::SparseMatrix<double>& stiffnessMatrix, const std::vector<int>& boundaryIndices) {
     Eigen::SparseMatrix<double> modifiedStiffnessMatrix = stiffnessMatrix;
+    // memo: cambia std::vector con Eigen::qualcosa
 
     // Right-hand side vector of the equation, all ones
     Values rhs(stiffnessMatrix.rows());
@@ -169,37 +116,83 @@ Values HeatEquation(const Eigen::SparseMatrix<double>& stiffnessMatrix, const st
 }
 
 
-
 //  ================== INCREMENTAL SOLUTION ==================
 
 // Function to update the solution vector based on the Eikonal equation
 bool updateSolution(Values& w, 
                     const Eigen::SparseMatrix<double>& stiffnessMatrix, 
+                    const Eigen::SparseMatrix<double>& gradientMatrix,
                     double gamma = 1e-3,
                     double tol = 1e-6) {
     
     std::cout << "entered in updateSolution:" << std::endl;
 
-    // Values bilinear_form = stiffnessMatrix * w;
+    std::cout << "w: \n" << w << std::endl;
+    std::cout << "w.rows(): " << w.rows() << std::endl;
+    std::cout << "w.cols(): " << w.cols() << std::endl;
+    std::cout << "\n" << std::endl;
 
-    // // Print stiffnessMatrix * w
-    // std::cout << "stiffnessMatrix * w:" << std::endl;
-    // std::cout << "Rows:" << bilinear_form.rows() << std::endl;
-    // std::cout << "Cols:" << bilinear_form.cols() << std::endl;
-    // std::cout << bilinear_form << std::endl;
+    std::cout << "stiffnessMatrix: \n" << stiffnessMatrix << std::endl;
+    std::cout << "stiffnessMatrix.rows(): " << stiffnessMatrix.rows() << std::endl;
+    std::cout << "stiffnessMatrix.cols(): " << stiffnessMatrix.cols() << std::endl;
+    std::cout << "\n" << std::endl;
 
-    double norm_grad_w = 1.0; // Compute the norm of the gradient of w at each node
+    std::cout << "gradientMatrix: \n" << gradientMatrix << std::endl;
+    std::cout << "gradientMatrix.rows(): " << gradientMatrix.rows() << std::endl;
+    std::cout << "gradientMatrix.cols(): " << gradientMatrix.cols() << std::endl;
+    std::cout << "\n" << std::endl;
+
+    Values bilinear_form = stiffnessMatrix * w;
+    std::cout << "bilinear_form: \n" << bilinear_form << std::endl;
+    std::cout << "bilinear_form.rows(): " << bilinear_form.rows() << std::endl;
+    std::cout << "bilinear_form.cols(): " << bilinear_form.cols() << std::endl;
+    std::cout << "\n" << std::endl;
+
+    Gradients grad_w(gradientMatrix.rows(), 3);
+    // std::cout << "grad_w: \n" << grad_w << std::endl;
+    // std::cout << "grad_w.rows(): " << grad_w.rows() << std::endl;
+    // std::cout << "grad_w.cols(): " << grad_w.cols() << std::endl;
+    // std::cout << "\n" << std::endl;
+
+    Gradients w_concatenated = w.replicate(1, 3);
+    std::cout << "w_concatenated: \n" << w_concatenated << std::endl;
+    std::cout << "w_concatenated.rows(): " << w_concatenated.rows() << std::endl;
+    std::cout << "w_concatenated.cols(): " << w_concatenated.cols() << std::endl;
+    std::cout << "\n" << std::endl;
+
+    grad_w = gradientMatrix.cwiseProduct(w_concatenated);
+
+    std::cout << "grad_w: \n" << grad_w << std::endl;
+    std::cout << "grad_w.rows(): " << grad_w.rows() << std::endl;
+    std::cout << "grad_w.cols(): " << grad_w.cols() << std::endl;
+    std::cout << "\n" << std::endl;
+
+    // Eigen::MatrixXd dense_grad_w = Eigen::MatrixXd(grad_w);
+    Values norm_grad_w = grad_w.rowwise().norm();
     std::cout << "norm_grad_w: " << norm_grad_w << std::endl;
+    std::cout << "norm_grad_w.rows(): " << norm_grad_w.rows() << std::endl;
+    std::cout << "norm_grad_w.cols(): " << norm_grad_w.cols() << std::endl;
+    std::cout << "\n" << std::endl;
 
-    double coeff = (1.0 - norm_grad_w) / (norm_grad_w + gamma);
+    Values gamma_vec = Values::Constant(gradientMatrix.rows(), gamma);
+    std::cout << "gamma_vec: " << gamma_vec << std::endl;
+    std::cout << "gamma_vec.rows(): " << gamma_vec.rows() << std::endl;
+    std::cout << "gamma_vec.cols(): " << gamma_vec.cols() << std::endl;
+    std::cout << "\n" << std::endl;
+    
+    // Values coeffs = ((Values::Constant(gradientMatrix.cols(), 1.0) - norm_grad_w).array() / (norm_grad_w + gamma_vec).array()).matrix();
+    Values coeffs = ((Values::Constant(gradientMatrix.rows(), 1.0) - norm_grad_w).array() / (norm_grad_w + gamma_vec).array()).matrix();
+    std::cout << "coeffs: " << coeffs << std::endl;
+    std::cout << "coeffs.rows(): " << coeffs.rows() << std::endl;
+    std::cout << "coeffs.cols(): " << coeffs.cols() << std::endl;
+    std::cout << "\n" << std::endl;
 
     // Compute the right-hand side for the linear problem
-    Values rhs = coeff * (stiffnessMatrix * w);
-    // // Print rhs
-    // std::cout << "rhs:" << std::endl;
-    // std::cout << "Rows:" << rhs.rows() << std::endl;
-    // std::cout << "Cols:" << rhs.cols() << std::endl;
-    // std::cout << rhs << std::endl;
+    Values rhs = coeffs * (stiffnessMatrix * w);
+    std::cout << "rhs: " << rhs << std::endl;
+    std::cout << "rhs.rows(): " << rhs.rows() << std::endl;
+    std::cout << "rhs.cols(): " << rhs.cols() << std::endl;
+    std::cout << "\n" << std::endl;
 
     Eigen::ConjugateGradient<Eigen::SparseMatrix<double>, Eigen::Lower|Eigen::Upper> solver;
     solver.compute(stiffnessMatrix);
@@ -250,11 +243,13 @@ int main() {
     // prepare global matrices
     Eigen::SparseMatrix<double> stiffnessMatrix(mesh.numNodes, mesh.numNodes);
     Eigen::SparseMatrix<double> massMatrix(mesh.numNodes, mesh.numNodes);
-    
+    Eigen::SparseMatrix<double> gradientMatrix(mesh.numNodes, 3);
+
     std::vector<Eigen::Triplet<double>> triplets;
     triplets.reserve(mesh.numElements);
 
     apsc::LinearFiniteElement<3> linearFiniteElement;
+    linearFiniteElement.initializeRefGradients();
 
     Nodes localNodes;
     Indexes globalNodeNumbers;
@@ -268,15 +263,22 @@ int main() {
             localNodes(j, i) = mesh.nodes(j, mesh.connectivity(i, k)); // localNodes(j, i) = nodes(j, globalNodeNumbers(i));
         }
         }
+
+        // Compute local nodes and update global node numbers
         linearFiniteElement.update(localNodes);
         linearFiniteElement.updateGlobalNodeNumbers(globalNodeNumbers);
-        // Compute the local stiffness matrix
+        
+        // Compute the local stiffness matrix and update the global stiffness matrix
         linearFiniteElement.computeLocalStiffness();
-        // Compute the local mass matrix
-        linearFiniteElement.computeLocalMass();
-        // Add the local matrices to the global matrices
         linearFiniteElement.updateGlobalStiffnessMatrix(stiffnessMatrix);
+        
+        // Compute the local mass matrix and update the global mass matrix
+        linearFiniteElement.computeLocalMass();
         linearFiniteElement.updateGlobalMassMatrix(massMatrix);
+        
+        // Compute the local gradient matrix and update the global gradient matrix
+        linearFiniteElement.computeLocalGradient();
+        linearFiniteElement.updateGlobalGradientMatrix(gradientMatrix);
     }
 
     // Print stiffness matrix
@@ -291,10 +293,20 @@ int main() {
     std::cout << "Cols:" << massMatrix.cols() << std::endl;
     std::cout << massMatrix << std::endl;
 
+    // Print gradient matrix
+    std::cout << "Gradient Matrix:" << std::endl;
+    std::cout << "Rows:" << gradientMatrix.rows() << std::endl;
+    std::cout << "Cols:" << gradientMatrix.cols() << std::endl;
+    std::cout << gradientMatrix << std::endl;
+    // gradientMatriix = gradientMatrix.transpose();
+
+
     // Solve the Eikonal Equation
+    // Solve the Heat Equation for initial conditions
     Values forcingTerm = Values::Constant(mesh.numNodes, 1.0);
     std::vector<int> boundaryIndices = {0, 2};
     Values initial_conditions = HeatEquation(stiffnessMatrix, boundaryIndices);
+    
     // Values initial_conditions = Values::Constant(mesh.numNodes, 5.0);
     std::cout << "initial_conditions:" << std::endl;
     std::cout << "Rows:" << initial_conditions.rows() << std::endl;
@@ -307,7 +319,7 @@ int main() {
     int maxIterations = 1000;
 
     for (int iter = 0; iter < maxIterations && !converged; ++iter) {
-        converged = updateSolution(w, stiffnessMatrix);
+        converged = updateSolution(w, stiffnessMatrix, gradientMatrix);
         if (converged) {
             std::cout << "Solution converged after " << iter + 1 << " iterations." << std::endl;
         }
