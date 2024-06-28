@@ -186,6 +186,26 @@ public:
     }
   }
   /*!
+  @brief Impose Dirichlet boundary condition on stiffness/mass matrix
+  @param globalMatrix The global matrix.
+  @param indices A vector of indices corresponding to boundary nodes.
+  @note It is assumed that the global matrix is already correctly initialized and
+  that the diagonal elements at the specified indices exist.
+  */
+void updateMatrixWithDirichletBoundary(GlobalMatrix &globalMatrix, const std::vector<int> &indices) {
+    constexpr double TGV = 1e40;
+    for (auto idx : indices) {
+        // Check if the diagonal element at position (idx, idx) exists
+        if (globalMatrix.coeffRef(idx, idx) != 0.0) {
+            // Element exists, update its value
+            globalMatrix.coeffRef(idx, idx) = TGV;
+        } else {
+            // Element does not exist, insert a new one
+            globalMatrix.insert(idx, idx) = TGV;
+        }
+    }
+}
+  /*!
   @brief Update global gradient matrix
   @param globalGradientMatrix The global gradient matrix
   @note It is assumed that the global gradient matrix is already correctly

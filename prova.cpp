@@ -190,6 +190,7 @@ bool updateSolution(Values& w,
                     const Eigen::SparseMatrix<double>& stiffnessMatrix, 
                     const Eigen::SparseMatrix<double>& gradientMatrix,
                     double gamma = 1e-3,
+                    const std::vector<int> &boundaryIndices,
                     double tol = 1e-6) {
     
     std::cout << "Entered in updateSolution:" << std::endl;
@@ -256,6 +257,11 @@ bool updateSolution(Values& w,
 
     // Compute the right-hand side for the linear problem
     Values rhs = coeffs * (stiffnessMatrix * w);
+    // Update for Dirichlet BC. If != 0, set with value*TGV, where TGV=1e40
+    for (int idx : boundaryIndices) {
+        rhs(idx) = 0.0;
+    }
+
     std::cout << "rhs: " << rhs << std::endl;
     std::cout << "rhs.rows(): " << rhs.rows() << std::endl;
     std::cout << "rhs.cols(): " << rhs.cols() << std::endl;
@@ -371,13 +377,16 @@ int main() {
     std::cout << initial_conditions << std::endl;
 
     Values w = initial_conditions;
+    
+    // Impose Dirichlet BC on stiffness matrix
+    linearFiniteElement.updateMatrixWithDirichletBoundary(stiffnessMatrix, boundaryIndices);
 
     bool converged = false;
     int maxIterations = 1000;
 
     for (int iter = 0; iter < maxIterations && !converged; ++iter) {
         std::cout << "-------------- Iteration " << iter + 1 << "--------------" << std::endl;
-        converged = updateSolution(w, stiffnessMatrix, gradientMatrix);
+        converged = updateSolution(w, stiffnessMatrix, gradientMatrix, boundaryIndices);
         if (converged) {
             std::cout << "Solution converged after " << iter + 1 << " iterations." << std::endl;
         }
