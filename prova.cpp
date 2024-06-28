@@ -19,17 +19,25 @@ struct MeshData {
 
 MeshData readMesh(const std::string& filename) {
     MeshData mesh;
+    std::cout << "Entered in readMesh:" << std::endl;
+    // std::cout << "initialization mesh.numNodes: " << mesh.numNodes << std::endl;
+    // std::cout << "initialization mesh.numElements: \n" << mesh.numElements << std::endl;
     std::ifstream file(filename);
+    // std::cout << "filename: " << filename << std::endl;
     std::string line;
     std::istringstream ss;
 
     if (!file.is_open()) {
         throw std::runtime_error("Failed to open file: " + filename);
     }
-
+    int i = 0;
+    // std::vector<int> offsets;
     while (std::getline(file, line)) {
+        // std::cout << "line " << i << ": " << line << std::endl;
         if (line.find("CELLS") != std::string::npos) {
+            std::cout << "line: " << line << std::endl;
             std::string numElementsStr = line.substr(line.find_first_of("0123456789"));
+            // std::cout << "numElementsStr: " << numElementsStr << std::endl;
             ss.str(numElementsStr);
             ss.clear();
             ss >> mesh.numElements;
@@ -46,19 +54,78 @@ MeshData readMesh(const std::string& filename) {
                 }
             }
         } else if (line.find("POINTS") != std::string::npos) {
+            std::cout << "line: " << line << std::endl;
             std::string numNodesStr = line.substr(line.find_first_of("0123456789"));
             ss.str(numNodesStr);
             ss.clear();
             ss >> mesh.numNodes;
+            std::cout << "mesh.numNodes: " << mesh.numNodes << std::endl;
             mesh.nodes.resize(3, mesh.numNodes);
 
-            for (int i = 0; i < mesh.numNodes; i++) {
-                std::getline(file, line);
-                ss.str(line);
-                ss.clear();
-                ss >> mesh.nodes(0, i) >> mesh.nodes(1, i) >> mesh.nodes(2, i);
+            int pointsRead = 0;
+            std::getline(file, line); // Move to the line where points data starts, usually just after the line with "POINTS"
+            ss.str(line);
+            ss.clear();
+            
+            double x, y, z;
+            while (pointsRead < mesh.numNodes) {
+                // While there are still nodes left to read and data available in the stream
+                while (ss >> x >> y >> z) {
+                    mesh.nodes(0, pointsRead) = x;
+                    mesh.nodes(1, pointsRead) = y;
+                    mesh.nodes(2, pointsRead) = z;
+                    pointsRead++;
+                    if (pointsRead >= mesh.numNodes) break;  // Stop if we have read enough points
+                }
+                if (pointsRead < mesh.numNodes) {
+                    // If we haven't read enough points and the stream is exhausted, read the next line
+                    if (!std::getline(file, line)) {
+                        throw std::runtime_error("Not enough points provided in file");
+                    }
+                    ss.str(line);
+                    ss.clear();
+                }
             }
+            std::cout << "mesh.nodes: done! \n" << std::endl;
         }
+
+        // } else if (line.find("POINTS") != std::string::npos) {
+        //     std::cout << "line: " << line << std::endl;
+        //     std::string numNodesStr = line.substr(line.find_first_of("0123456789"));
+        //     ss.str(numNodesStr);
+        //     ss.clear();
+        //     ss >> mesh.numNodes;
+        //     std::cout << "mesh.numNodes: " << mesh.numNodes << std::endl;
+        //     mesh.nodes.resize(3, mesh.numNodes);
+
+        //     for (int i = 0; i < mesh.numNodes; i++) {
+        //         std::getline(file, line);
+        //         ss.str(line);
+        //         ss.clear();
+        //         ss >> mesh.nodes(0, i) >> mesh.nodes(1, i) >> mesh.nodes(2, i);
+        //     }
+        //     std::cout << "mesh.nodes: done! \n" << std::endl;
+        // }
+
+        i += 1;
+        // } else if (line.find("OFFSETS") != std::string::npos) {
+        //     std::getline(file, line);
+        //     ss.str(line);
+        //     ss.clear();
+        //     int offset;
+        //     while (ss >> offset) {
+        //         offsets.push_back(offset);
+        //     }
+        //     if (ss.fail() && !file.eof()) { // Handle potential multi-line offsets
+        //         std::getline(file, line);
+        //         ss.str(line);
+        //         ss.clear();
+        //         while (ss >> offset) {
+        //             offsets.push_back(offset);
+        //         }
+        //     }
+        // }
+        
     }
 
     file.close();
@@ -125,17 +192,17 @@ bool updateSolution(Values& w,
                     double gamma = 1e-3,
                     double tol = 1e-6) {
     
-    std::cout << "entered in updateSolution:" << std::endl;
+    std::cout << "Entered in updateSolution:" << std::endl;
 
     std::cout << "w: \n" << w << std::endl;
     std::cout << "w.rows(): " << w.rows() << std::endl;
     std::cout << "w.cols(): " << w.cols() << std::endl;
     std::cout << "\n" << std::endl;
 
-    std::cout << "stiffnessMatrix: \n" << stiffnessMatrix << std::endl;
-    std::cout << "stiffnessMatrix.rows(): " << stiffnessMatrix.rows() << std::endl;
-    std::cout << "stiffnessMatrix.cols(): " << stiffnessMatrix.cols() << std::endl;
-    std::cout << "\n" << std::endl;
+    // std::cout << "stiffnessMatrix: \n" << stiffnessMatrix << std::endl;
+    // std::cout << "stiffnessMatrix.rows(): " << stiffnessMatrix.rows() << std::endl;
+    // std::cout << "stiffnessMatrix.cols(): " << stiffnessMatrix.cols() << std::endl;
+    // std::cout << "\n" << std::endl;
 
     std::cout << "gradientMatrix: \n" << gradientMatrix << std::endl;
     std::cout << "gradientMatrix.rows(): " << gradientMatrix.rows() << std::endl;
@@ -155,10 +222,10 @@ bool updateSolution(Values& w,
     // std::cout << "\n" << std::endl;
 
     Gradients w_concatenated = w.replicate(1, 3);
-    std::cout << "w_concatenated: \n" << w_concatenated << std::endl;
-    std::cout << "w_concatenated.rows(): " << w_concatenated.rows() << std::endl;
-    std::cout << "w_concatenated.cols(): " << w_concatenated.cols() << std::endl;
-    std::cout << "\n" << std::endl;
+    // std::cout << "w_concatenated: \n" << w_concatenated << std::endl;
+    // std::cout << "w_concatenated.rows(): " << w_concatenated.rows() << std::endl;
+    // std::cout << "w_concatenated.cols(): " << w_concatenated.cols() << std::endl;
+    // std::cout << "\n" << std::endl;
 
     grad_w = gradientMatrix.cwiseProduct(w_concatenated);
 
@@ -175,17 +242,17 @@ bool updateSolution(Values& w,
     std::cout << "\n" << std::endl;
 
     Values gamma_vec = Values::Constant(gradientMatrix.rows(), gamma);
-    std::cout << "gamma_vec: " << gamma_vec << std::endl;
-    std::cout << "gamma_vec.rows(): " << gamma_vec.rows() << std::endl;
-    std::cout << "gamma_vec.cols(): " << gamma_vec.cols() << std::endl;
-    std::cout << "\n" << std::endl;
+    // std::cout << "gamma_vec: " << gamma_vec << std::endl;
+    // std::cout << "gamma_vec.rows(): " << gamma_vec.rows() << std::endl;
+    // std::cout << "gamma_vec.cols(): " << gamma_vec.cols() << std::endl;
+    // std::cout << "\n" << std::endl;
     
     // Values coeffs = ((Values::Constant(gradientMatrix.cols(), 1.0) - norm_grad_w).array() / (norm_grad_w + gamma_vec).array()).matrix();
     Values coeffs = ((Values::Constant(gradientMatrix.rows(), 1.0) - norm_grad_w).array() / (norm_grad_w + gamma_vec).array()).matrix();
-    std::cout << "coeffs: " << coeffs << std::endl;
-    std::cout << "coeffs.rows(): " << coeffs.rows() << std::endl;
-    std::cout << "coeffs.cols(): " << coeffs.cols() << std::endl;
-    std::cout << "\n" << std::endl;
+    // std::cout << "coeffs: " << coeffs << std::endl;
+    // std::cout << "coeffs.rows(): " << coeffs.rows() << std::endl;
+    // std::cout << "coeffs.cols(): " << coeffs.cols() << std::endl;
+    // std::cout << "\n" << std::endl;
 
     // Compute the right-hand side for the linear problem
     Values rhs = coeffs * (stiffnessMatrix * w);
@@ -222,23 +289,12 @@ int main() {
     using Values = Eigen::Matrix<double, Eigen::Dynamic, 1>; //!< The array storing values at the the nodes
     using AnisotropyM = Eigen::Matrix<double, 3, 3>; //!< The array storing the anisotropy matrix M 
 
-//   try {
-//         MeshData mesh = readMesh("path/to/your/meshfile.mesh");
-//         std::cout << "Nodes: \n" << mesh.nodes << "\n" << std::endl;
-//         std::cout << "Connectivity: \n" << mesh.connectivity << "\n" << std::endl;
-//         std::cout << "Number of Elements: " << mesh.numElements << "\n" << std::endl;
-//         std::cout << "Number of Nodes: " << mesh.numNodes << "\n" << std::endl;
-//     } catch (const std::exception& e) {
-//         std::cerr << "Error: " << e.what() << std::endl;
-//         return -1;
-//     }
-
-    MeshData mesh = readMesh("mesh.vtk");
+    MeshData mesh = readMesh("mesh_cubo.vtk");
     
-    std::cout << "nodes: \n" << mesh.nodes << "\n" << std::endl;
-    std::cout << "connectivity: \n" << mesh.connectivity << "\n" << std::endl;
-    std::cout << "numElements: \n" << mesh.numElements << "\n" << std::endl;
     std::cout << "numNodes: \n" << mesh.numNodes << "\n" << std::endl;
+    // std::cout << "nodes: \n" << mesh.nodes << "\n" << std::endl;
+    // std::cout << "connectivity: \n" << mesh.connectivity << "\n" << std::endl;
+    std::cout << "numElements: \n" << mesh.numElements << "\n" << std::endl;
   
     // prepare global matrices
     Eigen::SparseMatrix<double> stiffnessMatrix(mesh.numNodes, mesh.numNodes);
@@ -246,6 +302,7 @@ int main() {
     Eigen::SparseMatrix<double> gradientMatrix(mesh.numNodes, 3);
 
     std::vector<Eigen::Triplet<double>> triplets;
+    std::cout << "max allocable size: \n" << triplets.max_size() << "\n" << std::endl;
     triplets.reserve(mesh.numElements);
 
     apsc::LinearFiniteElement<3> linearFiniteElement;
@@ -319,6 +376,7 @@ int main() {
     int maxIterations = 1000;
 
     for (int iter = 0; iter < maxIterations && !converged; ++iter) {
+        std::cout << "-------------- Iteration " << iter + 1 << "--------------" << std::endl;
         converged = updateSolution(w, stiffnessMatrix, gradientMatrix);
         if (converged) {
             std::cout << "Solution converged after " << iter + 1 << " iterations." << std::endl;
