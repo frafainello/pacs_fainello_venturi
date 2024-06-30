@@ -189,8 +189,8 @@ Values HeatEquation(const Eigen::SparseMatrix<double>& stiffnessMatrix, const st
 bool updateSolution(Values& w, 
                     const Eigen::SparseMatrix<double>& stiffnessMatrix, 
                     const Eigen::SparseMatrix<double>& gradientMatrix,
-                    double gamma = 1e-3,
                     const std::vector<int> &boundaryIndices,
+                    double gamma = 1e-3,
                     double tol = 1e-6) {
     
     std::cout << "Entered in updateSolution:" << std::endl;
