@@ -253,7 +253,7 @@ public:
           }
           outputFile << numCurrNodes << " ";
           for (int j = 0; j < numCurrNodes; ++j) {
-              outputFile << connectivity[i+j] << " ";
+              outputFile << connectivity[cells[i]+j] << " ";
           }
           outputFile << std::endl;
       }
