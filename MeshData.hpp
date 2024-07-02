@@ -8,6 +8,8 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <set>
+#include <map>
 #include <iostream>
 
 class MeshData {
@@ -30,6 +32,10 @@ public:
 
     int getNumNodes() const {
         return numNodes;
+    }
+
+    const std::vector<int>& getBoundaryNodes() const {
+        return boundaryNodes;
     }
 
     // // Setters
@@ -261,12 +267,41 @@ public:
 
       outputFile.close();
   }
-          
+
+
+    void updateBoundaryNodes() {
+        std::map<std::set<int>, int> faceCount;
+        for (int i = 0; i < numElements; ++i) {
+            // Each element has 4 faces
+            for (int j = 0; j < 4; ++j) {
+                std::set<int> face;
+                for (int k = 0; k < 4; ++k) {
+                    if (k != j) {
+                        face.insert(connectivity(k, i));
+                    }
+                }
+                faceCount[face]++;
+            }
+        }
+
+        std::set<int> boundaryNodesSet;
+        for (const auto& entry : faceCount) {
+            if (entry.second == 1) { // Boundary face
+                for (int node : entry.first) {
+                    boundaryNodesSet.insert(node);
+                }
+            }
+        }
+
+        boundaryNodes.assign(boundaryNodesSet.begin(), boundaryNodesSet.end());
+    }
+
 private:
     Eigen::Matrix<double, 3, Eigen::Dynamic> nodes;              // Node coordinates (x, y, z)
     Eigen::Matrix<Eigen::Index, 4, Eigen::Dynamic> connectivity; // Element connectivity
     int numElements;
     int numNodes;
+    std::vector<int> boundaryNodes; // Boundary nodes indices
 };
 
 #endif // MESHDATA_HPP

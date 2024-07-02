@@ -267,7 +267,14 @@ int main() {
     std::cout << "nodes rows: \n" << mesh.getNodes().rows() << "\n" << std::endl;
     // std::cout << "connectivity: \n" << mesh.getConnectivity() << "\n" << std::endl;
     std::cout << "numElements: \n" << mesh.getNumElements() << "\n" << std::endl;
-  
+    
+    mesh.updateBoundaryNodes();
+    const std::vector<int>& boundaryIndices = mesh.getBoundaryNodes();
+    std::cout << "Boundary nodes count: \n" << boundaryIndices.size() << "\n" << std::endl;
+    // for (int node : boundaryIndices) {
+    //     std::cout << "Boundary node: " << node << std::endl;
+    // }
+
     // prepare global matrices
     Eigen::SparseMatrix<double> stiffnessMatrix(mesh.getNumNodes(), mesh.getNumNodes());
     Eigen::SparseMatrix<double> massMatrix(mesh.getNumNodes(), mesh.getNumNodes());
@@ -335,7 +342,7 @@ int main() {
     // Solve the Eikonal Equation
     // Solve the Heat Equation for initial conditions
     Values forcingTerm = Values::Constant(mesh.getNumNodes(), 1.0);
-    std::vector<int> boundaryIndices = {0, 2};
+    // std::vector<int> boundaryIndices = {0};
     Values initial_conditions = HeatEquation(stiffnessMatrix, boundaryIndices);
     
     // Values initial_conditions = Values::Constant(mesh.getNumNodes(), 5.0);
@@ -348,6 +355,8 @@ int main() {
     
     // Impose Dirichlet BC on stiffness matrix
     linearFiniteElement.updateMatrixWithDirichletBoundary(stiffnessMatrix, boundaryIndices);
+    // std::cout << "Stiffness Matrix after BC:" << std::endl;
+    // std::cout << stiffnessMatrix << std::endl;
 
     bool converged = false;
     int maxIterations = 1000;
@@ -357,6 +366,7 @@ int main() {
         converged = updateSolution(w, stiffnessMatrix, gradientMatrix, boundaryIndices);
         if (converged) {
             std::cout << "Solution converged after " << iter + 1 << " iterations." << std::endl;
+            // std::cout << w << std::endl;
         }
     }
 
