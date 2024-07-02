@@ -176,7 +176,7 @@ public:
               readingCells = false;
               readingCellTypes = false;
               readingConnectivity = true;
-              outputFile << line << std::endl;
+            //   outputFile << line << std::endl;
               connectivity.reserve(numDuplicatedNodes);
 
           } else if (isalpha(line[0])) {
@@ -220,7 +220,7 @@ public:
               }
             }
           }
-      
+
       std::cout << "numPoints: " << numPoints << std::endl;
       std::cout << "numCells: " << numCells << std::endl;
       std::cout << "numDuplicatedNodes: " << numDuplicatedNodes << std::endl;
@@ -243,14 +243,10 @@ public:
         outputFile << point[0] << " " << point[1] << " " << point[2] << std::endl;
       }
 
-      outputFile << "CELLS " << numCells << " " << numDuplicatedNodes << std::endl;
-      for (int i = 0; i < cells.size(); ++i) {
-          int numCurrNodes = 0;
-          if (i == cells.size()-1) {
-              numCurrNodes = 1;
-          } else {
-              numCurrNodes = cells[i+1] - cells[i];
-          }
+      outputFile << "CELLS " << numCells-1 << " " << numDuplicatedNodes << std::endl;
+      for (int i = 0; i < cells.size()-1; ++i) {
+
+          int numCurrNodes = cells[i+1] - cells[i];
           outputFile << numCurrNodes << " ";
           for (int j = 0; j < numCurrNodes; ++j) {
               outputFile << connectivity[cells[i]+j] << " ";
@@ -258,10 +254,10 @@ public:
           outputFile << std::endl;
       }
 
-      // outputFile << "CELL_TYPES " << numCells << std::endl;
-      // for (const auto& cellType : cellTypes) {
-      //     outputFile << cellType << std::endl;
-      // }
+      outputFile << "CELL_TYPES " << numCells-1 << std::endl;
+      for (const auto& cellType : cellTypes) {
+          outputFile << cellType << std::endl;
+      }
 
       outputFile.close();
   }
