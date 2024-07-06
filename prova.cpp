@@ -1,5 +1,7 @@
+#include "Eikonal_traits.hpp"
 #include "LinearFiniteElement.hpp"
 #include "MeshData.hpp"
+#include "InitialConditions.hpp"
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -11,139 +13,56 @@ using Values = Eigen::Matrix<double, Eigen::Dynamic, 1>;
 using Gradients = Eigen::Matrix<double, Eigen::Dynamic, 3>;
 
 //  ================== MESH ==================
-// struct MeshData {
-//     Eigen::Matrix<double, 3, Eigen::Dynamic> nodes;              // Node coordinates (x, y, z)
-//     Eigen::Matrix<Eigen::Index, 4, Eigen::Dynamic> connectivity; // Element connectivity
-//     int numElements;
-//     int numNodes;
-// };
-
-// MeshData readMesh(const std::string& filename) {
-//     MeshData mesh;
-//     std::cout << "Entered in readMesh:" << std::endl;
-//     // std::cout << "initialization mesh.getNumNodes(): " << mesh.getNumNodes() << std::endl;
-//     // std::cout << "initialization mesh.getNumElements(): \n" << mesh.getNumElements() << std::endl;
-//     std::ifstream file(filename);
-//     // std::cout << "filename: " << filename << std::endl;
-//     std::string line;
-//     std::istringstream ss;
-
-//     if (!file.is_open()) {
-//         throw std::runtime_error("Failed to open file: " + filename);
-//     }
-//     int i = 0;
-//     // std::vector<int> offsets;
-//     while (std::getline(file, line)) {
-//         // std::cout << "line " << i << ": " << line << std::endl;
-//         if (line.find("CELLS") != std::string::npos) {
-//             std::cout << "line: " << line << std::endl;
-//             std::string numElementsStr = line.substr(line.find_first_of("0123456789"));
-//             // std::cout << "numElementsStr: " << numElementsStr << std::endl;
-//             ss.str(numElementsStr);
-//             ss.clear();
-//             ss >> mesh.getNumElements();
-//             mesh.getConnectivity().resize(4, mesh.getNumElements());
-
-//             for (int i = 0; i < mesh.getNumElements(); i++) {
-//                 std::getline(file, line);
-//                 ss.str(line);
-//                 ss.clear();
-//                 int dummy;  // Dummy to hold the number of nodes per element (should be 4 for tetrahedra)
-//                 ss >> dummy;
-//                 for (int j = 0; j < 4; j++) {
-//                     ss >> mesh.getConnectivity()(j, i);
-//                 }
-//             }
-//         } else if (line.find("POINTS") != std::string::npos) {
-//             std::cout << "line: " << line << std::endl;
-//             std::string numNodesStr = line.substr(line.find_first_of("0123456789"));
-//             ss.str(numNodesStr);
-//             ss.clear();
-//             ss >> mesh.getNumNodes();
-//             std::cout << "mesh.getNumNodes(): " << mesh.getNumNodes() << std::endl;
-//             mesh.nodes.resize(3, mesh.getNumNodes());
-
-//             int pointsRead = 0;
-//             std::getline(file, line); // Move to the line where points data starts, usually just after the line with "POINTS"
-//             ss.str(line);
-//             ss.clear();
-            
-//             double x, y, z;
-//             while (pointsRead < mesh.getNumNodes()) {
-//                 // While there are still nodes left to read and data available in the stream
-//                 while (ss >> x >> y >> z) {
-//                     mesh.nodes(0, pointsRead) = x;
-//                     mesh.nodes(1, pointsRead) = y;
-//                     mesh.nodes(2, pointsRead) = z;
-//                     pointsRead++;
-//                     if (pointsRead >= mesh.getNumNodes()) break;  // Stop if we have read enough points
-//                 }
-//                 if (pointsRead < mesh.getNumNodes()) {
-//                     // If we haven't read enough points and the stream is exhausted, read the next line
-//                     if (!std::getline(file, line)) {
-//                         throw std::runtime_error("Not enough points provided in file");
-//                     }
-//                     ss.str(line);
-//                     ss.clear();
-//                 }
-//             }
-//             std::cout << "mesh.nodes: done! \n" << std::endl;
-//         }
-//     }
-
-//     file.close();
-//     return mesh;
-// }
 
 //  ================== INITIAL CONDITION ==================
 
-Values HeatEquation(const Eigen::SparseMatrix<double>& stiffnessMatrix, const std::vector<int>& boundaryIndices) {
-    Eigen::SparseMatrix<double> modifiedStiffnessMatrix = stiffnessMatrix;
-    // memo: cambia std::vector con Eigen::qualcosa
+// Values HeatEquation(const Eigen::SparseMatrix<double>& stiffnessMatrix, const std::vector<int>& boundaryIndices) {
+//     Eigen::SparseMatrix<double> modifiedStiffnessMatrix = stiffnessMatrix;
+//     // memo: cambia std::vector con Eigen::qualcosa
 
-    // Right-hand side vector of the equation, all ones
-    Values rhs(stiffnessMatrix.rows());
-    rhs.setOnes();
+//     // Right-hand side vector of the equation, all ones
+//     Values rhs(stiffnessMatrix.rows());
+//     rhs.setOnes();
 
-    // // Apply null Dirichlet boundary conditions
-    // for (int idx : boundaryIndices) {
-    //     modifiedStiffnessMatrix.row(idx).setZero();
-    //     modifiedStiffnessMatrix.col(idx).setZero();
+//     // // Apply null Dirichlet boundary conditions
+//     // for (int idx : boundaryIndices) {
+//     //     modifiedStiffnessMatrix.row(idx).setZero();
+//     //     modifiedStiffnessMatrix.col(idx).setZero();
 
-    //     modifiedStiffnessMatrix.coeffRef(idx, idx) = 1.0;
+//     //     modifiedStiffnessMatrix.coeffRef(idx, idx) = 1.0;
 
-    //     rhs[idx] = 0.0;
-    // }
-    // Apply null Dirichlet boundary conditions
-    for (int idx : boundaryIndices) {
-        // Zero out the row
-        for (Eigen::SparseMatrix<double>::InnerIterator it(modifiedStiffnessMatrix, idx); it; ++it) {
-            it.valueRef() = 0.0;
-        }
+//     //     rhs[idx] = 0.0;
+//     // }
+//     // Apply null Dirichlet boundary conditions
+//     for (int idx : boundaryIndices) {
+//         // Zero out the row
+//         for (Eigen::SparseMatrix<double>::InnerIterator it(modifiedStiffnessMatrix, idx); it; ++it) {
+//             it.valueRef() = 0.0;
+//         }
 
-        // Zero out the column
-        for (int k = 0; k < modifiedStiffnessMatrix.outerSize(); ++k) {
-            for (Eigen::SparseMatrix<double>::InnerIterator it(modifiedStiffnessMatrix, k); it; ++it) {
-                if (it.row() == idx) {
-                    it.valueRef() = 0.0;
-                }
-            }
-        }
+//         // Zero out the column
+//         for (int k = 0; k < modifiedStiffnessMatrix.outerSize(); ++k) {
+//             for (Eigen::SparseMatrix<double>::InnerIterator it(modifiedStiffnessMatrix, k); it; ++it) {
+//                 if (it.row() == idx) {
+//                     it.valueRef() = 0.0;
+//                 }
+//             }
+//         }
 
-        // Set diagonal element to 1
-        modifiedStiffnessMatrix.coeffRef(idx, idx) = 1.0;
+//         // Set diagonal element to 1
+//         modifiedStiffnessMatrix.coeffRef(idx, idx) = 1.0;
 
-        // Set corresponding rhs element to 0
-        rhs[idx] = 0.0;
-    }
+//         // Set corresponding rhs element to 0
+//         rhs[idx] = 0.0;
+//     }
 
-    // Compute the solution
-    Eigen::ConjugateGradient<Eigen::SparseMatrix<double>, Eigen::Lower|Eigen::Upper> solver;
-    Values solution = solver.compute(modifiedStiffnessMatrix).solve(rhs);
+//     // Compute the solution
+//     Eigen::ConjugateGradient<Eigen::SparseMatrix<double>, Eigen::Lower|Eigen::Upper> solver;
+//     Values solution = solver.compute(modifiedStiffnessMatrix).solve(rhs);
 
-    // Return the computed values
-    return solution;
-}
+//     // Return the computed values
+//     return solution;
+// }
 
 
 //  ================== INCREMENTAL SOLUTION ==================
@@ -152,7 +71,7 @@ Values HeatEquation(const Eigen::SparseMatrix<double>& stiffnessMatrix, const st
 bool updateSolution(Values& w, 
                     const Eigen::SparseMatrix<double>& stiffnessMatrix, 
                     const Eigen::SparseMatrix<double>& gradientMatrix,
-                    const std::vector<int> &boundaryIndices,
+                    const std::vector<long int> &boundaryIndices,
                     double gamma = 1e-3,
                     double tol = 1e-6) {
     
@@ -222,7 +141,7 @@ bool updateSolution(Values& w,
     Values rhs = coeffs * (stiffnessMatrix * w);
     // Update for Dirichlet BC. If != 0, set with value*TGV, where TGV=1e40
     for (int idx : boundaryIndices) {
-        rhs(idx) = 0.0;
+        rhs(idx) = 0.0 * 1e40;
     }
 
     // std::cout << "rhs: " << rhs << std::endl;
@@ -258,7 +177,7 @@ int main() {
     using Values = Eigen::Matrix<double, Eigen::Dynamic, 1>; //!< The array storing values at the the nodes
     using AnisotropyM = Eigen::Matrix<double, 3, 3>; //!< The array storing the anisotropy matrix M 
 
-    MeshData mesh;
+    MeshData<3> mesh;
     // mesh.convertVTK("mesh_cubo.vtk", "mesh_cubo_3.vtk");
     mesh.readMesh("mesh_cubo_3.vtk");
 
@@ -269,7 +188,7 @@ int main() {
     std::cout << "numElements: \n" << mesh.getNumElements() << "\n" << std::endl;
     
     mesh.updateBoundaryNodes();
-    const std::vector<int>& boundaryIndices = mesh.getBoundaryNodes();
+    const std::vector<long int> boundaryIndices = mesh.getBoundaryNodes();
     std::cout << "Boundary nodes count: \n" << boundaryIndices.size() << "\n" << std::endl;
     // for (int node : boundaryIndices) {
     //     std::cout << "Boundary node: " << node << std::endl;
@@ -339,11 +258,18 @@ int main() {
     // gradientMatriix = gradientMatrix.transpose();
 
 
+    
+    // Impose Dirichlet BC on stiffness matrix
+    linearFiniteElement.updateMatrixWithDirichletBoundary(stiffnessMatrix, boundaryIndices);
+    // std::cout << "Stiffness Matrix after BC:" << std::endl;
+    // std::cout << stiffnessMatrix << std::endl;
+
     // Solve the Eikonal Equation
     // Solve the Heat Equation for initial conditions
     Values forcingTerm = Values::Constant(mesh.getNumNodes(), 1.0);
     // std::vector<int> boundaryIndices = {0};
-    Values initial_conditions = HeatEquation(stiffnessMatrix, boundaryIndices);
+    InitialConditions<3> initialConditions;
+    Values initial_conditions = initialConditions.HeatEquation(stiffnessMatrix, boundaryIndices);
     
     // Values initial_conditions = Values::Constant(mesh.getNumNodes(), 5.0);
     std::cout << "initial_conditions:" << std::endl;
@@ -352,11 +278,6 @@ int main() {
     // std::cout << initial_conditions << std::endl;
 
     Values w = initial_conditions;
-    
-    // Impose Dirichlet BC on stiffness matrix
-    linearFiniteElement.updateMatrixWithDirichletBoundary(stiffnessMatrix, boundaryIndices);
-    // std::cout << "Stiffness Matrix after BC:" << std::endl;
-    // std::cout << stiffnessMatrix << std::endl;
 
     bool converged = false;
     int maxIterations = 1000;

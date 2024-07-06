@@ -192,7 +192,7 @@ public:
   @note It is assumed that the global matrix is already correctly initialized and
   that the diagonal elements at the specified indices exist.
   */
-void updateMatrixWithDirichletBoundary(GlobalMatrix &globalMatrix, const std::vector<int> &indices) {
+void updateMatrixWithDirichletBoundary(GlobalMatrix &globalMatrix, const std::vector<long int> &indices) {
     constexpr double TGV = 1e40;
     for (auto idx : indices) {
         // Check if the diagonal element at position (idx, idx) exists

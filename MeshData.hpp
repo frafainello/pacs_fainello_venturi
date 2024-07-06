@@ -2,6 +2,7 @@
 #ifndef MESHDATA_HPP
 #define MESHDATA_HPP
 
+#include "Eikonal_traits.hpp"
 #include <Eigen/Dense>
 #include <fstream>
 #include <sstream>
@@ -12,17 +13,25 @@
 #include <map>
 #include <iostream>
 
+template<std::size_t PHDIM, std::size_t INTRINSIC_DIM=PHDIM>
 class MeshData {
 
 public:
+    using Traits = Eikonal::Eikonal_traits<PHDIM, INTRINSIC_DIM>;
+    using Index = typename Traits::Index;
+    using Indexes = typename Traits::Indexes;
+    using Nodes = typename Traits::Nodes;
+    using Elements = typename Traits::Elements;
+
+
     MeshData() : numElements(0), numNodes(0) {}
 
     // Getters
-    const Eigen::Matrix<double, 3, Eigen::Dynamic>& getNodes() const {
+    const Nodes& getNodes() const {
         return nodes;
     }
 
-    const Eigen::Matrix<Eigen::Index, 4, Eigen::Dynamic>& getConnectivity() const {
+    const Elements& getConnectivity() const {
         return connectivity;
     }
 
@@ -34,16 +43,16 @@ public:
         return numNodes;
     }
 
-    const std::vector<int>& getBoundaryNodes() const {
+    const Indexes& getBoundaryNodes() const {
         return boundaryNodes;
     }
 
     // // Setters
-    // void setNodes(const Eigen::Matrix<double, 3, Eigen::Dynamic>& nodes) {
+    // void setNodes(const Nodes& nodes) {
     //     this->nodes = nodes;
     // }
 
-    // void setConnectivity(const Eigen::Matrix<Eigen::Index, 4, Eigen::Dynamic>& connectivity) {
+    // void setConnectivity(const Elements& connectivity) {
     //     this->connectivity = connectivity;
     // }
 
@@ -64,8 +73,8 @@ public:
         }
 
         // Read element connectivity and nodes
-        // Eigen::Matrix<double, 3, Eigen::Dynamic> nodes; // 3 rows --> x, y, z, num_cols = numNodes
-        // Eigen::Matrix<Eigen::Index, 4, Eigen::Dynamic> connectivity; // 4 rows --> 4 nodes of the tetrahedron, num_cols = numElements
+        // Nodes nodes; // 3 rows --> x, y, z, num_cols = numNodes
+        // Elements connectivity; // 4 rows --> 4 nodes of the tetrahedron, num_cols = numElements
         // int numElements;
         // int numNodes;
         std::string line;
@@ -131,9 +140,9 @@ public:
 
       std::string line;
       std::vector<std::vector<double>> points;
-      std::vector<int> cells;
-      std::vector<int> cellTypes;
-      std::vector<int> connectivity;
+      Indexes cells;
+      Indexes cellTypes;
+      Indexes connectivity;
 
       bool readingPoints = false;
       bool readingCells = false;
@@ -297,11 +306,11 @@ public:
     }
 
 private:
-    Eigen::Matrix<double, 3, Eigen::Dynamic> nodes;              // Node coordinates (x, y, z)
-    Eigen::Matrix<Eigen::Index, 4, Eigen::Dynamic> connectivity; // Element connectivity
+    Nodes nodes;              // Node coordinates (x, y, z)
+    Elements connectivity;    // Element connectivity
     int numElements;
     int numNodes;
-    std::vector<int> boundaryNodes; // Boundary nodes indices
+    Indexes boundaryNodes;    // Boundary nodes indices
 };
 
 #endif // MESHDATA_HPP
