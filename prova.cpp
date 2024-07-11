@@ -74,68 +74,22 @@ bool updateSolution(Values& w,
                     const std::vector<long int> &boundaryIndices,
                     double gamma = 1e-3,
                     double tol = 1e-6) {
-    
-    // std::cout << "Entered in updateSolution:" << std::endl;
-
-    // std::cout << "w: \n" << w << std::endl;
-    // std::cout << "w.rows(): " << w.rows() << std::endl;
-    // std::cout << "w.cols(): " << w.cols() << std::endl;
-    // std::cout << "\n" << std::endl;
-
-    // std::cout << "stiffnessMatrix: \n" << stiffnessMatrix << std::endl;
-    // std::cout << "stiffnessMatrix.rows(): " << stiffnessMatrix.rows() << std::endl;
-    // std::cout << "stiffnessMatrix.cols(): " << stiffnessMatrix.cols() << std::endl;
-    // std::cout << "\n" << std::endl;
-
-    // std::cout << "gradientMatrix: \n" << gradientMatrix << std::endl;
-    // std::cout << "gradientMatrix.rows(): " << gradientMatrix.rows() << std::endl;
-    // std::cout << "gradientMatrix.cols(): " << gradientMatrix.cols() << std::endl;
-    // std::cout << "\n" << std::endl;
 
     Values bilinear_form = stiffnessMatrix * w;
-    // std::cout << "bilinear_form: \n" << bilinear_form << std::endl;
-    // std::cout << "bilinear_form.rows(): " << bilinear_form.rows() << std::endl;
-    // std::cout << "bilinear_form.cols(): " << bilinear_form.cols() << std::endl;
-    // std::cout << "\n" << std::endl;
 
     Gradients grad_w(gradientMatrix.rows(), 3);
-    // std::cout << "grad_w: \n" << grad_w << std::endl;
-    // std::cout << "grad_w.rows(): " << grad_w.rows() << std::endl;
-    // std::cout << "grad_w.cols(): " << grad_w.cols() << std::endl;
-    // std::cout << "\n" << std::endl;
 
     Gradients w_concatenated = w.replicate(1, 3);
-    // std::cout << "w_concatenated: \n" << w_concatenated << std::endl;
-    // std::cout << "w_concatenated.rows(): " << w_concatenated.rows() << std::endl;
-    // std::cout << "w_concatenated.cols(): " << w_concatenated.cols() << std::endl;
-    // std::cout << "\n" << std::endl;
 
     grad_w = gradientMatrix.cwiseProduct(w_concatenated);
 
-    // std::cout << "grad_w: \n" << grad_w << std::endl;
-    // std::cout << "grad_w.rows(): " << grad_w.rows() << std::endl;
-    // std::cout << "grad_w.cols(): " << grad_w.cols() << std::endl;
-    // std::cout << "\n" << std::endl;
-
     // Eigen::MatrixXd dense_grad_w = Eigen::MatrixXd(grad_w);
     Values norm_grad_w = grad_w.rowwise().norm();
-    // std::cout << "norm_grad_w: " << norm_grad_w << std::endl;
-    // std::cout << "norm_grad_w.rows(): " << norm_grad_w.rows() << std::endl;
-    // std::cout << "norm_grad_w.cols(): " << norm_grad_w.cols() << std::endl;
-    // std::cout << "\n" << std::endl;
 
     Values gamma_vec = Values::Constant(gradientMatrix.rows(), gamma);
-    // std::cout << "gamma_vec: " << gamma_vec << std::endl;
-    // std::cout << "gamma_vec.rows(): " << gamma_vec.rows() << std::endl;
-    // std::cout << "gamma_vec.cols(): " << gamma_vec.cols() << std::endl;
-    // std::cout << "\n" << std::endl;
     
     // Values coeffs = ((Values::Constant(gradientMatrix.cols(), 1.0) - norm_grad_w).array() / (norm_grad_w + gamma_vec).array()).matrix();
     Values coeffs = ((Values::Constant(gradientMatrix.rows(), 1.0) - norm_grad_w).array() / (norm_grad_w + gamma_vec).array()).matrix();
-    // std::cout << "coeffs: " << coeffs << std::endl;
-    // std::cout << "coeffs.rows(): " << coeffs.rows() << std::endl;
-    // std::cout << "coeffs.cols(): " << coeffs.cols() << std::endl;
-    // std::cout << "\n" << std::endl;
 
     // Compute the right-hand side for the linear problem
     Values rhs = coeffs * (stiffnessMatrix * w);
@@ -143,11 +97,6 @@ bool updateSolution(Values& w,
     for (int idx : boundaryIndices) {
         rhs(idx) = 0.0 * 1e40;
     }
-
-    // std::cout << "rhs: " << rhs << std::endl;
-    // std::cout << "rhs.rows(): " << rhs.rows() << std::endl;
-    // std::cout << "rhs.cols(): " << rhs.cols() << std::endl;
-    // std::cout << "\n" << std::endl;
 
     Eigen::ConjugateGradient<Eigen::SparseMatrix<double>, Eigen::Lower|Eigen::Upper> solver;
     solver.compute(stiffnessMatrix);
@@ -221,48 +170,21 @@ int main() {
         }
         }
 
-        // Compute local nodes and update global node numbers
         linearFiniteElement.update(localNodes);
         linearFiniteElement.updateGlobalNodeNumbers(globalNodeNumbers);
         
-        // Compute the local stiffness matrix and update the global stiffness matrix
         linearFiniteElement.computeLocalStiffness();
         linearFiniteElement.updateGlobalStiffnessMatrix(stiffnessMatrix);
         
-        // Compute the local mass matrix and update the global mass matrix
         linearFiniteElement.computeLocalMass();
         linearFiniteElement.updateGlobalMassMatrix(massMatrix);
         
-        // Compute the local gradient matrix and update the global gradient matrix
         linearFiniteElement.computeLocalGradient();
         linearFiniteElement.updateGlobalGradientMatrix(gradientMatrix);
     }
-
-    // Print stiffness matrix
-    std::cout << "Stiffness Matrix:" << std::endl;
-    std::cout << "Rows:" << stiffnessMatrix.rows() << std::endl;
-    std::cout << "Cols:" << stiffnessMatrix.cols() << std::endl;
-    // std::cout << stiffnessMatrix << std::endl;
-
-    // Print mass matrix
-    std::cout << "Mass Matrix:" << std::endl;
-    std::cout << "Rows:" << massMatrix.rows() << std::endl;
-    std::cout << "Cols:" << massMatrix.cols() << std::endl;
-    // std::cout << massMatrix << std::endl;
-
-    // Print gradient matrix
-    std::cout << "Gradient Matrix:" << std::endl;
-    std::cout << "Rows:" << gradientMatrix.rows() << std::endl;
-    std::cout << "Cols:" << gradientMatrix.cols() << std::endl;
-    // std::cout << gradientMatrix << std::endl;
-    // gradientMatriix = gradientMatrix.transpose();
-
-
     
     // Impose Dirichlet BC on stiffness matrix
     linearFiniteElement.updateMatrixWithDirichletBoundary(stiffnessMatrix, boundaryIndices);
-    // std::cout << "Stiffness Matrix after BC:" << std::endl;
-    // std::cout << stiffnessMatrix << std::endl;
 
     // Solve the Eikonal Equation
     // Solve the Heat Equation for initial conditions
