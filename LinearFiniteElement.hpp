@@ -44,6 +44,30 @@ public:
   // apsc::LinearFiniteElement<3> linearFiniteElement;
   // specify N=3 in the template (parametric class on the parameter N)
   
+
+  // Getters
+  auto getNodes() const{
+    return nodes_;
+  }
+  auto getGlobalNodeNumbers() const{
+    return globalNodeNumbers_;
+  }
+  auto getRefGradients() const{
+    return refGradients_;
+  }
+  // auto getMeasure() const{ --> same as the method measure
+  //   return measure_;
+  // }
+  auto getLocalStiffness() const{
+    return localStiffness_;
+  }
+  auto getLocalMass() const{
+    return localMass_;
+  }
+  auto getLocalGradient() const{
+    return localGradient_;
+  }
+
   /*!
   @brief Update the nodes
   */
@@ -109,6 +133,8 @@ public:
 
     // std::cout << "Local Gradient:" << std::endl;
     // std::cout << localGradient_ << std::endl;
+    // std::cout << "Rows:" << localGradient_.rows() << std::endl;
+    // std::cout << "Cols:" << localGradient_.cols() << std::endl;
     return localGradient_;
   }
   /*!

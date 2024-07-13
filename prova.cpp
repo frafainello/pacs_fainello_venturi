@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <Eigen/Dense>
+#include <Eigen/Sparse>
 
 using Values = Eigen::Matrix<double, Eigen::Dynamic, 1>;
 using Gradients = Eigen::Matrix<double, Eigen::Dynamic, 3>;
@@ -111,6 +112,13 @@ bool updateSolution(Values& w,
     // std::cout << "\n" << std::endl;
 
     grad_w = gradientMatrix.cwiseProduct(w_concatenated);
+    
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // Gradients grad_w(gradientMatrixElementwise.size(), 3); 
+    // for(int i = 0; i < gradientMatrixElementwise.size(); i++) {
+    //     grad_w.row(i) = gradientMatrixElementwise[i] * w["take the correct nodes!!!"]; // 3x4 * 4x1 = 3x1
+    // }
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     // std::cout << "grad_w: \n" << grad_w << std::endl;
     // std::cout << "grad_w.rows(): " << grad_w.rows() << std::endl;
@@ -150,6 +158,7 @@ bool updateSolution(Values& w,
     // std::cout << "\n" << std::endl;
 
     Eigen::ConjugateGradient<Eigen::SparseMatrix<double>, Eigen::Lower|Eigen::Upper> solver;
+    // Eigen::SparseLU<Eigen::SparseMatrix<double>> solver;
     solver.compute(stiffnessMatrix);
 
     if(solver.info() != Eigen::Success) {
@@ -197,7 +206,11 @@ int main() {
     // prepare global matrices
     Eigen::SparseMatrix<double> stiffnessMatrix(mesh.getNumNodes(), mesh.getNumNodes());
     Eigen::SparseMatrix<double> massMatrix(mesh.getNumNodes(), mesh.getNumNodes());
-    Eigen::SparseMatrix<double> gradientMatrix(mesh.getNumNodes(), 3);
+    Eigen::SparseMatrix<double> gradientMatrixNodewise(mesh.getNumNodes(), 3);
+    
+    // std::vector<Eigen::SparseMatrix<double>> gradientMatrixElementwise(3, 3+1);
+    // gradientMatrixElementwise.reserve(mesh.getNumElements());
+    std::vector<Eigen::Matrix<double, 3, 3+1>> gradientMatrixElementwise(mesh.getNumElements());
 
     std::vector<Eigen::Triplet<double>> triplets;
     // std::cout << "max allocable size: \n" << triplets.max_size() << "\n" << std::endl;
@@ -235,30 +248,41 @@ int main() {
         
         // Compute the local gradient matrix and update the global gradient matrix
         linearFiniteElement.computeLocalGradient();
-        linearFiniteElement.updateGlobalGradientMatrix(gradientMatrix);
+        // std::cout << "local gradient matrix: \n" << linearFiniteElement.getLocalGradient() << std::endl;
+        gradientMatrixElementwise[k] = linearFiniteElement.getLocalGradient();
+        linearFiniteElement.updateGlobalGradientMatrix(gradientMatrixNodewise);
+
     }
 
     // Print stiffness matrix
     std::cout << "Stiffness Matrix:" << std::endl;
     std::cout << "Rows:" << stiffnessMatrix.rows() << std::endl;
     std::cout << "Cols:" << stiffnessMatrix.cols() << std::endl;
+    std::cout << "\n" << std::endl;
     // std::cout << stiffnessMatrix << std::endl;
 
     // Print mass matrix
     std::cout << "Mass Matrix:" << std::endl;
     std::cout << "Rows:" << massMatrix.rows() << std::endl;
     std::cout << "Cols:" << massMatrix.cols() << std::endl;
+    std::cout << "\n" << std::endl;
     // std::cout << massMatrix << std::endl;
 
     // Print gradient matrix
     std::cout << "Gradient Matrix:" << std::endl;
-    std::cout << "Rows:" << gradientMatrix.rows() << std::endl;
-    std::cout << "Cols:" << gradientMatrix.cols() << std::endl;
+    std::cout << "Rows:" << gradientMatrixNodewise.rows() << std::endl;
+    std::cout << "Cols:" << gradientMatrixNodewise.cols() << std::endl;
+    std::cout << "\n" << std::endl;
     // std::cout << gradientMatrix << std::endl;
     // gradientMatriix = gradientMatrix.transpose();
 
+    // Print gradient matrix elementwise
+    // std::cout << "Gradient Matrix Elementwise:" << std::endl;
+    // for (size_t k = 0; k < mesh.getNumElements(); ++k) {
+    //     std::cout << "Element " << k << " matrix:\n" << gradientMatrixElementwise[k] << "\n\n";
+    // }
+    // std::cout << "\n" << std::endl;
 
-    
     // Impose Dirichlet BC on stiffness matrix
     linearFiniteElement.updateMatrixWithDirichletBoundary(stiffnessMatrix, boundaryIndices);
     // std::cout << "Stiffness Matrix after BC:" << std::endl;
@@ -284,7 +308,7 @@ int main() {
 
     for (int iter = 0; iter < maxIterations && !converged; ++iter) {
         // std::cout << "-------------- Iteration " << iter + 1 << "--------------" << std::endl;
-        converged = updateSolution(w, stiffnessMatrix, gradientMatrix, boundaryIndices);
+        converged = updateSolution(w, stiffnessMatrix, gradientMatrixNodewise, boundaryIndices);
         if (converged) {
             std::cout << "Solution converged after " << iter + 1 << " iterations." << std::endl;
             // std::cout << w << std::endl;
