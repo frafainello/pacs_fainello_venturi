@@ -12,7 +12,20 @@
 
 using Values = Eigen::Matrix<double, Eigen::Dynamic, 1>;
 using Gradients = Eigen::Matrix<double, Eigen::Dynamic, 3>;
+using Elements = Eigen::Matrix<long int, 3+1, Eigen::Dynamic>;
 
+
+auto computeGradient(const Eigen::Matrix<double, 3, 3> &Coefficients,
+                     const Eigen::Matrix<double, 3 + 1, 1> &values)
+    -> Eigen::Matrix<double, 3, 1> {
+  // Compute the differences in values
+  Eigen::Matrix<double, 3, 1> d_values;
+  for (auto i = 0u; i < 3; ++i) {
+    d_values(i) = values(i + 1) - values(0);
+  }
+  // Compute the gradient
+  return Coefficients * d_values;
+}
 //  ================== MESH ==================
 
 //  ================== INITIAL CONDITION ==================
@@ -72,11 +85,14 @@ using Gradients = Eigen::Matrix<double, Eigen::Dynamic, 3>;
 bool updateSolution(Values& w, 
                     const Eigen::SparseMatrix<double>& stiffnessMatrix, 
                     const Eigen::SparseMatrix<double>& gradientMatrix,
+                    const std::vector<Eigen::Matrix<double, 3, 3+1>>& gradientMatrixElementwise,
+                    const std::vector<Eigen::Matrix<double, 3, 3>>& gradientCoeffElementwise,
+                    const Elements& connectivity,
                     const std::vector<long int> &boundaryIndices,
                     double gamma = 1e-3,
                     double tol = 1e-6) {
     
-    // std::cout << "Entered in updateSolution:" << std::endl;
+    std::cout << "Entered in updateSolution:" << std::endl;
 
     // std::cout << "w: \n" << w << std::endl;
     // std::cout << "w.rows(): " << w.rows() << std::endl;
@@ -99,55 +115,115 @@ bool updateSolution(Values& w,
     // std::cout << "bilinear_form.cols(): " << bilinear_form.cols() << std::endl;
     // std::cout << "\n" << std::endl;
 
-    Gradients grad_w(gradientMatrix.rows(), 3);
-    // std::cout << "grad_w: \n" << grad_w << std::endl;
+    // VERSION NODEWISE ---------------------------------------------------------------------
+
+    // Gradients grad_w(gradientMatrix.rows(), 3);
+    // // std::cout << "grad_w: \n" << grad_w << std::endl;
+    // // std::cout << "grad_w.rows(): " << grad_w.rows() << std::endl;
+    // // std::cout << "grad_w.cols(): " << grad_w.cols() << std::endl;
+    // // std::cout << "\n" << std::endl;
+
+    // Gradients w_concatenated = w.replicate(1, 3);
+    // // std::cout << "w_concatenated: \n" << w_concatenated << std::endl;
+    // // std::cout << "w_concatenated.rows(): " << w_concatenated.rows() << std::endl;
+    // // std::cout << "w_concatenated.cols(): " << w_concatenated.cols() << std::endl;
+    // // std::cout << "\n" << std::endl;
+
+    // grad_w = gradientMatrix.cwiseProduct(w_concatenated); // num_nodi x 3
+    // // std::cout << "grad_w: \n" << grad_w << std::endl;
+    // // std::cout << "grad_w.rows(): " << grad_w.rows() << std::endl;
+    // // std::cout << "grad_w.cols(): " << grad_w.cols() << std::endl;
+    // // std::cout << "\n" << std::endl;
+    // // Eigen::MatrixXd dense_grad_w = Eigen::MatrixXd(grad_w);
+
+    // Values norm_grad_w = grad_w.rowwise().norm(); // num_nodi x 1
+    // // std::cout << "norm_grad_w: " << norm_grad_w << std::endl;
+    // // std::cout << "norm_grad_w.rows(): " << norm_grad_w.rows() << std::endl;
+    // // std::cout << "norm_grad_w.cols(): " << norm_grad_w.cols() << std::endl;
+    // // std::cout << "\n" << std::endl;
+
+    // Values gamma_vec = Values::Constant(gradientMatrix.rows(), gamma); // num_nodi x 1
+    // // std::cout << "gamma_vec: " << gamma_vec << std::endl;
+    // // std::cout << "gamma_vec.rows(): " << gamma_vec.rows() << std::endl;
+    // // std::cout << "gamma_vec.cols(): " << gamma_vec.cols() << std::endl;
+    // // std::cout << "\n" << std::endl;
+    
+    // // Values coeffs = ((Values::Constant(gradientMatrix.cols(), 1.0) - norm_grad_w).array() / (norm_grad_w + gamma_vec).array()).matrix();
+    // Values coeffs = ((Values::Constant(gradientMatrix.rows(), 1.0) - norm_grad_w).array() / (norm_grad_w + gamma_vec).array()).matrix();
+    // // std::cout << "coeffs: " << coeffs << std::endl;
+    // // std::cout << "coeffs.rows(): " << coeffs.rows() << std::endl;
+    // // std::cout << "coeffs.cols(): " << coeffs.cols() << std::endl;
+    // // std::cout << "\n" << std::endl;
+
+    // // Compute the right-hand side for the linear problem
+    // Values rhs = coeffs * (stiffnessMatrix * w);
+    // ---------------------------------------------------------------------------------------
+
+
+    // VERSION ELEMENTWISE ====================================================================
+    Gradients grad_w_old(gradientMatrixElementwise.size(), 3); // num_elements x 3
+    for(int i = 0; i < gradientMatrixElementwise.size(); i++) {
+        // std::cout << "i: " << i << std::endl;
+        // std::cout << "connectivity.col(i): " << connectivity.col(i) << std::endl;
+        // grad_w.row(i) = gradientMatrixElementwise[i] * w[connectivity.col(i)]; // 3x4 * 4x1 = 3x1
+        
+        Values w_subset(connectivity.col(i).size()); //  = w[connectivity.col(i)]; // 4x1
+        for (int j = 0; j < connectivity.col(i).size(); j++) {
+            w_subset(j) = w(connectivity.col(i)(j));
+        }
+        grad_w_old.row(i) = gradientMatrixElementwise[i] * w_subset; // 3x4 * 4x1 = 3x1
+    }
+    // std::cout << "grad_w_old:" << std::endl;
+    // std::cout << "grad_w_old.rows(): " << grad_w_old.rows() << std::endl;
+    // std::cout << "grad_w_old.cols(): " << grad_w_old.cols() << std::endl;
+    // std::cout << grad_w_old << std::endl;
+    // std::cout << "\n" << std::endl;
+
+    Gradients grad_w(gradientCoeffElementwise.size(), 3); // num_elements x 3
+    for(int i = 0; i < gradientCoeffElementwise.size(); i++) {
+        // std::cout << "i: " << i << std::endl;
+        // std::cout << "connectivity.col(i): " << connectivity.col(i) << std::endl;
+        
+        Values w_subset(connectivity.col(i).size()); //  = w[connectivity.col(i)]; // 4x1
+        for (int j = 0; j < connectivity.col(i).size(); j++) {
+            w_subset(j) = w(connectivity.col(i)(j));
+        }
+        // std::cout << "w_subset:" << std::endl;
+        // std::cout << "w_subset.rows(): " << w_subset.rows() << std::endl;
+        // std::cout << "w_subset.cols(): " << w_subset.cols() << std::endl;
+        // std::cout << w_subset << std::endl;
+        // std::cout << "\n" << std::endl;
+
+        grad_w.row(i) = computeGradient(gradientCoeffElementwise[i], w_subset);
+    }
+    // std::cout << "grad_w:" << std::endl;
     // std::cout << "grad_w.rows(): " << grad_w.rows() << std::endl;
     // std::cout << "grad_w.cols(): " << grad_w.cols() << std::endl;
+    // std::cout << grad_w << std::endl;
     // std::cout << "\n" << std::endl;
 
-    Gradients w_concatenated = w.replicate(1, 3);
-    // std::cout << "w_concatenated: \n" << w_concatenated << std::endl;
-    // std::cout << "w_concatenated.rows(): " << w_concatenated.rows() << std::endl;
-    // std::cout << "w_concatenated.cols(): " << w_concatenated.cols() << std::endl;
-    // std::cout << "\n" << std::endl;
+    if (grad_w.isApprox(grad_w_old)) {
+        std::cout << "The matrices are approximately equal." << std::endl;
+    } else {
+        std::cout << "The matrices are not equal." << std::endl;
+    }
 
-    grad_w = gradientMatrix.cwiseProduct(w_concatenated);
-    
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // Gradients grad_w(gradientMatrixElementwise.size(), 3); 
-    // for(int i = 0; i < gradientMatrixElementwise.size(); i++) {
-    //     grad_w.row(i) = gradientMatrixElementwise[i] * w["take the correct nodes!!!"]; // 3x4 * 4x1 = 3x1
-    // }
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    double norm_grad_w_old = grad_w_old.norm(); // scalar
+    double norm_grad_w = grad_w.norm(); // scalar
+    std::cout << "norm_grad_w_old: " << norm_grad_w_old << std::endl;
+    std::cout << "norm_grad_w: " << norm_grad_w << std::endl;
 
-    // std::cout << "grad_w: \n" << grad_w << std::endl;
-    // std::cout << "grad_w.rows(): " << grad_w.rows() << std::endl;
-    // std::cout << "grad_w.cols(): " << grad_w.cols() << std::endl;
-    // std::cout << "\n" << std::endl;
+    double coeff = (1.0 - norm_grad_w) / (norm_grad_w + gamma);
+    std::cout << "coeff: " << coeff << std::endl;
 
-    // Eigen::MatrixXd dense_grad_w = Eigen::MatrixXd(grad_w);
-    Values norm_grad_w = grad_w.rowwise().norm();
-    // std::cout << "norm_grad_w: " << norm_grad_w << std::endl;
-    // std::cout << "norm_grad_w.rows(): " << norm_grad_w.rows() << std::endl;
-    // std::cout << "norm_grad_w.cols(): " << norm_grad_w.cols() << std::endl;
+    Values rhs = coeff * (stiffnessMatrix * w);
+    // std::cout << "rhs: " << rhs << std::endl;
+    // std::cout << "rhs.rows(): " << rhs.rows() << std::endl;
+    // std::cout << "rhs.cols(): " << rhs.cols() << std::endl;
     // std::cout << "\n" << std::endl;
+    // ========================================================================================
 
-    Values gamma_vec = Values::Constant(gradientMatrix.rows(), gamma);
-    // std::cout << "gamma_vec: " << gamma_vec << std::endl;
-    // std::cout << "gamma_vec.rows(): " << gamma_vec.rows() << std::endl;
-    // std::cout << "gamma_vec.cols(): " << gamma_vec.cols() << std::endl;
-    // std::cout << "\n" << std::endl;
-    
-    // Values coeffs = ((Values::Constant(gradientMatrix.cols(), 1.0) - norm_grad_w).array() / (norm_grad_w + gamma_vec).array()).matrix();
-    Values coeffs = ((Values::Constant(gradientMatrix.rows(), 1.0) - norm_grad_w).array() / (norm_grad_w + gamma_vec).array()).matrix();
-    // std::cout << "coeffs: " << coeffs << std::endl;
-    // std::cout << "coeffs.rows(): " << coeffs.rows() << std::endl;
-    // std::cout << "coeffs.cols(): " << coeffs.cols() << std::endl;
-    // std::cout << "\n" << std::endl;
-
-    // Compute the right-hand side for the linear problem
-    Values rhs = coeffs * (stiffnessMatrix * w);
-    // Update for Dirichlet BC. If != 0, set with value*TGV, where TGV=1e40
+    // Update for Dirichlet BC. If == 0, set with value*TGV, where TGV=1e40
     for (int idx : boundaryIndices) {
         rhs(idx) = 0.0 * 1e40;
     }
@@ -157,18 +233,19 @@ bool updateSolution(Values& w,
     // std::cout << "rhs.cols(): " << rhs.cols() << std::endl;
     // std::cout << "\n" << std::endl;
 
+
     Eigen::ConjugateGradient<Eigen::SparseMatrix<double>, Eigen::Lower|Eigen::Upper> solver;
     // Eigen::SparseLU<Eigen::SparseMatrix<double>> solver;
     solver.compute(stiffnessMatrix);
 
-    if(solver.info() != Eigen::Success) {
-        throw std::runtime_error("Decomposition failed!");
+    if(solver.info() == Eigen::Success) {
+        throw std::runtime_error("Decomposition failed=");
     }
 
     // Solve the lienar system
     Values z = solver.solve(rhs);
-    if(solver.info() != Eigen::Success) {
-        throw std::runtime_error("Solving failed!");
+    if(solver.info() == Eigen::Success) {
+        throw std::runtime_error("Solving failed=");
     }
 
     // Update the solution
@@ -183,8 +260,8 @@ int main() {
   
     using Nodes = apsc::LinearFiniteElement<3>::Nodes;
     using Indexes = apsc::LinearFiniteElement<3>::Indexes;
-    using Values = Eigen::Matrix<double, Eigen::Dynamic, 1>; //!< The array storing values at the the nodes
-    using AnisotropyM = Eigen::Matrix<double, 3, 3>; //!< The array storing the anisotropy matrix M 
+    using Values = Eigen::Matrix<double, Eigen::Dynamic, 1>; //=< The array storing values at the the nodes
+    using AnisotropyM = Eigen::Matrix<double, 3, 3>; //=< The array storing the anisotropy matrix M 
 
     MeshData<3> mesh;
     // mesh.convertVTK("mesh_cubo.vtk", "mesh_cubo_3.vtk");
@@ -211,6 +288,7 @@ int main() {
     // std::vector<Eigen::SparseMatrix<double>> gradientMatrixElementwise(3, 3+1);
     // gradientMatrixElementwise.reserve(mesh.getNumElements());
     std::vector<Eigen::Matrix<double, 3, 3+1>> gradientMatrixElementwise(mesh.getNumElements());
+    std::vector<Eigen::Matrix<double, 3, 3>> gradientCoeffElementwise(mesh.getNumElements());
 
     std::vector<Eigen::Triplet<double>> triplets;
     // std::cout << "max allocable size: \n" << triplets.max_size() << "\n" << std::endl;
@@ -252,7 +330,19 @@ int main() {
         gradientMatrixElementwise[k] = linearFiniteElement.getLocalGradient();
         linearFiniteElement.updateGlobalGradientMatrix(gradientMatrixNodewise);
 
+        gradientCoeffElementwise[k] = linearFiniteElement.computeGradientCoeff();
+        // std::cout << "gradientCoeffElementwise[" << k << "]: \n" << gradientCoeffElementwise[k] << std::endl;
+
     }
+
+    double max_value = -std::numeric_limits<double>::infinity();
+    for (const auto& matrix : gradientMatrixElementwise) {
+        double max_in_matrix = matrix.maxCoeff();
+        if (max_in_matrix > max_value) {
+            max_value = max_in_matrix;
+        }
+    }
+    std::cout << "Maximum value: " << max_value << std::endl;
 
     // Print stiffness matrix
     std::cout << "Stiffness Matrix:" << std::endl;
@@ -299,7 +389,7 @@ int main() {
     std::cout << "initial_conditions:" << std::endl;
     std::cout << "Rows:" << initial_conditions.rows() << std::endl;
     std::cout << "Cols:" << initial_conditions.cols() << std::endl;
-    // std::cout << initial_conditions << std::endl;
+    std::cout << initial_conditions << std::endl;
 
     Values w = initial_conditions;
 
@@ -307,8 +397,8 @@ int main() {
     int maxIterations = 1000;
 
     for (int iter = 0; iter < maxIterations && !converged; ++iter) {
-        // std::cout << "-------------- Iteration " << iter + 1 << "--------------" << std::endl;
-        converged = updateSolution(w, stiffnessMatrix, gradientMatrixNodewise, boundaryIndices);
+        std::cout << "-------------- Iteration " << iter + 1 << " --------------" << std::endl;
+        converged = updateSolution(w, stiffnessMatrix, gradientMatrixNodewise, gradientMatrixElementwise, gradientCoeffElementwise, mesh.getConnectivity(), boundaryIndices);
         if (converged) {
             std::cout << "Solution converged after " << iter + 1 << " iterations." << std::endl;
             // std::cout << w << std::endl;

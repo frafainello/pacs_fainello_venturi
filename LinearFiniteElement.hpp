@@ -137,6 +137,11 @@ public:
     // std::cout << "Cols:" << localGradient_.cols() << std::endl;
     return localGradient_;
   }
+
+  auto computeGradientCoeff() const -> Jacobian const {
+    return apsc::computeGradCoeff<N>(nodes_);
+  }
+  
   /*!
   @brief Get the measure of the simplex
   */
