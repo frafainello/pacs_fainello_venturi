@@ -148,7 +148,7 @@ public:
       bool readingCells = false;
       bool readingCellTypes = false;
       bool readingConnectivity = false;
-      
+
       int numPoints = 0;
       int numCells = 0;
       int numDuplicatedNodes = 0;
@@ -197,7 +197,7 @@ public:
           } else if (isalpha(line[0])) {
             // Skip lines starting with non-number literals that are not among the keywords
             continue;
-            
+
           } else {
               std::istringstream ss(line);
               if (readingPoints) {
@@ -302,7 +302,18 @@ public:
             }
         }
 
-        boundaryNodes.assign(boundaryNodesSet.begin(), boundaryNodesSet.end());
+        // TAKE ALL BOUNDARY NODES
+        // boundaryNodes.assign(boundaryNodesSet.begin(), boundaryNodesSet.end());
+
+        // OR
+
+        // TAKE ONLY ONE FACE (z=0)
+        boundaryNodes.clear();
+        for (int node : boundaryNodesSet) {
+            if (nodes(2, node) == 0) {
+                boundaryNodes.push_back(node);
+            }
+        }
     }
 
 private:
