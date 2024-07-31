@@ -161,18 +161,18 @@ bool updateSolution(Values& w,
 
 
     // VERSION ELEMENTWISE ====================================================================
-    Gradients grad_w_old(gradientMatrixElementwise.size(), 3); // num_elements x 3
-    for(int i = 0; i < gradientMatrixElementwise.size(); i++) {
-        // std::cout << "i: " << i << std::endl;
-        // std::cout << "connectivity.col(i): " << connectivity.col(i) << std::endl;
-        // grad_w.row(i) = gradientMatrixElementwise[i] * w[connectivity.col(i)]; // 3x4 * 4x1 = 3x1
+    // Gradients grad_w_old(gradientMatrixElementwise.size(), 3); // num_elements x 3
+    // for(int i = 0; i < gradientMatrixElementwise.size(); i++) {
+    //     // std::cout << "i: " << i << std::endl;
+    //     // std::cout << "connectivity.col(i): " << connectivity.col(i) << std::endl;
+    //     // grad_w.row(i) = gradientMatrixElementwise[i] * w[connectivity.col(i)]; // 3x4 * 4x1 = 3x1
         
-        Values w_subset(connectivity.col(i).size()); //  = w[connectivity.col(i)]; // 4x1
-        for (int j = 0; j < connectivity.col(i).size(); j++) {
-            w_subset(j) = w(connectivity.col(i)(j));
-        }
-        grad_w_old.row(i) = gradientMatrixElementwise[i] * w_subset; // 3x4 * 4x1 = 3x1
-    }
+    //     Values w_subset(connectivity.col(i).size()); //  = w[connectivity.col(i)]; // 4x1
+    //     for (int j = 0; j < connectivity.col(i).size(); j++) {
+    //         w_subset(j) = w(connectivity.col(i)(j));
+    //     }
+    //     grad_w_old.row(i) = gradientMatrixElementwise[i] * w_subset; // 3x4 * 4x1 = 3x1
+    // }
     // std::cout << "grad_w_old:" << std::endl;
     // std::cout << "grad_w_old.rows(): " << grad_w_old.rows() << std::endl;
     // std::cout << "grad_w_old.cols(): " << grad_w_old.cols() << std::endl;
@@ -196,27 +196,27 @@ bool updateSolution(Values& w,
 
         grad_w.row(i) = computeGradient(gradientCoeffElementwise[i], w_subset);
     }
-    // std::cout << "grad_w:" << std::endl;
-    // std::cout << "grad_w.rows(): " << grad_w.rows() << std::endl;
-    // std::cout << "grad_w.cols(): " << grad_w.cols() << std::endl;
-    // std::cout << grad_w << std::endl;
-    // std::cout << "\n" << std::endl;
+    std::cout << "grad_w:" << std::endl;
+    std::cout << "grad_w.rows(): " << grad_w.rows() << std::endl;
+    std::cout << "grad_w.cols(): " << grad_w.cols() << std::endl;
+    std::cout << grad_w << std::endl;
+    std::cout << "\n" << std::endl;
 
-    if (grad_w.isApprox(grad_w_old)) {
-        std::cout << "The matrices are approximately equal." << std::endl;
-    } else {
-        std::cout << "The matrices are not equal." << std::endl;
-    }
+    // if (grad_w.isApprox(grad_w_old)) {
+    //     std::cout << "The matrices are approximately equal." << std::endl;
+    // } else {
+    //     std::cout << "The matrices are not equal." << std::endl;
+    // }
 
-    double norm_grad_w_old = grad_w_old.norm(); // scalar
+    // double norm_grad_w_old = grad_w_old.norm(); // scalar
     double norm_grad_w = grad_w.norm(); // scalar
-    std::cout << "norm_grad_w_old: " << norm_grad_w_old << std::endl;
+    // std::cout << "norm_grad_w_old: " << norm_grad_w_old << std::endl;
     std::cout << "norm_grad_w: " << norm_grad_w << std::endl;
 
     double coeff = (1.0 - norm_grad_w) / (norm_grad_w + gamma);
     std::cout << "coeff: " << coeff << std::endl;
 
-    Values rhs = coeff * (stiffnessMatrix * w);
+    Values rhs = coeff * (stiffnessMatrix * w); // matrice locale, elemento per elemento --> riasseblare a posteriori
     // std::cout << "rhs: " << rhs << std::endl;
     // std::cout << "rhs.rows(): " << rhs.rows() << std::endl;
     // std::cout << "rhs.cols(): " << rhs.cols() << std::endl;
@@ -236,11 +236,11 @@ bool updateSolution(Values& w,
 
     Eigen::ConjugateGradient<Eigen::SparseMatrix<double>, Eigen::Lower|Eigen::Upper> solver;
     // Eigen::SparseLU<Eigen::SparseMatrix<double>> solver;
-    solver.compute(stiffnessMatrix);
+    // solver.compute(stiffnessMatrix); // con metodo diretto, no decomposizione solo all'inizio
 
-    if(solver.info() == Eigen::Success) {
-        throw std::runtime_error("Decomposition failed=");
-    }
+    // if(solver.info() == Eigen::Success) {
+    //     throw std::runtime_error("Decomposition failed=");
+    // }
 
     // Solve the lienar system
     Values z = solver.solve(rhs);
@@ -331,7 +331,7 @@ int main() {
         linearFiniteElement.updateGlobalGradientMatrix(gradientMatrixNodewise);
 
         gradientCoeffElementwise[k] = linearFiniteElement.computeGradientCoeff();
-        // std::cout << "gradientCoeffElementwise[" << k << "]: \n" << gradientCoeffElementwise[k] << std::endl;
+        std::cout << "gradientCoeffElementwise[" << k << "]: \n" << gradientCoeffElementwise[k] << std::endl;
 
     }
 
