@@ -35,7 +35,7 @@ public:
   // The source term is a vector of 4 elements for each element
   using LocalVector = Eigen::Matrix<double, N + 1, 1>;
 
-  using GlobalVector = Eigen::Matrix<double>;
+  using GlobalVector = Eigen::Matrix<double, Eigen::Dynamic, 1>;
   
   /*!
   @brief Constructor
