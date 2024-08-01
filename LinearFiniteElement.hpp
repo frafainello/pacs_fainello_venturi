@@ -35,7 +35,7 @@ public:
   // The source term is a vector of 4 elements for each element
   using LocalVector = Eigen::Matrix<double, N + 1, 1>;
 
-  using GlobalVector = Eigen::Matrix<double, Eigen::Dynamic, 1>;
+  using GlobalVector = Eigen::Matrix<double>;
   
   /*!
   @brief Constructor
@@ -96,11 +96,15 @@ public:
 
   void computeLocalIntegral() const {
     localIntegral_ = measure() * localRefIntegral_;
+    // std::cout << "Local integral " << localIntegral_ << std::endl;
   }
 
   void updateGlobalIntegrals(GlobalVector& globalIntegrals) const {
     for (auto i = 0u; i < N + 1; ++i) {
-      globalIntegrals.coeffRef(globalNodeNumbers_(i), 0) += localIntegral_;
+      // std::cout << "Global node numbers " << globalNodeNumbers_(i) << std::endl;
+      // std::cout << "Before " << globalIntegrals.coeff(globalNodeNumbers_(i)) << std::endl;
+      globalIntegrals.coeffRef(globalNodeNumbers_(i)) += localIntegral_;
+      // std::cout << "After " << globalIntegrals.coeff(globalNodeNumbers_(i)) << std::endl;
       }
     }
 

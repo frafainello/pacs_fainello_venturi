@@ -58,8 +58,9 @@ public:
         // Compute the solution
         // Eigen::ConjugateGradient<Eigen::SparseMatrix<double>, Eigen::Lower|Eigen::Upper> solver;
         Eigen::SparseLU<Eigen::SparseMatrix<double>> solver;
-        solver.compute(stiffnessMatrix);
+
         // Values solution = solver.compute(modifiedStiffnessMatrix).solve(rhs);
+        solver.compute(stiffnessMatrix);
         Values solution = solver.solve(rhs);
 
         // Return the computed values

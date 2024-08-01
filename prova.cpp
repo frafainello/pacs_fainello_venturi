@@ -289,8 +289,9 @@ int main() {
     using AnisotropyM = Eigen::Matrix<double, 3, 3>; //=< The array storing the anisotropy matrix M 
 
     MeshData<3> mesh;
-    // mesh.convertVTK("mesh_cubo.vtk", "mesh_cubo_3.vtk");
-    mesh.readMesh("mesh_cubo_3.vtk");
+    const std::string mesh_file = "mesh_simple_3.vtk";
+    mesh.convertVTK("mesh_simple.vtk", mesh_file);
+    mesh.readMesh(mesh_file);
 
     std::cout << "numNodes: \n" << mesh.getNumNodes() << "\n" << std::endl;
     std::cout << "nodes cols: \n" << mesh.getNodes().cols() << "\n" << std::endl;
@@ -421,11 +422,13 @@ int main() {
                                                                 forcingTerm, 
                                                                 boundaryIndices);
     
+    mesh.addScalarField(initial_conditions, mesh_file);
+
     // Values initial_conditions = Values::Constant(mesh.getNumNodes(), 5.0);
     std::cout << "initial_conditions:" << std::endl;
     std::cout << "Rows:" << initial_conditions.rows() << std::endl;
     std::cout << "Cols:" << initial_conditions.cols() << std::endl;
-    std::cout << initial_conditions << std::endl;
+    // std::cout << initial_conditions << std::endl;
 
     // Values w = initial_conditions;
 

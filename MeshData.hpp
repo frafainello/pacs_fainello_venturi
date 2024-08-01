@@ -17,6 +17,7 @@ template<std::size_t PHDIM, std::size_t INTRINSIC_DIM=PHDIM>
 class MeshData {
 
 public:
+
     using Traits = Eikonal::Eikonal_traits<PHDIM, INTRINSIC_DIM>;
     using Index = typename Traits::Index;
     using Indexes = typename Traits::Indexes;
@@ -258,7 +259,7 @@ public:
         outputFile << point[0] << " " << point[1] << " " << point[2] << std::endl;
       }
 
-      outputFile << "CELLS " << numCells-1 << " " << numDuplicatedNodes << std::endl;
+      outputFile << "CELLS " << numCells-1 << " " << numDuplicatedNodes+numCellsTypes << std::endl;
       for (int i = 0; i < cells.size()-1; ++i) {
 
           int numCurrNodes = cells[i+1] - cells[i];
@@ -277,6 +278,46 @@ public:
       outputFile.close();
   }
 
+    void addScalarField(const Eigen::Matrix<double, Eigen::Dynamic, 1>& values, const std::string& inputFilePath) {
+    if (values.size() != numNodes) {
+        throw std::invalid_argument("The size of values must match the number of nodes in the mesh.");
+    }
+
+    // Create the new file name by appending "_sol.vtk" to the original file name
+    std::string outputFilePath = inputFilePath.substr(0, inputFilePath.find_last_of('.')) + "_sol.vtk";
+
+    // Open the input file and create the output file
+    std::ifstream inputFile(inputFilePath);
+    std::ofstream outputFile(outputFilePath);
+
+    if (!inputFile.is_open()) {
+        std::cerr << "Error: Could not open input file " << inputFilePath << std::endl;
+        return;
+    }
+
+    if (!outputFile.is_open()) {
+        outputFile.open(outputFilePath);
+        std::cerr << "Error: Could not open output file " << outputFilePath << std::endl;
+        return;
+    }
+
+    // Copy the contents of the input file to the output file
+    std::string line;
+    while (std::getline(inputFile, line)) {
+        outputFile << line << std::endl;
+    }
+
+    // Append the scalar field data to the new file
+    outputFile << "POINT_DATA " << numNodes << std::endl;
+    outputFile << "SCALARS sol float" << std::endl;
+    outputFile << "LOOKUP_TABLE default" << std::endl;
+    for (int i = 0; i < values.size(); ++i) {
+        outputFile << values(i) << std::endl;
+    }
+
+    inputFile.close();
+    outputFile.close();
+}
 
     void updateBoundaryNodes() {
         std::map<std::set<int>, int> faceCount;
