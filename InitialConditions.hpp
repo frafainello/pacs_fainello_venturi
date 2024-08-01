@@ -24,12 +24,13 @@ public:
     InitialConditions() = default;
 
     Values HeatEquation(const Eigen::SparseMatrix<double>& stiffnessMatrix, 
+                        const Values& Integrals,
+                        const Values& forcingTerm,
                         const Indexes& boundaryIndices) const {
         // Eigen::SparseMatrix<double> modifiedStiffnessMatrix = stiffnessMatrix;
 
         // Right-hand side vector of the equation, all ones
-        Values rhs(stiffnessMatrix.rows());
-        rhs.setOnes();
+        Values rhs = forcingTerm * Integrals;
 
         // Apply null Dirichlet boundary conditions
         for (int idx : boundaryIndices) {
@@ -55,9 +56,11 @@ public:
         }
 
         // Compute the solution
-        Eigen::ConjugateGradient<Eigen::SparseMatrix<double>, Eigen::Lower|Eigen::Upper> solver;
+        // Eigen::ConjugateGradient<Eigen::SparseMatrix<double>, Eigen::Lower|Eigen::Upper> solver;
+        Eigen::SparseLU<Eigen::SparseMatrix<double>> solver;
+        solver.compute(stiffnessMatrix);
         // Values solution = solver.compute(modifiedStiffnessMatrix).solve(rhs);
-        Values solution = solver.compute(stiffnessMatrix).solve(rhs);
+        Values solution = solver.solve(rhs);
 
         // Return the computed values
         return solution;

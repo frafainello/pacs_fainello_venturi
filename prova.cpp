@@ -84,11 +84,12 @@ auto computeGradient(const Eigen::Matrix<double, 3, 3> &Coefficients,
 // Function to update the solution vector based on the Eikonal equation
 bool updateSolution(Values& w, 
                     const Eigen::SparseMatrix<double>& stiffnessMatrix, 
-                    const Eigen::SparseMatrix<double>& gradientMatrix,
-                    const std::vector<Eigen::Matrix<double, 3, 3+1>>& gradientMatrixElementwise,
+                    // const Eigen::SparseMatrix<double>& gradientMatrix,
+                    // const std::vector<Eigen::Matrix<double, 3, 3+1>>& gradientMatrixElementwise,
                     const std::vector<Eigen::Matrix<double, 3, 3>>& gradientCoeffElementwise,
                     const Elements& connectivity,
                     const std::vector<long int> &boundaryIndices,
+                    const auto& solver,
                     double gamma = 1e-3,
                     double tol = 1e-6) {
     
@@ -109,7 +110,7 @@ bool updateSolution(Values& w,
     // std::cout << "gradientMatrix.cols(): " << gradientMatrix.cols() << std::endl;
     // std::cout << "\n" << std::endl;
 
-    Values bilinear_form = stiffnessMatrix * w;
+    // Values bilinear_form = stiffnessMatrix * w;
     // std::cout << "bilinear_form: \n" << bilinear_form << std::endl;
     // std::cout << "bilinear_form.rows(): " << bilinear_form.rows() << std::endl;
     // std::cout << "bilinear_form.cols(): " << bilinear_form.cols() << std::endl;
@@ -167,11 +168,11 @@ bool updateSolution(Values& w,
     //     // std::cout << "connectivity.col(i): " << connectivity.col(i) << std::endl;
     //     // grad_w.row(i) = gradientMatrixElementwise[i] * w[connectivity.col(i)]; // 3x4 * 4x1 = 3x1
         
-    //     Values w_subset(connectivity.col(i).size()); //  = w[connectivity.col(i)]; // 4x1
+    //     Values local_w(connectivity.col(i).size()); //  = w[connectivity.col(i)]; // 4x1
     //     for (int j = 0; j < connectivity.col(i).size(); j++) {
-    //         w_subset(j) = w(connectivity.col(i)(j));
+    //         local_w(j) = w(connectivity.col(i)(j));
     //     }
-    //     grad_w_old.row(i) = gradientMatrixElementwise[i] * w_subset; // 3x4 * 4x1 = 3x1
+    //     grad_w_old.row(i) = gradientMatrixElementwise[i] * local_w; // 3x4 * 4x1 = 3x1
     // }
     // std::cout << "grad_w_old:" << std::endl;
     // std::cout << "grad_w_old.rows(): " << grad_w_old.rows() << std::endl;
@@ -179,44 +180,77 @@ bool updateSolution(Values& w,
     // std::cout << grad_w_old << std::endl;
     // std::cout << "\n" << std::endl;
 
+    // Local objects
+    Values local_w(connectivity.rows()); //  = w[connectivity.col(i)]; // 4x1
+    Eigen::SparseMatrix<double> localStiffness(connectivity.rows(), connectivity.rows()); // 4x4
+    Values local_rhs(connectivity.rows()); // 4x1
+    
+    // Global objects
     Gradients grad_w(gradientCoeffElementwise.size(), 3); // num_elements x 3
+    Values rhs = Values::Zero(stiffnessMatrix.rows()); // num_nodi x 1
+    
     for(int i = 0; i < gradientCoeffElementwise.size(); i++) {
         // std::cout << "i: " << i << std::endl;
         // std::cout << "connectivity.col(i): " << connectivity.col(i) << std::endl;
         
-        Values w_subset(connectivity.col(i).size()); //  = w[connectivity.col(i)]; // 4x1
         for (int j = 0; j < connectivity.col(i).size(); j++) {
-            w_subset(j) = w(connectivity.col(i)(j));
+            local_w(j) = w(connectivity.col(i)(j));
         }
-        // std::cout << "w_subset:" << std::endl;
-        // std::cout << "w_subset.rows(): " << w_subset.rows() << std::endl;
-        // std::cout << "w_subset.cols(): " << w_subset.cols() << std::endl;
-        // std::cout << w_subset << std::endl;
+        // std::cout << "local_w:" << std::endl;
+        // std::cout << "local_w.rows(): " << local_w.rows() << std::endl;
+        // std::cout << "local_w.cols(): " << local_w.cols() << std::endl;
+        // std::cout << local_w << std::endl;
         // std::cout << "\n" << std::endl;
 
-        grad_w.row(i) = computeGradient(gradientCoeffElementwise[i], w_subset);
+        grad_w.row(i) = computeGradient(gradientCoeffElementwise[i], local_w);
+        
+        std::cout << "\n" << std::endl;
+        std::cout << "grad_w.row(i):" << std::endl;
+        // std::cout << "grad_w.rows(): " << grad_w.rows() << std::endl;
+        // std::cout << "grad_w.cols(): " << grad_w.cols() << std::endl;
+        std::cout << grad_w.row(i) << std::endl;
+
+        // if (grad_w.isApprox(grad_w_old)) {
+        //     std::cout << "The matrices are approximately equal." << std::endl;
+        // } else {
+        //     std::cout << "The matrices are not equal." << std::endl;
+        // }
+
+        // double norm_grad_w_old = grad_w_old.norm(); // scalar
+        double norm_grad_w = grad_w.row(i).norm(); // scalar
+        // std::cout << "norm_grad_w_old: " << norm_grad_w_old << std::endl;
+        std::cout << "norm_grad_w: " << norm_grad_w << std::endl;
+
+        double coeff = (1.0 - norm_grad_w) / (norm_grad_w + gamma);
+        std::cout << "coeff: " << coeff << std::endl;
+
+        for (int k = 0; k < connectivity.col(i).size(); ++k) {
+            for (int j = 0; j < connectivity.col(i).size(); ++j) {
+                localStiffness.coeffRef(k, j) = stiffnessMatrix.coeff(connectivity.col(i)(k), connectivity.col(i)(j));
+            }
+        }
+        // std::cout << "localStiffness:" << std::endl;
+        // std::cout << "localStiffness.rows(): " << localStiffness.rows() << std::endl;
+        // std::cout << "localStiffness.cols(): " << localStiffness.cols() << std::endl;
+        // std::cout << localStiffness << std::endl;
+        // std::cout << "\n" << std::endl;
+
+        local_rhs = coeff * (localStiffness * local_w); // matrice locale, elemento per elemento --> riasseblare a posteriori
+        // std::cout << "local_rhs:" << std::endl;
+        // std::cout << "local_rhs.rows(): " << local_rhs.rows() << std::endl;
+        // std::cout << "local_rhs.cols(): " << local_rhs.cols() << std::endl;
+        // std::cout << local_rhs << std::endl;
+        // std::cout << "\n" << std::endl;
+
+        for (int j = 0; j < connectivity.col(i).size(); ++j) {
+            rhs(connectivity.col(i)(j)) += local_rhs(j);
+        }
+
     }
-    std::cout << "grad_w:" << std::endl;
-    std::cout << "grad_w.rows(): " << grad_w.rows() << std::endl;
-    std::cout << "grad_w.cols(): " << grad_w.cols() << std::endl;
-    std::cout << grad_w << std::endl;
-    std::cout << "\n" << std::endl;
 
-    // if (grad_w.isApprox(grad_w_old)) {
-    //     std::cout << "The matrices are approximately equal." << std::endl;
-    // } else {
-    //     std::cout << "The matrices are not equal." << std::endl;
-    // }
 
-    // double norm_grad_w_old = grad_w_old.norm(); // scalar
-    double norm_grad_w = grad_w.norm(); // scalar
-    // std::cout << "norm_grad_w_old: " << norm_grad_w_old << std::endl;
-    std::cout << "norm_grad_w: " << norm_grad_w << std::endl;
 
-    double coeff = (1.0 - norm_grad_w) / (norm_grad_w + gamma);
-    std::cout << "coeff: " << coeff << std::endl;
-
-    Values rhs = coeff * (stiffnessMatrix * w); // matrice locale, elemento per elemento --> riasseblare a posteriori
+    // Values rhs = coeff * (stiffnessMatrix * w); // matrice locale, elemento per elemento --> riasseblare a posteriori
     // std::cout << "rhs: " << rhs << std::endl;
     // std::cout << "rhs.rows(): " << rhs.rows() << std::endl;
     // std::cout << "rhs.cols(): " << rhs.cols() << std::endl;
@@ -232,15 +266,6 @@ bool updateSolution(Values& w,
     // std::cout << "rhs.rows(): " << rhs.rows() << std::endl;
     // std::cout << "rhs.cols(): " << rhs.cols() << std::endl;
     // std::cout << "\n" << std::endl;
-
-
-    Eigen::ConjugateGradient<Eigen::SparseMatrix<double>, Eigen::Lower|Eigen::Upper> solver;
-    // Eigen::SparseLU<Eigen::SparseMatrix<double>> solver;
-    // solver.compute(stiffnessMatrix); // con metodo diretto, no decomposizione solo all'inizio
-
-    // if(solver.info() == Eigen::Success) {
-    //     throw std::runtime_error("Decomposition failed=");
-    // }
 
     // Solve the lienar system
     Values z = solver.solve(rhs);
@@ -290,6 +315,8 @@ int main() {
     std::vector<Eigen::Matrix<double, 3, 3+1>> gradientMatrixElementwise(mesh.getNumElements());
     std::vector<Eigen::Matrix<double, 3, 3>> gradientCoeffElementwise(mesh.getNumElements());
 
+    Values globalIntegrals = Values::Constant(mesh.getNumNodes(), 0.0);
+
     std::vector<Eigen::Triplet<double>> triplets;
     // std::cout << "max allocable size: \n" << triplets.max_size() << "\n" << std::endl;
     triplets.reserve(mesh.getNumElements());
@@ -315,6 +342,9 @@ int main() {
         // Compute local nodes and update global node numbers
         linearFiniteElement.update(localNodes);
         linearFiniteElement.updateGlobalNodeNumbers(globalNodeNumbers);
+
+        linearFiniteElement.computeLocalIntegral();
+        linearFiniteElement.updateGlobalIntegrals(globalIntegrals);
         
         // Compute the local stiffness matrix and update the global stiffness matrix
         linearFiniteElement.computeLocalStiffness();
@@ -331,10 +361,13 @@ int main() {
         linearFiniteElement.updateGlobalGradientMatrix(gradientMatrixNodewise);
 
         gradientCoeffElementwise[k] = linearFiniteElement.computeGradientCoeff();
-        std::cout << "gradientCoeffElementwise[" << k << "]: \n" << gradientCoeffElementwise[k] << std::endl;
+        // std::cout << "gradientCoeffElementwise[" << k << "]: \n" << gradientCoeffElementwise[k] << std::endl;
 
     }
 
+    std::cout << "globalIntegrals: \n" << globalIntegrals << std::endl;
+
+    
     double max_value = -std::numeric_limits<double>::infinity();
     for (const auto& matrix : gradientMatrixElementwise) {
         double max_in_matrix = matrix.maxCoeff();
@@ -360,8 +393,8 @@ int main() {
 
     // Print gradient matrix
     std::cout << "Gradient Matrix:" << std::endl;
-    std::cout << "Rows:" << gradientMatrixNodewise.rows() << std::endl;
-    std::cout << "Cols:" << gradientMatrixNodewise.cols() << std::endl;
+    // std::cout << "Rows:" << gradientMatrixNodewise.rows() << std::endl;
+    // std::cout << "Cols:" << gradientMatrixNodewise.cols() << std::endl;
     std::cout << "\n" << std::endl;
     // std::cout << gradientMatrix << std::endl;
     // gradientMatriix = gradientMatrix.transpose();
@@ -383,7 +416,10 @@ int main() {
     Values forcingTerm = Values::Constant(mesh.getNumNodes(), 1.0);
     // std::vector<int> boundaryIndices = {0};
     InitialConditions<3> initialConditions;
-    Values initial_conditions = initialConditions.HeatEquation(stiffnessMatrix, boundaryIndices);
+    Values initial_conditions = initialConditions.HeatEquation(stiffnessMatrix, 
+                                                                globalIntegrals,
+                                                                forcingTerm, 
+                                                                boundaryIndices);
     
     // Values initial_conditions = Values::Constant(mesh.getNumNodes(), 5.0);
     std::cout << "initial_conditions:" << std::endl;
@@ -391,23 +427,36 @@ int main() {
     std::cout << "Cols:" << initial_conditions.cols() << std::endl;
     std::cout << initial_conditions << std::endl;
 
-    Values w = initial_conditions;
+    // Values w = initial_conditions;
 
-    bool converged = false;
-    int maxIterations = 1000;
+    // bool converged = false;
+    // int maxIterations = 1000;
 
-    for (int iter = 0; iter < maxIterations && !converged; ++iter) {
-        std::cout << "-------------- Iteration " << iter + 1 << " --------------" << std::endl;
-        converged = updateSolution(w, stiffnessMatrix, gradientMatrixNodewise, gradientMatrixElementwise, gradientCoeffElementwise, mesh.getConnectivity(), boundaryIndices);
-        if (converged) {
-            std::cout << "Solution converged after " << iter + 1 << " iterations." << std::endl;
-            // std::cout << w << std::endl;
-        }
-    }
+    // // Eigen::ConjugateGradient<Eigen::SparseMatrix<double>, Eigen::Lower|Eigen::Upper> solver;
+    // Eigen::SparseLU<Eigen::SparseMatrix<double>> solver;
+    // solver.compute(stiffnessMatrix); // con metodo diretto, no decomposizione solo all'inizio
 
-    if (!converged) {
-        std::cout << "Solution did not converge within the maximum number of iterations." << std::endl;
-    }
+    // // if(solver.info() == Eigen::Success) {
+    // //     throw std::runtime_error("Decomposition failed=");
+    // // }
+
+    // for (int iter = 0; iter < maxIterations && !converged; ++iter) {
+    //     std::cout << "-------------- Iteration " << iter + 1 << " --------------" << std::endl;
+    //     converged = updateSolution(w, stiffnessMatrix, 
+    //                             // gradientMatrixNodewise, gradientMatrixElementwise, 
+    //                             gradientCoeffElementwise, 
+    //                             mesh.getConnectivity(), 
+    //                             boundaryIndices,
+    //                             solver);
+    //     if (converged) {
+    //         std::cout << "Solution converged after " << iter + 1 << " iterations." << std::endl;
+    //         // std::cout << w << std::endl;
+    //     }
+    // }
+
+    // if (!converged) {
+    //     std::cout << "Solution did not converge within the maximum number of iterations." << std::endl;
+    // }
 
     return 0;
 }

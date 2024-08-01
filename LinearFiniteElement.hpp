@@ -34,6 +34,8 @@ public:
   // The local vector storing the source term (for the Mass matrix computation)
   // The source term is a vector of 4 elements for each element
   using LocalVector = Eigen::Matrix<double, N + 1, 1>;
+
+  using GlobalVector = Eigen::Matrix<double, Eigen::Dynamic, 1>;
   
   /*!
   @brief Constructor
@@ -91,6 +93,17 @@ public:
       refGradients_(i - 1, i) = 1.0;
     }
   }
+
+  void computeLocalIntegral() const {
+    localIntegral_ = measure() * localRefIntegral_;
+  }
+
+  void updateGlobalIntegrals(GlobalVector& globalIntegrals) const {
+    for (auto i = 0u; i < N + 1; ++i) {
+      globalIntegrals.coeffRef(globalNodeNumbers_(i), 0) += localIntegral_;
+      }
+    }
+
 
   /*!
   @brief Compute the local stiffness matrix
@@ -258,10 +271,14 @@ private:
   double measure_ = 0.0;
   Nodes nodes_;
   Indexes globalNodeNumbers_;
+  mutable double localIntegral_;
+
   mutable LocalMatrix localStiffness_;
   mutable LocalMatrix localMass_;
   mutable LocalGradients localGradient_;
   LocalGradients refGradients_;
+  
+  const double localRefIntegral_ = 1.0/apsc::factorial<N+1>();
 
   // refGradients_.col(0) = Node::Constant(N, -1.0);
 
