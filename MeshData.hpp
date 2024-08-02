@@ -264,13 +264,15 @@ public:
         outputFile.close();
   }
 
-    void addScalarField(const Eigen::Matrix<double, Eigen::Dynamic, 1>& values, const std::string& inputFilePath) {
+    void addScalarField(const Eigen::Matrix<double, Eigen::Dynamic, 1>& values, 
+                        const std::string& inputFilePath,
+                        const std::string& suffix) {
         if (values.size() != numNodes) {
             throw std::invalid_argument("The size of values must match the number of nodes in the mesh.");
         }
 
-        // Create the new file name by appending "_sol.vtk" to the original file name
-        std::string outputFilePath = inputFilePath.substr(0, inputFilePath.find_last_of('.')) + "_sol.vtk";
+        // Create the new file name by appending "_suffix.vtk" to the original file name
+        std::string outputFilePath = inputFilePath.substr(0, inputFilePath.find_last_of('.')) + "_" + suffix + ".vtk";
 
         // Open the input file and create the output file
         std::ifstream inputFile(inputFilePath);

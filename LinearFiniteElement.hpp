@@ -57,9 +57,6 @@ public:
   auto getRefGradients() const{
     return refGradients_;
   }
-  // auto getMeasure() const{ --> same as the method measure
-  //   return measure_;
-  // }
   auto getLocalStiffness() const{
     return localStiffness_;
   }
@@ -86,25 +83,22 @@ public:
     globalNodeNumbers_ = globalNodeNumbers;
   }
 
-  void initializeRefGradients() {
-    refGradients_.col(0) = Node::Constant(N, -1.0);
-    for (auto i = 1; i < N + 1; ++i) {
-      refGradients_.col(i) = Node::Zero(N);
-      refGradients_(i - 1, i) = 1.0;
-    }
-  }
+  // void initializeRefGradients() {
+  //   refGradients_.col(0) = Node::Constant(N, -1.0);
+  //   for (auto i = 1; i < N + 1; ++i) {
+  //     refGradients_.col(i) = Node::Zero(N);
+  //     refGradients_(i - 1, i) = 1.0;
+  //   }
+  // }
 
   void computeLocalIntegral() const {
-    localIntegral_ = measure() * localRefIntegral_;
+    localIntegral_ = measure() / (N + 1); // measure() * localRefIntegral_;
     // std::cout << "Local integral " << localIntegral_ << std::endl;
   }
 
   void updateGlobalIntegrals(GlobalVector& globalIntegrals) const {
     for (auto i = 0u; i < N + 1; ++i) {
-      // std::cout << "Global node numbers " << globalNodeNumbers_(i) << std::endl;
-      // std::cout << "Before " << globalIntegrals.coeff(globalNodeNumbers_(i)) << std::endl;
       globalIntegrals.coeffRef(globalNodeNumbers_(i)) += localIntegral_;
-      // std::cout << "After " << globalIntegrals.coeff(globalNodeNumbers_(i)) << std::endl;
       }
     }
 
@@ -157,6 +151,10 @@ public:
 
   auto computeGradientCoeff() const -> Jacobian const {
     return apsc::computeGradCoeff<N>(nodes_);
+  }
+
+  auto computeGradient(const LocalVector& values) const {
+    return apsc::computeGradient<N>(computeGradientCoeff(), values);
   }
   
   /*!
