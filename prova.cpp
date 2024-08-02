@@ -148,7 +148,7 @@ int main() {
 
     // Read the mesh file and create the mesh object
     MeshData<3> mesh;
-    const std::string mesh_file = "mesh_uniform_3.vtk";
+    const std::string mesh_file = "vtk_files/mesh_uniform_3.vtk";
     // mesh.convertVTK("mesh_uniform.vtk", mesh_file);
     mesh.readMesh(mesh_file);
     mesh.updateBoundaryNodes();
