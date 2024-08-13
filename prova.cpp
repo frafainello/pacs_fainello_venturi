@@ -14,6 +14,8 @@
 using Values = Eigen::Matrix<double, Eigen::Dynamic, 1>;
 using Gradients = Eigen::Matrix<double, Eigen::Dynamic, 3>;
 using Elements = Eigen::Matrix<long int, 3+1, Eigen::Dynamic>;
+using Nodes = apsc::LinearFiniteElement<3>::Nodes;
+using Indexes = apsc::LinearFiniteElement<3>::Indexes;
 
 
 auto computeGradient(const Eigen::Matrix<double, 3, 3> &Coefficients,
@@ -34,11 +36,11 @@ auto computeGradient(const Eigen::Matrix<double, 3, 3> &Coefficients,
 bool updateSolution(Values& w, 
                     const Eigen::SparseMatrix<double>& stiffnessMatrix, 
                     const std::vector<Eigen::Matrix<double, 3, 3>>& gradientCoeff,
-                    const Elements& connectivity,
+                    const MeshData<3>& mesh,
                     const std::vector<long int> &boundaryIndices,
                     const auto& solver,
                     double gamma = 1e-3,
-                    double tol = 1e-5) {
+                    double tol = 1e-4) {
     
     std::cout << "Entered in updateSolution:" << std::endl;
 
@@ -56,19 +58,24 @@ bool updateSolution(Values& w,
     // VERSION ELEMENTWISE ===================================================================
     
     // Local objects
-    Values local_w(connectivity.rows()); //  = w[connectivity.col(i)]; // 4x1
-    Eigen::SparseMatrix<double> localStiffness(connectivity.rows(), connectivity.rows()); // 4x4
-    Values local_rhs(connectivity.rows()); // 4x1
+    Values local_w(mesh.getConnectivity().rows()); //  = w[connectivity.col(i)]; // 4x1
+    Eigen::SparseMatrix<double> localStiffness(mesh.getConnectivity().rows(), mesh.getConnectivity().rows()); // 4x4
+    Values local_rhs(mesh.getConnectivity().rows()); // 4x1
     
     // Global objects
     Gradients grad_w(gradientCoeff.size(), 3); // num_elements x 3
     Values norm_grad_w(gradientCoeff.size(), 1); // num_elements x 1
     Values rhs = Values::Zero(stiffnessMatrix.rows()); // num_nodi x 1
+
+    apsc::LinearFiniteElement<3> linearFiniteElement;
+    
+    Nodes localNodes;
+    Indexes globalNodeNumbers;
     
     for(int i = 0; i < gradientCoeff.size(); i++) {
         
-        for (int j = 0; j < connectivity.col(i).size(); j++) {
-            local_w(j) = w(connectivity.col(i)(j));
+        for (int j = 0; j < mesh.getConnectivity().col(i).size(); j++) {
+            local_w(j) = w(mesh.getConnectivity().col(i)(j));
         }
         
         grad_w.row(i) = computeGradient(gradientCoeff[i], local_w);
@@ -76,26 +83,43 @@ bool updateSolution(Values& w,
 
         double norm_grad = grad_w.row(i).norm();
         norm_grad_w.coeffRef(i) = norm_grad; // scalar
-        std::cout << "norm_grad_w: " << norm_grad << std::endl;
+        // std::cout << "norm_grad_w: " << norm_grad << std::endl;
 
         double coeff = (1.0 - norm_grad) / (norm_grad + gamma);
-        std::cout << "coeff: " << coeff << std::endl;
+        // std::cout << "coeff: " << coeff << std::endl;
 
-        for (int k = 0; k < connectivity.col(i).size(); ++k) {
-            for (int j = 0; j < connectivity.col(i).size(); ++j) {
-                localStiffness.coeffRef(k, j) = stiffnessMatrix.coeff(connectivity.col(i)(k), connectivity.col(i)(j));
+        // for (int k = 0; k < connectivity.col(i).size(); ++k) {
+        //     for (int j = 0; j < connectivity.col(i).size(); ++j) {
+        //         localStiffness.coeffRef(k, j) = stiffnessMatrix.coeff(connectivity.col(i)(k), connectivity.col(i)(j));
+        //     }
+        // }
+
+        for (auto k = 0; k < 4; ++k) // node numbering
+            {
+            globalNodeNumbers(k) = mesh.getConnectivity()(k, i);
+            for (auto j = 0; j < 3; ++j) // local node coordinates
+            {
+                localNodes(j, k) = mesh.getNodes()(j, mesh.getConnectivity()(k, i)); // localNodes(j, i) = nodes(j, globalNodeNumbers(i));
             }
         }
+        
+        // Compute local nodes and update global node numbers
+        linearFiniteElement.update(localNodes);
+        linearFiniteElement.updateGlobalNodeNumbers(globalNodeNumbers);
+        
+        // Compute the local stiffness matrix and update the global stiffness matrix
+        linearFiniteElement.computeLocalStiffness();
+        // linearFiniteElement.updateGlobalStiffnessMatrix(stiffnessMatrix);
 
-        local_rhs = coeff * (localStiffness * local_w); // contributo locale di ogni elemento al rhs globale
+        local_rhs = coeff * (linearFiniteElement.getLocalStiffness() * local_w); // contributo locale di ogni elemento al rhs globale
         // std::cout << "localStiffness: " << std::endl;
         // std::cout << localStiffness << std::endl;
         // std::cout << "local_rhs: " << std::endl;
         // std::cout << local_rhs << std::endl;
         // std::cout << "\n =========" << std::endl;
 
-        for (int j = 0; j < connectivity.col(i).size(); ++j) {
-            rhs(connectivity.col(i)(j)) += local_rhs(j);
+        for (int j = 0; j < mesh.getConnectivity().col(i).size(); ++j) {
+            rhs(mesh.getConnectivity().col(i)(j)) += local_rhs(j);
         }
     }
 
@@ -106,11 +130,11 @@ bool updateSolution(Values& w,
         rhs(idx) = 0.0 * 1e40;
     }
 
-    std::cout << "max_grad: " << norm_grad_w.maxCoeff() << std::endl;
-    std::cout << "min_grad: " << norm_grad_w.minCoeff() << std::endl;
+    // std::cout << "max_grad: " << norm_grad_w.maxCoeff() << std::endl;
+    // std::cout << "min_grad: " << norm_grad_w.minCoeff() << std::endl;
 
-    std::cout << "max_rhs: " << rhs.maxCoeff() << std::endl;
-    std::cout << "min_rhs: " << rhs.minCoeff() << std::endl;
+    // std::cout << "max_rhs: " << rhs.maxCoeff() << std::endl;
+    // std::cout << "min_rhs: " << rhs.minCoeff() << std::endl;
 
     // Solve the lienar system
     Values z = solver.solve(rhs);
@@ -133,7 +157,7 @@ bool updateSolution(Values& w,
 
     // Update the solution
     w += z;
-    std::cout << "z : " << z.norm() << std::endl;
+    // std::cout << "z : " << z.norm() << std::endl;
     return (z.norm() < tol);
 
 }
@@ -194,8 +218,6 @@ int main() {
         gradientCoeff[k] = linearFiniteElement.computeGradientCoeff();
         
     }
-    std::cout << "max stiffnessMatrix: " << stiffnessMatrix.toDense().maxCoeff() << std::endl;
-    std::cout << "min stiffnessMatrix: " << stiffnessMatrix.toDense().minCoeff() << std::endl;
 
     // Impose Dirichlet BC on Stiffness Matrix
     linearFiniteElement.updateMatrixWithDirichletBoundary(stiffnessMatrix, boundaryIndices);
@@ -226,11 +248,13 @@ int main() {
         std::cout << "-------------- Iteration " << iter + 1 << " --------------" << std::endl;
         converged = updateSolution(w, stiffnessMatrix, 
                                     gradientCoeff, 
-                                    mesh.getConnectivity(), 
+                                    mesh,
+                                    // mesh.getConnectivity(), 
                                     boundaryIndices,
                                     solver);
         if (converged) {
             std::cout << "Solution converged after " << iter + 1 << " iterations." << std::endl;
+            mesh.addScalarField(w, mesh_file, "solution");
             // std::cout << w << std::endl;
         }
     }
