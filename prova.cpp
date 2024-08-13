@@ -1,7 +1,9 @@
+#include "gradient.hpp"
 #include "Eikonal_traits.hpp"
 #include "LinearFiniteElement.hpp"
 #include "MeshData.hpp"
 #include "InitialConditions.hpp"
+#include "EikonalEquation.hpp"
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -18,17 +20,17 @@ using Nodes = apsc::LinearFiniteElement<3>::Nodes;
 using Indexes = apsc::LinearFiniteElement<3>::Indexes;
 
 
-auto computeGradient(const Eigen::Matrix<double, 3, 3> &Coefficients,
-                     const Eigen::Matrix<double, 3 + 1, 1> &values)
-    -> Eigen::Matrix<double, 3, 1> {
-  // Compute the differences in values
-  Eigen::Matrix<double, 3, 1> d_values;
-  for (auto i = 0u; i < 3; ++i) {
-    d_values(i) = values(i + 1) - values(0);
-  }
-  // Compute the gradient
-  return Coefficients * d_values;
-}
+// auto computeGradient(const Eigen::Matrix<double, 3, 3> &Coefficients,
+//                      const Eigen::Matrix<double, 3 + 1, 1> &values)
+//     -> Eigen::Matrix<double, 3, 1> {
+//   // Compute the differences in values
+//   Eigen::Matrix<double, 3, 1> d_values;
+//   for (auto i = 0u; i < 3; ++i) {
+//     d_values(i) = values(i + 1) - values(0);
+//   }
+//   // Compute the gradient
+//   return Coefficients * d_values;
+// }
 
 // ================== INCREMENTAL SOLUTION ==================
 
@@ -78,7 +80,7 @@ bool updateSolution(Values& w,
             local_w(j) = w(mesh.getConnectivity().col(i)(j));
         }
         
-        grad_w.row(i) = computeGradient(gradientCoeff[i], local_w);
+        grad_w.row(i) = apsc::computeGradient<3>(gradientCoeff[i], local_w);
         // std::cout << "grad_w(i): " << grad_w.row(i) << std::endl;
 
         double norm_grad = grad_w.row(i).norm();
