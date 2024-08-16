@@ -16,14 +16,14 @@
 
 //  ================== MAIN ==================
 int main() {
-  
-    using Nodes = apsc::LinearFiniteElement<3>::Nodes;
-    using Indexes = apsc::LinearFiniteElement<3>::Indexes;
-    using Values = Eigen::Matrix<double, Eigen::Dynamic, 1>; //=< The array storing values at the the nodes
-    using AnisotropyM = Eigen::Matrix<double, 3, 3>; //=< The array storing the anisotropy matrix M 
+    
+    const std::size_t PHDIM = 3;
 
+    using Traits = Eikonal::Eikonal_traits<PHDIM>;
+    using Values = typename Traits::Values;
+    
     // Read the mesh file and create the mesh object
-    MeshData<3> mesh;
+    MeshData<PHDIM> mesh;
     const std::string mesh_file = "vtk_files/mesh_uniform_3.vtk";
     // mesh.convertVTK("mesh_uniform.vtk", mesh_file);
     mesh.readMesh(mesh_file);
@@ -32,51 +32,19 @@ int main() {
     
     // Prepare global matrices
     Eigen::SparseMatrix<double> stiffnessMatrix(mesh.getNumNodes(), mesh.getNumNodes());
+    Eigen::SparseMatrix<double> massMatrix(mesh.getNumNodes(), mesh.getNumNodes());
     
-    std::vector<Eigen::Matrix<double, 3, 3>> gradientCoeff(mesh.getNumElements());
+    std::vector<Eigen::Matrix<double, PHDIM, PHDIM>> gradientCoeff(mesh.getNumElements());
     Values globalIntegrals = Values::Constant(mesh.getNumNodes(), 0.0);
 
-    std::vector<Eigen::Triplet<double>> triplets;
-    triplets.reserve(mesh.getNumElements());
+    // std::vector<Eigen::Triplet<double>> triplets;
+    // triplets.reserve(mesh.getNumElements());
 
-    apsc::LinearFiniteElement<3> linearFiniteElement;
-    
-    Nodes localNodes;
-    Indexes globalNodeNumbers(3+1);
-    
-    for (auto k = 0; k < mesh.getNumElements(); ++k) {
+    mesh.fillGlobalVariables(stiffnessMatrix, massMatrix, globalIntegrals, gradientCoeff, boundaryIndices);
 
-        for (auto i = 0; i < 4; ++i) // node numbering
-            {
-            globalNodeNumbers[i] = mesh.getConnectivity()(i, k);
-            for (auto j = 0; j < 3; ++j) // local node coordinates
-            {
-                localNodes(j, i) = mesh.getNodes()(j, mesh.getConnectivity()(i, k)); // localNodes(j, i) = nodes(j, globalNodeNumbers(i));
-            }
-        }
-        
-        // Compute local nodes and update global node numbers
-        linearFiniteElement.update(localNodes);
-        linearFiniteElement.updateGlobalNodeNumbers(globalNodeNumbers);
-
-        linearFiniteElement.computeLocalIntegral();
-        linearFiniteElement.updateGlobalIntegrals(globalIntegrals);
-        
-        // Compute the local stiffness matrix and update the global stiffness matrix
-        linearFiniteElement.computeLocalStiffness();
-        linearFiniteElement.updateGlobalStiffnessMatrix(stiffnessMatrix);
-        
-        // Compute the local gradient coefficients
-        gradientCoeff[k] = linearFiniteElement.computeGradientCoeff();
-        
-    }
-
-    // Impose Dirichlet BC on Stiffness Matrix
-    linearFiniteElement.updateMatrixWithDirichletBoundary(stiffnessMatrix, boundaryIndices);
-    
     // Solve the Heat Equation for initial conditions
     Values forcingTerm = Values::Constant(mesh.getNumNodes(), 1.0);
-    InitialConditions<3> initialConditions;
+    InitialConditions<PHDIM> initialConditions;
     Values initial_conditions = initialConditions.HeatEquation(stiffnessMatrix, 
                                                                 globalIntegrals,
                                                                 forcingTerm, 
@@ -94,10 +62,15 @@ int main() {
     Eigen::SparseLU<Eigen::SparseMatrix<double>> solver;
     solver.compute(stiffnessMatrix); // Decompose the stiffness matrix with a direct solver
     
-    StandardEikonal<3> eikonal(mesh, w, stiffnessMatrix, gradientCoeff, boundaryIndices, solver);
+    // StandardEikonal<PHDIM> eikonal(mesh, w, stiffnessMatrix, gradientCoeff, boundaryIndices, solver);
+    
+    double r = 0.001;
+    PenaltyEikonal<PHDIM> eikonal(mesh, w, stiffnessMatrix, gradientCoeff, boundaryIndices, solver, r);
+
+    // Values lagrangians = Values::Zero(mesh.getNumNodes());
 
     for (int iter = 0; iter < maxIterations && !converged; ++iter) {
-        std::cout << "-------------- Iteration " << iter + 1 << " --------------" << std::endl;
+        // std::cout << "-------------- Iteration " << iter + 1 << " --------------" << std::endl;
         
         converged = eikonal.updateSolution();
         if (converged) {

@@ -23,7 +23,7 @@ public:
     using Indexes = typename Traits::Indexes;
     using Nodes = typename Traits::Nodes;
     using Elements = typename Traits::Elements;
-
+    using Values = typename Traits::Values;
 
     MeshData() : numElements(0), numNodes(0) {}
 
@@ -262,7 +262,51 @@ public:
         }
 
         outputFile.close();
-  }
+    }
+
+    void fillGlobalVariables(Eigen::SparseMatrix<double>& stiffnessMatrix, 
+                        Eigen::SparseMatrix<double>& massMatrix, 
+                        Values& globalIntegrals,
+                        std::vector<Eigen::Matrix<double, PHDIM, PHDIM>>& gradientCoeff,
+                        const std::vector<long int>& boundaryIndices) {
+                        
+        Nodes localNodes(PHDIM, PHDIM+1);
+        Indexes globalNodeNumbers(PHDIM+1);
+
+        apsc::LinearFiniteElement<PHDIM> linearFiniteElement;
+
+        for (int k = 0; k < getNumElements(); ++k) {
+            for (int i = 0; i < PHDIM+1; ++i) {  // Node numbering
+                globalNodeNumbers[i] = getConnectivity()(i, k);
+                for (int j = 0; j < PHDIM; ++j) {  // Local node coordinates
+                    localNodes(j, i) = getNodes()(j, getConnectivity()(i, k));
+                }
+            }
+            
+            // Compute local nodes and update global node numbers
+            linearFiniteElement.update(localNodes);
+            linearFiniteElement.updateGlobalNodeNumbers(globalNodeNumbers);
+
+            // Compute integrals and update global matrices
+            linearFiniteElement.computeLocalIntegral();
+            linearFiniteElement.updateGlobalIntegrals(globalIntegrals);
+            // std::cout << "Global integrals: " << std::endl << globalIntegrals << std::endl;
+
+            // Compute stiffness and update global stiffness matrix
+            linearFiniteElement.computeLocalStiffness();
+            linearFiniteElement.updateGlobalStiffnessMatrix(stiffnessMatrix);
+
+            // Compute the local mass matrix and update the global mass matrix
+            linearFiniteElement.computeLocalMass();
+            linearFiniteElement.updateGlobalMassMatrix(massMatrix);
+
+            // Compute gradient coefficients
+            gradientCoeff[k] = linearFiniteElement.computeGradientCoeff();
+        }
+
+        // Impose Dirichlet boundary conditions on the stiffness matrix
+        linearFiniteElement.updateMatrixWithDirichletBoundary(stiffnessMatrix, boundaryIndices);
+    }
 
     void addScalarField(const Eigen::Matrix<double, Eigen::Dynamic, 1>& values, 
                         const std::string& inputFilePath,
