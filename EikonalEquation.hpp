@@ -33,7 +33,7 @@ public:
           localStiffness(mesh.getConnectivity().rows(), mesh.getConnectivity().rows()),
           local_rhs(mesh.getConnectivity().rows()),
           grad_w(gradientCoeff.size(), PHDIM),
-          norm_grad_w(gradientCoeff.size(), 1),
+        //   norm_grad_w(gradientCoeff.size(), 1),
           rhs(Values::Zero(stiffnessMatrix.rows())),
           linearFiniteElement(),
           localNodes(PHDIM, PHDIM+1),
@@ -49,7 +49,7 @@ public:
         local_rhs.setZero();
 
         grad_w.setZero();
-        norm_grad_w.setZero();
+        // norm_grad_w.setZero();
         rhs.setZero();
 
         apsc::LinearFiniteElement<PHDIM> linearFiniteElement;
@@ -93,7 +93,7 @@ public:
         // norm_grad_w.coeffRef(i) = grad.norm(); // scalar
         
         double stiffnessCoeff = computeStiffnessCoeff(grad);
-        double massCoeff = computeMassCoeff(grad);
+        double massCoeff = computeReactionCoeff(grad);
 
         local_rhs = stiffnessCoeff * (linearFiniteElement.getLocalStiffness() * local_w); // + massCoeff * (linearFiniteElement.getLocalMass() * local_lagrangians); 
     }
@@ -123,11 +123,14 @@ public:
         // Update the solution
         w += z;
         // std::cout << "z : " << z.norm() << std::endl;
+
+
+
         return (z.norm() < tol);
     }
 
     virtual double computeStiffnessCoeff(Eigen::Matrix<double, 1, PHDIM> grad) = 0;
-    virtual double computeMassCoeff(Eigen::Matrix<double, 1, PHDIM> grad) = 0;
+    virtual double computeReactionCoeff(Eigen::Matrix<double, 1, PHDIM> grad) = 0;
 
 protected:
     MeshData<PHDIM> mesh;
@@ -144,7 +147,7 @@ protected:
     Eigen::SparseMatrix<double> localStiffness;
     Values local_rhs;
     Eigen::Matrix<double, Eigen::Dynamic, PHDIM> grad_w;
-    Values norm_grad_w;
+    // Values norm_grad_w;
     Values rhs;
     apsc::LinearFiniteElement<PHDIM> linearFiniteElement;
     Nodes localNodes;
@@ -174,7 +177,7 @@ public:
         double norm_grad = grad.norm();
         return (1.0 - norm_grad) / (norm_grad + this->gamma);
     }
-    double computeMassCoeff(Eigen::Matrix<double, 1, PHDIM> grad) override {
+    double computeReactionCoeff(Eigen::Matrix<double, 1, PHDIM> grad) override {
         return 0.0;
     }
 };
@@ -200,54 +203,57 @@ public:
 
     double computeStiffnessCoeff(Eigen::Matrix<double, 1, PHDIM> grad) override {
         double norm_grad = grad.norm();
-        return (1.0 - norm_grad) / ((1.0 + this->r)*(norm_grad + this->gamma));
+        return (1.0 - norm_grad) / ((1.0 + this->r)*(norm_grad) + this->gamma);
     }
-    double computeMassCoeff(Eigen::Matrix<double, 1, PHDIM>  grad) override {
+    double computeReactionCoeff(Eigen::Matrix<double, 1, PHDIM>  grad) override {
         return 0.0;
     }
 private:
     double r;
 };
 
-// template<std::size_t PHDIM, std::size_t INTRINSIC_DIM=PHDIM>
-// class LagrangianEikonal : public EikonalEquation<PHDIM> {
-// public:
-//     using Traits = Eikonal::Eikonal_traits<PHDIM, INTRINSIC_DIM>;
-//     using Index = typename Traits::Index;
-//     using Indexes = typename Traits::Indexes;
-//     using Nodes = typename Traits::Nodes;
-//     using Elements = typename Traits::Elements;
-//     using Values = typename Traits::Values;
+template<std::size_t PHDIM, std::size_t INTRINSIC_DIM=PHDIM>
+class LagrangianEikonal : public EikonalEquation<PHDIM> {
+public:
+    using Traits = Eikonal::Eikonal_traits<PHDIM, INTRINSIC_DIM>;
+    using Index = typename Traits::Index;
+    using Indexes = typename Traits::Indexes;
+    using Nodes = typename Traits::Nodes;
+    using Elements = typename Traits::Elements;
+    using Values = typename Traits::Values;
 
-//     LagrangianEikonal(MeshData<PHDIM>& mesh,
-//                 Values& w,
-//                 const Eigen::SparseMatrix<double>& stiffnessMatrix,
-//                 const std::vector<Eigen::Matrix<double, PHDIM, PHDIM>>& gradientCoeff,
-//                 const std::vector<long int>& boundaryIndices,
-//                 const Eigen::SparseLU<Eigen::SparseMatrix<double>>& solver,
-//                 double r,
-//                 const Eigen::SparseMatrix<double>& msssMatrix,
-//                 const Values& lagrangians
-//                 )
-//         : EikonalEquation<PHDIM>(mesh, w, stiffnessMatrix, gradientCoeff, boundaryIndices, solver), r(r), massMatrix(massMatrix), lagrangians(lagrangians) {}
-//             // // Initialize lagrangians
-//             // lagrangians = Values::Zero(mesh.getNumNodes());
+    LagrangianEikonal(MeshData<PHDIM>& mesh,
+                Values& w,
+                const Eigen::SparseMatrix<double>& stiffnessMatrix,
+                const std::vector<Eigen::Matrix<double, PHDIM, PHDIM>>& gradientCoeff,
+                const std::vector<long int>& boundaryIndices,
+                const Eigen::SparseLU<Eigen::SparseMatrix<double>>& solver,
+                double r,
+                const Eigen::SparseMatrix<double>& massMatrix,
+                const Values& lagrangians
+                )
+        : EikonalEquation<PHDIM>(mesh, w, stiffnessMatrix, gradientCoeff, boundaryIndices, solver), r(r), massMatrix(massMatrix), lagrangians(lagrangians) {}
+            // // Initialize lagrangians
+            // lagrangians = Values::Zero(mesh.getNumNodes());
         
-//     double computeStiffnessCoeff(Eigen::Matrix<double, 1, PHDIM>  grad) override{
-//         // extract local lagrangians (lagrangians è num_elementi x 1, quindi local lagrangians probabilment è Eigen::Matrix<double, PHDIM, 1>)
-//         // devi assicurarti quindi che grad e local_lagrangians siano dello stesso tipo
-//         double new_norm = grad - local_lagrangians/r // secondo me grad è Eigen::Matrix<double, 1, PHDIM> mentre local lagrangians è Eigen::Matrix<double, PHDIM, 1>
-//         return ;
-//     }
-//     double computeMassCoeff(Eigen::Matrix<double, 1, PHDIM>  norm_grad) override {
-//         return 0.0;
-//     }
+    double computeStiffnessCoeff(Eigen::Matrix<double, 1, PHDIM>  grad) override{
+        // extract local lagrangians (lagrangians è num_elementi x 1, quindi local lagrangians probabilment è Eigen::Matrix<double, PHDIM+1, 1>)
+        // devi assicurarti quindi che grad e local_lagrangians siano dello stesso tipo
+        
+        double q_norm = (grad - local_lagrangians/r).norm() // secondo me grad è Eigen::Matrix<double, 1, PHDIM> mentre local lagrangians è Eigen::Matrix<double, PHDIM, 1>
+        local_lagrangian = langrangians(i);
+        return (1.0 - q_norm) / ((1.0 + this->r)*(q_norm) + this->gamma);
+    }
+    double computeReactionCoeff(Eigen::Matrix<double, 1, PHDIM> grad) override {
+        double q_norm = (grad - local_lagrangians/r).norm() // secondo me grad è Eigen::Matrix<double, 1, PHDIM> mentre local lagrangians è Eigen::Matrix<double, PHDIM, 1>
+        return (q_norm - 1.0) / (r * (1.0+r) * q_norm);
+    }
 
-// private:
-//     Eigen::SparseMatrix<double> massMatrix;
-//     Values lagrangians;
+private:
+    Eigen::SparseMatrix<double> massMatrix;
+    Values lagrangians;
     
-// };
+};
 
 
 #endif // EIKONAL_EQUATION_HPP
