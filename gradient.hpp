@@ -90,7 +90,7 @@ the simplex, and a possible constant elemental multiplicative factor.
 @return The elemental stiffness matrix
 */
 template <unsigned int N>
-auto computeLocalStiffness(const Eigen::Matrix<double, N, N + 1> &vertices, // coordinate dei nodi
+auto computeLocalStiffness(const Eigen::Matrix<double, N, N + 1> &vertices,
                            double measure, double factor = 1.0)
     -> Eigen::Matrix<double, N + 1, N + 1> {
   return computeLocalStiffnessWithGradient<N>(computeGradCoeff<N>(vertices),
@@ -215,6 +215,41 @@ auto computeLocalMassWithSource(double measure,
   }
   return localMass.template selfadjointView<Eigen::Lower>();
 }
+
+template <unsigned int N>
+auto computeLocalReactionWithGradient(
+    const Eigen::Matrix<double, N, N> &gradCoeff, 
+    double const &measure,
+    double const &factor = 1.0) 
+    -> std::vector<std::vector<Eigen::Matrix<double, N, 1>>> {
+
+  constexpr double scale = factorial<N>() / (N + 1.0);
+  
+  Eigen::Matrix<double, N, N + 1> gradCoeffExt;
+  std::vector<std::vector<Eigen::Matrix<double, N, 1>>> localReaction(N + 1, std::vector<Eigen::Matrix<double, N, 1>>(N + 1));
+
+  // Constructs gradCoeffExt, an extended gradient coefficient matrix of size N x (N + 1):
+  // The first column is the negative sum of the rows of gradCoeff.
+  // The remaining columns are copied directly from gradCoeff.
+  gradCoeffExt.template rightCols<N>() = gradCoeff;
+  gradCoeffExt.template leftCols<1>() = -gradCoeff.rowwise().sum();
+
+  // compute the local reaction matrix
+  for (auto i = 0u; i < N + 1; ++i) {
+    for (auto j = 0u; j < N + 1; ++j) { // compute lower triangular part
+      localReaction[i][j] = factor * measure * scale * gradCoeffExt.col(j); // !!!!!!!!!!!!!
+    }
+  }
+  return localReaction;
+}
+template <unsigned int N>
+auto computeLocalReaction(const Eigen::Matrix<double, N, N + 1> &vertices,
+                           double measure, double factor = 1.0)
+    -> std::vector<std::vector<Eigen::Matrix<double, N, 1>>> {
+      return computeLocalReactionWithGradient<N>(computeGradCoeff<N>(vertices),
+                                              measure, factor);
+}
+
 
 /*!
 @brief Compute the gradient of the linear interpolant

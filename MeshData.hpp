@@ -266,6 +266,7 @@ public:
 
     void fillGlobalVariables(Eigen::SparseMatrix<double>& stiffnessMatrix, 
                         Eigen::SparseMatrix<double>& massMatrix, 
+                        std::vector<std::vector<Eigen::Matrix<double, PHDIM, 1>>>& reactionMatrix,
                         Values& globalIntegrals,
                         std::vector<Eigen::Matrix<double, PHDIM, PHDIM>>& gradientCoeff,
                         const std::vector<long int>& boundaryIndices) {
@@ -300,9 +301,15 @@ public:
             linearFiniteElement.computeLocalMass();
             linearFiniteElement.updateGlobalMassMatrix(massMatrix);
 
+            // Compute the local reaction matrix and update the global reaction matrix
+            linearFiniteElement.computeLocalReaction();
+            linearFiniteElement.updateGlobalReactionMatrix(reactionMatrix);
+
             // Compute gradient coefficients
             gradientCoeff[k] = linearFiniteElement.computeGradientCoeff();
         }
+
+        // std::cout << "Global reaction matrix: " << std::endl << reactionMatrix << std::endl;
 
         // Impose Dirichlet boundary conditions on the stiffness matrix
         linearFiniteElement.updateMatrixWithDirichletBoundary(stiffnessMatrix, boundaryIndices);

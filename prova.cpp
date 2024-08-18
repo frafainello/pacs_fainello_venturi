@@ -21,6 +21,7 @@ int main() {
 
     using Traits = Eikonal::Eikonal_traits<PHDIM>;
     using Values = typename Traits::Values;
+    using Nodes = typename Traits::Nodes;
     
     // Read the mesh file and create the mesh object
     MeshData<PHDIM> mesh;
@@ -33,6 +34,7 @@ int main() {
     // Prepare global matrices
     Eigen::SparseMatrix<double> stiffnessMatrix(mesh.getNumNodes(), mesh.getNumNodes());
     Eigen::SparseMatrix<double> massMatrix(mesh.getNumNodes(), mesh.getNumNodes());
+    std::vector<std::vector<Eigen::Matrix<double, PHDIM, 1>>> reactionMatrix(mesh.getNumNodes(), std::vector<Eigen::Matrix<double, PHDIM, 1>>(mesh.getNumNodes()));
     
     std::vector<Eigen::Matrix<double, PHDIM, PHDIM>> gradientCoeff(mesh.getNumElements());
     Values globalIntegrals = Values::Constant(mesh.getNumNodes(), 0.0);
@@ -40,7 +42,7 @@ int main() {
     // std::vector<Eigen::Triplet<double>> triplets;
     // triplets.reserve(mesh.getNumElements());
 
-    mesh.fillGlobalVariables(stiffnessMatrix, massMatrix, globalIntegrals, gradientCoeff, boundaryIndices);
+    mesh.fillGlobalVariables(stiffnessMatrix, massMatrix, reactionMatrix, globalIntegrals, gradientCoeff, boundaryIndices);
 
     // Solve the Heat Equation for initial conditions
     Values forcingTerm = Values::Constant(mesh.getNumNodes(), 1.0);
@@ -62,12 +64,12 @@ int main() {
     Eigen::SparseLU<Eigen::SparseMatrix<double>> solver;
     solver.compute(stiffnessMatrix); // Decompose the stiffness matrix with a direct solver
     
-    // StandardEikonal<PHDIM> eikonal(mesh, w, stiffnessMatrix, gradientCoeff, boundaryIndices, solver);
+    StandardEikonal<PHDIM> eikonal(mesh, w, stiffnessMatrix, gradientCoeff, boundaryIndices, solver);
     
-    double r = 0.001;
-    PenaltyEikonal<PHDIM> eikonal(mesh, w, stiffnessMatrix, gradientCoeff, boundaryIndices, solver, r);
+    // double r = 0.001;
+    // PenaltyEikonal<PHDIM> eikonal(mesh, w, stiffnessMatrix, gradientCoeff, boundaryIndices, solver, r);
 
-    // Values lagrangians = Values::Zero(mesh.getNumNodes());
+    Eigen::Matrix<double, Eigen::Dynamic, PHDIM> lagrangians = Eigen::Matrix<double, Eigen::Dynamic, PHDIM>::Constant(mesh.getNumElements(), PHDIM, 0.0);
 
     for (int iter = 0; iter < maxIterations && !converged; ++iter) {
         // std::cout << "-------------- Iteration " << iter + 1 << " --------------" << std::endl;

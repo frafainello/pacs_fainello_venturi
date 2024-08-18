@@ -87,6 +87,11 @@ public:
     localStiffness_ = apsc::computeLocalStiffness<N>(nodes_, measure_, factor);
     return localStiffness_;
   }
+
+  auto computeLocalReaction(double factor = 1.0) const -> std::vector<std::vector<Eigen::Matrix<double, N, 1>>> const & {
+    localReaction_ = apsc::computeLocalReaction<N>(nodes_, measure_, factor);
+    return localReaction_;
+  }
   
   /*!
   @brief Compute the local mass matrix
@@ -146,6 +151,10 @@ public:
   */
   auto localStiffness() const -> LocalMatrix const & { return localStiffness_; }
   /*!
+  @brief Get the chached reaction matrix
+  */
+  auto localReaction() const -> LocalMatrix const & { return localReaction_; }
+  /*!
   @brief Get the chached mass matrix
   */
   auto localMass() const -> LocalMatrix const & { return localMass_; }
@@ -169,6 +178,15 @@ public:
       }
     }
   }
+
+  void updateGlobalReactionMatrix(std::vector<std::vector<Eigen::Matrix<double, N, 1>>> &globalReactionMatrix) const {
+    for (auto i = 0u; i < N + 1; ++i) {
+      for (auto j = 0u; j < N + 1; ++j) {
+        globalReactionMatrix[globalNodeNumbers_[i]][globalNodeNumbers_[j]] += localReaction_[i][j];
+      }
+    }
+  }
+
   /*!
   @brief Update global mass matrix with the cached local mass matrix
   @param globalMassMatrix The global mass matrix
@@ -212,6 +230,7 @@ private:
   mutable double localIntegral_;
 
   mutable LocalMatrix localStiffness_;
+  mutable std::vector<std::vector<Eigen::Matrix<double, N, 1>>> localReaction_;
   mutable LocalMatrix localMass_;
   
   const double localRefIntegral_ = 1.0/apsc::factorial<N+1>();
