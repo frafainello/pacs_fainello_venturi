@@ -29,12 +29,12 @@ public:
           gamma(gamma), 
           tol(tol),
 
-          local_w(mesh.getConnectivity().rows()),
-          localStiffness(mesh.getConnectivity().rows(), mesh.getConnectivity().rows()),
-          local_rhs(mesh.getConnectivity().rows()),
-          grad_w(gradientCoeff.size(), PHDIM),
+          local_w(mesh.getConnectivity().rows()), // PHDIM+1
+          localStiffness(mesh.getConnectivity().rows(), mesh.getConnectivity().rows()), // PHDIM+1 x PHDIM+1
+          local_rhs(mesh.getConnectivity().rows()), // PHDIM+1
+          grad_w(gradientCoeff.size(), PHDIM), // mesh.getNumElements() x PHDIM
         //   norm_grad_w(gradientCoeff.size(), 1),
-          rhs(Values::Zero(stiffnessMatrix.rows())),
+          rhs(Values::Zero(stiffnessMatrix.rows())), 
           linearFiniteElement(),
           localNodes(PHDIM, PHDIM+1),
           globalNodeNumbers(PHDIM+1) 
@@ -59,7 +59,7 @@ public:
 
     }
 
-    void computeLocalMassAndStiffness(int i) {
+    void computeLocalReactionAndStiffness(int i) {
         for (auto k = 0; k < PHDIM+1; ++k) // node numbering
             {
             globalNodeNumbers[k] = mesh.getConnectivity()(k, i);
@@ -74,12 +74,13 @@ public:
         
         // Compute the local stiffness matrix and update the global stiffness matrix
         linearFiniteElement.computeLocalStiffness();
-        linearFiniteElement.computeLocalMass();
+        linearFiniteElement.computeLocalReaction();
+        // linearFiniteElement.computeLocalMass();
     }
 
     void computeLocalRhs(int i) {
         
-        computeLocalMassAndStiffness(i);
+        computeLocalReactionAndStiffness(i);
 
         // compute local w
         for (int j = 0; j < mesh.getConnectivity().col(i).size(); j++) {
@@ -121,15 +122,16 @@ public:
 
         // Update the solution
         w += z;
-        // std::cout << "z : " << z.norm() << std::endl;
+        std::cout << "z : " << z.norm() << std::endl;
 
-
+        updateLagrangians(z);
 
         return (z.norm() < tol);
     }
 
     virtual Values computeStiffnessTerm(int i) = 0;
     virtual Values computeReactionTerm(int i) = 0;
+    virtual void updateLagrangians(const Values& z) = 0;
 
 protected:
     MeshData<PHDIM> mesh;
@@ -181,6 +183,7 @@ public:
     Values computeReactionTerm(int i) override {
         return Values::Zero(PHDIM+1);
     }
+    void updateLagrangians(const Values& z) override { return; }
 };
 
 template<std::size_t PHDIM, std::size_t INTRINSIC_DIM=PHDIM>
@@ -210,6 +213,7 @@ public:
     Values computeReactionTerm(int i) override {
         return Values::Zero(PHDIM+1);
     }
+    void updateLagrangians(const Values& z) override { return; }
 private:
     double r;
 };
@@ -231,43 +235,67 @@ public:
                 const std::vector<long int>& boundaryIndices,
                 const Eigen::SparseLU<Eigen::SparseMatrix<double>>& solver,
                 double r,
-                const Eigen::SparseMatrix<double>& massMatrix,
-                const Values& lagrangians
+                Eigen::Matrix<double, Eigen::Dynamic, PHDIM>& lagrangians
                 )
-        : EikonalEquation<PHDIM>(mesh, w, stiffnessMatrix, gradientCoeff, boundaryIndices, solver), r(r), massMatrix(massMatrix), lagrangians(lagrangians) {}
-            // // Initialize lagrangians
-            // lagrangians = Values::Zero(mesh.getNumNodes());
+        : EikonalEquation<PHDIM>(mesh, w, stiffnessMatrix, gradientCoeff, boundaryIndices, solver), r(r), lagrangians(lagrangians) {}
         
     Values computeStiffnessTerm(int i) override{
-        // extract local lagrangians (lagrangians è num_elementi x 1, quindi local lagrangians probabilment è Eigen::Matrix<double, PHDIM+1, 1>)
-        // devi assicurarti quindi che grad e localLagrangians siano dello stesso tipo
         Eigen::Matrix<double, 1, PHDIM> grad = this->grad_w.row(i);
-        Eigen::Matrix<double, PHDIM, 1> localLagrangian = lagrangians.row(i);
-        double q_norm = (grad - localLagrangian/r).norm();
+        Eigen::Matrix<double, 1, PHDIM> localLagrangian = lagrangians.row(i);
+        double q_norm = (grad - localLagrangian/this->r).norm();
         double stiffnessCoeff = (1.0 - q_norm) / ((1.0 + this->r)*(q_norm) + this->gamma);
-        return 
+        return stiffnessCoeff * (this->linearFiniteElement.getLocalStiffness() * this->local_w);
     }
     Values computeReactionTerm(int i) override {
         Eigen::Matrix<double, 1, PHDIM> grad = this->grad_w.row(i);
-        Eigen::Matrix<double, PHDIM, 1> localLagrangian = lagrangians.row(i);
+        Eigen::Matrix<double, 1, PHDIM> localLagrangian = lagrangians.row(i);
         double q_norm = (grad - localLagrangian/r).norm();
         double reactionCoeff = (q_norm - 1.0) / ((r * (1.0+r) * q_norm) + this->gamma);
         
-        Values uu;
-        for (int j = 0; j < N+1; j++) {
-            for (int k = 0; k < N+1; k++) {
-                // check this happens correctly ===================================================================================================
-                uu(j) += this->linearFiniteElement.getLocalReaction()(j, k).cdot(localLagrangian);
+        Values uu(PHDIM+1);
+        for (int j = 0; j < PHDIM+1; j++) {
+            for (int k = 0; k < PHDIM+1; k++) {
+                uu(j) += this->linearFiniteElement.getLocalReaction()[j][k].dot(localLagrangian.transpose()); // (PHDIMx1) x (PHDIMx1)
             }
         }
         
         return reactionCoeff * uu;
     }
 
+    void updateLagrangians(const Values& z) override {
+        Eigen::Matrix<double, Eigen::Dynamic, 1> q_norm = (this->grad_w - lagrangians/r).rowwise().norm();
+        // std::cout << "q_norm: \n" << q_norm << std::endl;
+        
+        Eigen::Matrix<double, Eigen::Dynamic, 1> c = (1.0 + this->r * q_norm.array()) / ((1 + this->r) * q_norm.array());
+        // std::cout << "c: \n" << c << std::endl;
+        
+        // Eigen::Matrix<double, Eigen::Dynamic, 1> lagrangianCoeff = (q_norm.array() - 1.0) / ((1.0 + this->r)*q_norm.array());
+        Eigen::Matrix<double, Eigen::Dynamic, 1> lagrangianCoeff = 1 - c.array();
+        // std::cout << "lagrangianCoeff: \n" << lagrangianCoeff << std::endl;
+          
+        Eigen::Matrix<double, Eigen::Dynamic, 1> gradzCoeff = this->r * c;
+        // std::cout << "gradzCoeff: \n" << gradzCoeff << std::endl;
+        
+        Values local_z = Values::Zero(this->mesh.getConnectivity().rows());
+        Eigen::Matrix<double, Eigen::Dynamic, PHDIM> grad_z(this->mesh.getNumElements(), PHDIM);
+
+        for(int i = 0; i < this->gradientCoeff.size(); i++) {
+            for (int j = 0; j < this->mesh.getConnectivity().col(i).size(); j++) {
+                local_z(j) = z(this->mesh.getConnectivity().col(i)(j));
+                }
+            grad_z.row(i) = apsc::computeGradient<PHDIM>(this->gradientCoeff[i], local_z);
+
+            lagrangians.row(i) = lagrangianCoeff(i)*lagrangians.row(i) + gradzCoeff(i)*grad_z.row(i);
+        }
+        for (int i = 0; i < this->mesh.getNumElements(); i++) {
+            // std::cout << "lagrangians: " << lagrangians.row(i) << std::endl;
+        }
+    }
+
 private:
-    Eigen::SparseMatrix<double> massMatrix;
+    // Eigen::SparseMatrix<double> reactionMatrix;
+    double r;
     Eigen::Matrix<double, Eigen::Dynamic, PHDIM> lagrangians;
-    
 };
 
 

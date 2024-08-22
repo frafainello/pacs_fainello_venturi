@@ -64,15 +64,17 @@ int main() {
     Eigen::SparseLU<Eigen::SparseMatrix<double>> solver;
     solver.compute(stiffnessMatrix); // Decompose the stiffness matrix with a direct solver
     
-    StandardEikonal<PHDIM> eikonal(mesh, w, stiffnessMatrix, gradientCoeff, boundaryIndices, solver);
+    // StandardEikonal<PHDIM> eikonal(mesh, w, stiffnessMatrix, gradientCoeff, boundaryIndices, solver);
     
     // double r = 0.001;
     // PenaltyEikonal<PHDIM> eikonal(mesh, w, stiffnessMatrix, gradientCoeff, boundaryIndices, solver, r);
 
+    double r = 5;
     Eigen::Matrix<double, Eigen::Dynamic, PHDIM> lagrangians = Eigen::Matrix<double, Eigen::Dynamic, PHDIM>::Constant(mesh.getNumElements(), PHDIM, 0.0);
+    LagrangianEikonal<PHDIM> eikonal(mesh, w, stiffnessMatrix, gradientCoeff, boundaryIndices, solver, r, lagrangians);
 
     for (int iter = 0; iter < maxIterations && !converged; ++iter) {
-        // std::cout << "-------------- Iteration " << iter + 1 << " --------------" << std::endl;
+        std::cout << "-------------- Iteration " << iter + 1 << " --------------" << std::endl;
         
         converged = eikonal.updateSolution();
         if (converged) {

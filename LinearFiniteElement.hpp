@@ -43,9 +43,10 @@ public:
   auto getLocalStiffness() const{
     return localStiffness_;
   }
-  auto getLocalMass() const{
-    return localMass_;
+  auto getLocalReaction() const{
+    return localReaction_;
   }
+
 
   /*!
   @brief Update the nodes

@@ -223,7 +223,7 @@ auto computeLocalReactionWithGradient(
     double const &factor = 1.0) 
     -> std::vector<std::vector<Eigen::Matrix<double, N, 1>>> {
 
-  constexpr double scale = factorial<N>() / (N + 1.0);
+  // constexpr double scale = factorial<N>() / (N + 1.0);
   
   Eigen::Matrix<double, N, N + 1> gradCoeffExt;
   std::vector<std::vector<Eigen::Matrix<double, N, 1>>> localReaction(N + 1, std::vector<Eigen::Matrix<double, N, 1>>(N + 1));
@@ -237,11 +237,18 @@ auto computeLocalReactionWithGradient(
   // compute the local reaction matrix
   for (auto i = 0u; i < N + 1; ++i) {
     for (auto j = 0u; j < N + 1; ++j) { // compute lower triangular part
-      localReaction[i][j] = factor * measure * scale * gradCoeffExt.col(j); // !!!!!!!!!!!!!
+      localReaction[i][j] = factor * measure * gradCoeffExt.col(j); // !!!!!!!!!!!!!
     }
   }
+  // for (auto i = 0u; i < N + 1; ++i) {
+  //   for (auto j = 0u; j < N + 1; ++j) { // compute lower triangular part
+  //     std::cout << "localReaction[" << i << "][" << j << "]: " << localReaction[i][j] << std::endl;
+  //     }
+  //   }
+  
   return localReaction;
 }
+
 template <unsigned int N>
 auto computeLocalReaction(const Eigen::Matrix<double, N, N + 1> &vertices,
                            double measure, double factor = 1.0)
