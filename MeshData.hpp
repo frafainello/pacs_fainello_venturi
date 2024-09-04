@@ -428,10 +428,6 @@ public:
         boundaryNodes.clear();
         switch (boundaryCondition) {
             case 0:
-                // Include all boundary nodes
-                boundaryNodes.assign(boundaryNodesSet.begin(), boundaryNodesSet.end());
-                break;
-            case 1:
                 // Include only nodes with z=0
                 for (int node : boundaryNodesSet) {
                     if (nodes(2, node) == 0) { // Assuming node position z is at index 2 in nodes
@@ -439,11 +435,14 @@ public:
                     }
                 }
                 break;
+            case 1:
+                break;
             case 2:
                 // mesh.updateBoundaryNodes("vertex", "0,0,0"); // Assumes updateBoundaryNodes can handle additional specs
                 break;
             case 3:
-                // mesh.updateBoundaryNodes("central-point", "0.5,0.5"); // Assumes updateBoundaryNodes can handle additional specs
+                // Include all boundary nodes
+                boundaryNodes.assign(boundaryNodesSet.begin(), boundaryNodesSet.end());
                 break;
             default:
                 std::cerr << "Invalid option. Please run the program again with a valid choice.\n";

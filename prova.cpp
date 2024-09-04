@@ -27,7 +27,7 @@ int main() {
     MeshData<PHDIM> mesh;
     // const std::string mesh_file = "vtk_files/mesh_uniform_3.vtk";
     std::string mesh_file;
-    std::cout << "Enter the mesh file name (default: mesh_uniform_3.vtk): ";
+    std::cout << "\nEnter the mesh file name (default: mesh_uniform_3.vtk): ";
     std::getline(std::cin, mesh_file);
 
     // Append directory to filename if not empty, otherwise use default file
@@ -48,20 +48,26 @@ int main() {
     // mesh.convertVTK("mesh_uniform.vtk", mesh_file);
     mesh.readMesh(mesh_file);
 
-    int choice = 1; // Initialize choice with the default value
-    std::cout << "Enter the Dirichlet Boundary Conditions:\n";
+    int choice = 1; // Default value
+    std::string input;
+
+    std::cout << "\nEnter the Dirichlet Boundary Conditions:\n";
     std::cout << "1. Dirichlet Null BCs on the bottom face of the domain (z=0)\n";
     std::cout << "2. Dirichlet Null BCs on the central point of the bottom face (z=0, x=0.5, y=0.5)\n";
     std::cout << "3. Dirichlet Null BCs on one vertex of the domain (x=0, y=0, z=0)\n";
     std::cout << "4. Dirichlet Null BCs on the whole boundary of the domain\n";
     std::cout << "Please choose an option (1-4, default 1): ";
 
-    if (!(std::cin >> choice) || choice < 1 || choice > 4) {
-        std::cin.clear(); // Clear the error flag that may be set by an invalid input
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore the rest of the incorrect input
-        choice = 1; // Set to default if input is invalid or not within the range
+    std::getline(std::cin, input); // Read the whole line as string
+
+    // Attempt to parse the input as an integer
+    std::stringstream ss(input);
+    if (!(ss >> choice) || choice < 1 || choice > 4) {
+        choice = 1; // Default to 1 if input is invalid or not within the range
         std::cout << "Invalid input. Defaulting to option 1." << std::endl;
     }
+
+    std::cout << "Selected option: " << choice << std::endl;
 
     mesh.updateBoundaryNodes(choice);
     
@@ -104,7 +110,7 @@ int main() {
     // LagrangianEikonal<PHDIM> eikonal(mesh, w, stiffnessMatrix, gradientCoeff, solver, r, lagrangians);
 
     int methodChoice;
-    std::cout << "Select the eikonal method to use:\n";
+    std::cout << "\nSelect the eikonal method to use:\n";
     std::cout << "1. Standard Eikonal\n";
     std::cout << "2. Penalty Eikonal\n";
     std::cout << "3. Lagrangian Eikonal\n";
