@@ -1,6 +1,8 @@
 #ifndef EIKONAL_EQUATION_HPP
 #define EIKONAL_EQUATION_HPP
 
+#include <mpi.h>
+
 template<std::size_t PHDIM, std::size_t INTRINSIC_DIM=PHDIM>
 class EikonalEquation {
 public:
@@ -105,29 +107,39 @@ public:
         }
     }
 
-    bool updateSolution() {
+    bool updateSolution(const int rank, const int size) {
         
         reset_attributes();
-        for(int i = 0; i < this->mesh.getGradientCoeff().size(); i++) {
+        
+        int n = this->mesh.getGradientCoeff().size();
+        int local_n = n / size;
+        int start = rank * local_n;
+        int end = (rank == size - 1) ? n : start + local_n; // Last process handles the remainder
+
+        for (int i = start; i < end; i++) {
             computeLocalRhs(i);
             updateGlobalRhs(i);
         }
-        
-        // Update for Dirichlet BC. If == 0, set with value*TGV, where TGV=1e40
-        for (int idx : mesh.getBoundaryNodes()) {
-            rhs(idx) = 0.0 * 1e40;
+
+        Values global_rhs(rhs.size());
+        MPI_Reduce(rhs.data(), global_rhs.data(), rhs.size(), MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+
+        if (rank == 0) { // Only the master process handles the solution update
+            rhs = global_rhs;
+            // Continue with the rest of the updateSolution as before
+            for (int idx : mesh.getBoundaryNodes()) {
+                rhs(idx) = 0.0 * 1e40;
+            }
+
+            Values z = solver.solve(rhs);
+            w += z;
+            std::cout << "z : " << z.norm() << std::endl;
+            updateLagrangians(z);
+
+            return (z.norm() < tol);
         }
-        
-        // Solve the lienar system
-        Values z = solver.solve(rhs);
 
-        // Update the solution
-        w += z;
-        std::cout << "z : " << z.norm() << std::endl;
-
-        updateLagrangians(z);
-
-        return (z.norm() < tol);
+        return true;
     }
 
     virtual Values computeStiffnessTerm(int i) = 0;

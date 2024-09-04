@@ -1,5 +1,5 @@
 # Compiler and flags
-CXX = g++
+CXX = mpic++
 CXXFLAGS = -std=c++17 -DNDEBUG
 
 # Directories
