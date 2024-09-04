@@ -358,15 +358,14 @@ public:
     // }
     void addScalarField(const Eigen::Matrix<double, Eigen::Dynamic, 1>& values, 
                         const std::string& inputFilePath,
-                        const std::string& ic="heat",
-                        const int& bc=0,
-                        bool overallSolution=true) {
+                        const std::string& bc,
+                        const std::string& iterativeMethod,
+                        const std::string& ic="heat") {
         if (values.size() != numNodes) {
             throw std::invalid_argument("The size of values must match the number of nodes in the mesh.");
         }
 
-        std::string suffix = overallSolution ? "_solution" : "";
-        std::string outputFilePath = inputFilePath.substr(0, inputFilePath.find_last_of('.')) + "_" + std::to_string(bc) + "_" + ic + suffix + ".vtk";
+        std::string outputFilePath = inputFilePath.substr(0, inputFilePath.find_last_of('.')) + "_" + bc + "_" + ic + iterativeMethod + ".vtk";
 
         // Open the input file and create the output file
         std::ifstream inputFile(inputFilePath);

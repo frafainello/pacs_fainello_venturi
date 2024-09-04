@@ -68,6 +68,16 @@ int main() {
     }
 
     std::cout << "Selected option: " << choice << std::endl;
+        std::string choiceString = "";
+    if (choice == 1) {
+            choiceString = "face";
+        } else if (choice == 1) {
+            choiceString = "center";
+        } else if (choice == 2) {
+            choiceString = "vertex";
+        } else if (choice == 3) {
+            choiceString = "all";
+        }
 
     mesh.updateBoundaryNodes(choice);
     
@@ -89,7 +99,7 @@ int main() {
                                                                 forcingTerm, 
                                                                 mesh.getBoundaryNodes());
     
-    mesh.addScalarField(initial_conditions, mesh_file, "heat", choice, false);
+    mesh.addScalarField(initial_conditions, mesh_file, choiceString, "", "heat");
 
     // Solve the Eikonal Equation Iteratively
     Values w = initial_conditions;
@@ -126,9 +136,18 @@ int main() {
         std::cout << "Defaulting to option 1." << std::endl;
     }
     std::cout << "Selected option: " << methodChoice << std::endl;
+    std::string itMethString = "";
+    if (methodChoice == 0) {
+            itMethString = "";
+        } else if (methodChoice == 1) {
+            itMethString = "_standard";
+        } else if (methodChoice == 2) {
+            itMethString = "_penalty";
+        } else if (methodChoice == 3) {
+            itMethString = "_lagrangian";
+        }
 
     std::unique_ptr<EikonalEquation<PHDIM>> eikonal = nullptr;
-    
     if (methodChoice == 1) {
         eikonal = std::make_unique<StandardEikonal<PHDIM>>(mesh, w, stiffnessMatrix, gradientCoeff, solver);
         std::cout << "Standard Eikonal selected." << std::endl;
@@ -155,7 +174,7 @@ int main() {
         converged = eikonal->updateSolution();
         if (converged) {
             std::cout << "Solution converged after " << iter + 1 << " iterations." << std::endl;
-            mesh.addScalarField(w, mesh_file, "heat", choice, true);
+            mesh.addScalarField(w, mesh_file, choiceString, itMethString, "heat");
             // std::cout << w << std::endl;
         }
     }
