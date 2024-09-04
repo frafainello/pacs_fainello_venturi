@@ -240,11 +240,6 @@ auto computeLocalReactionWithGradient(
       localReaction[i][j] = factor * measure * gradCoeffExt.col(j); // !!!!!!!!!!!!!
     }
   }
-  // for (auto i = 0u; i < N + 1; ++i) {
-  //   for (auto j = 0u; j < N + 1; ++j) { // compute lower triangular part
-  //     std::cout << "localReaction[" << i << "][" << j << "]: " << localReaction[i][j] << std::endl;
-  //     }
-  //   }
   
   return localReaction;
 }

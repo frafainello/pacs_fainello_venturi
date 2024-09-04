@@ -16,15 +16,13 @@ public:
                     Values& w, 
                     const Eigen::SparseMatrix<double>& stiffnessMatrix, 
                     const std::vector<Eigen::Matrix<double, PHDIM, PHDIM>>& gradientCoeff,
-                    const std::vector<long int>& boundaryIndices,
                     const Eigen::SparseLU<Eigen::SparseMatrix<double>>& solver,
                     double gamma = 1e-3,
                     double tol = 1e-3)
         : mesh(mesh), 
           w(w), 
           stiffnessMatrix(stiffnessMatrix), 
-          gradientCoeff(gradientCoeff), 
-          boundaryIndices(boundaryIndices), 
+          gradientCoeff(gradientCoeff),
           solver(solver), 
           gamma(gamma), 
           tol(tol),
@@ -113,7 +111,7 @@ public:
         }
         
         // Update for Dirichlet BC. If == 0, set with value*TGV, where TGV=1e40
-        for (int idx : boundaryIndices) {
+        for (int idx : mesh.getBoundaryNodes()) {
             rhs(idx) = 0.0 * 1e40;
         }
         
@@ -138,7 +136,6 @@ protected:
     Values& w;
     const Eigen::SparseMatrix<double>& stiffnessMatrix;
     const std::vector<Eigen::Matrix<double, PHDIM, PHDIM>>& gradientCoeff;
-    const std::vector<long int>& boundaryIndices;
     const Eigen::SparseLU<Eigen::SparseMatrix<double>>& solver;
     double gamma;
     double tol;
@@ -170,9 +167,8 @@ public:
                     Values& w,
                     const Eigen::SparseMatrix<double>& stiffnessMatrix,
                     const std::vector<Eigen::Matrix<double, PHDIM, PHDIM>>& gradientCoeff,
-                    const std::vector<long int>& boundaryIndices,
                     const Eigen::SparseLU<Eigen::SparseMatrix<double>>& solver)
-        : EikonalEquation<PHDIM>(mesh, w, stiffnessMatrix, gradientCoeff, boundaryIndices, solver) {}
+        : EikonalEquation<PHDIM>(mesh, w, stiffnessMatrix, gradientCoeff, solver) {}
 
     Values computeStiffnessTerm(int i) override {
         Eigen::Matrix<double, 1, PHDIM> grad = this->grad_w.row(i);
@@ -200,10 +196,9 @@ public:
                     Values& w,
                     const Eigen::SparseMatrix<double>& stiffnessMatrix,
                     const std::vector<Eigen::Matrix<double, PHDIM, PHDIM>>& gradientCoeff,
-                    const std::vector<long int>& boundaryIndices,
                     const Eigen::SparseLU<Eigen::SparseMatrix<double>>& solver,
                     double r)
-        : EikonalEquation<PHDIM>(mesh, w, stiffnessMatrix, gradientCoeff, boundaryIndices, solver), r(r) {}
+        : EikonalEquation<PHDIM>(mesh, w, stiffnessMatrix, gradientCoeff, solver), r(r) {}
 
     Values computeStiffnessTerm(int i) override {
         Eigen::Matrix<double, 1, PHDIM> grad = this->grad_w.row(i);
@@ -232,12 +227,11 @@ public:
                 Values& w,
                 const Eigen::SparseMatrix<double>& stiffnessMatrix,
                 const std::vector<Eigen::Matrix<double, PHDIM, PHDIM>>& gradientCoeff,
-                const std::vector<long int>& boundaryIndices,
                 const Eigen::SparseLU<Eigen::SparseMatrix<double>>& solver,
                 double r,
                 Eigen::Matrix<double, Eigen::Dynamic, PHDIM>& lagrangians
                 )
-        : EikonalEquation<PHDIM>(mesh, w, stiffnessMatrix, gradientCoeff, boundaryIndices, solver), r(r), lagrangians(lagrangians) {}
+        : EikonalEquation<PHDIM>(mesh, w, stiffnessMatrix, gradientCoeff, solver), r(r), lagrangians(lagrangians) {}
         
     Values computeStiffnessTerm(int i) override{
         Eigen::Matrix<double, 1, PHDIM> grad = this->grad_w.row(i);
@@ -258,7 +252,6 @@ public:
                 uu(j) += this->linearFiniteElement.getLocalReaction()[j][k].dot(localLagrangian.transpose()); // (PHDIMx1) x (PHDIMx1)
             }
         }
-        
         return reactionCoeff * uu;
     }
 
@@ -287,9 +280,9 @@ public:
 
             lagrangians.row(i) = lagrangianCoeff(i)*lagrangians.row(i) + gradzCoeff(i)*grad_z.row(i);
         }
-        for (int i = 0; i < this->mesh.getNumElements(); i++) {
-            // std::cout << "lagrangians: " << lagrangians.row(i) << std::endl;
-        }
+        // for (int i = 0; i < this->mesh.getNumElements(); i++) {
+        //     // std::cout << "lagrangians: " << lagrangians.row(i) << std::endl;
+        // }
     }
 
 private:

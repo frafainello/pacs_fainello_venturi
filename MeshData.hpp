@@ -268,8 +268,7 @@ public:
                         Eigen::SparseMatrix<double>& massMatrix, 
                         std::vector<std::vector<Eigen::Matrix<double, PHDIM, 1>>>& reactionMatrix,
                         Values& globalIntegrals,
-                        std::vector<Eigen::Matrix<double, PHDIM, PHDIM>>& gradientCoeff,
-                        const std::vector<long int>& boundaryIndices) {
+                        std::vector<Eigen::Matrix<double, PHDIM, PHDIM>>& gradientCoeff) {
                         
         Nodes localNodes(PHDIM, PHDIM+1);
         Indexes globalNodeNumbers(PHDIM+1);
@@ -312,18 +311,62 @@ public:
         // std::cout << "Global reaction matrix: " << std::endl << reactionMatrix << std::endl;
 
         // Impose Dirichlet boundary conditions on the stiffness matrix
-        linearFiniteElement.updateMatrixWithDirichletBoundary(stiffnessMatrix, boundaryIndices);
+        linearFiniteElement.updateMatrixWithDirichletBoundary(stiffnessMatrix, getBoundaryNodes());
     }
 
+    // void addScalarField(const Eigen::Matrix<double, Eigen::Dynamic, 1>& values, 
+    //                     const std::string& inputFilePath,
+    //                     const std::string& suffix) {
+    //     if (values.size() != numNodes) {
+    //         throw std::invalid_argument("The size of values must match the number of nodes in the mesh.");
+    //     }
+
+    //     // Create the new file name by appending "_suffix.vtk" to the original file name
+    //     std::string outputFilePath = inputFilePath.substr(0, inputFilePath.find_last_of('.')) + "_" + suffix + ".vtk";
+
+    //     // Open the input file and create the output file
+    //     std::ifstream inputFile(inputFilePath);
+    //     std::ofstream outputFile(outputFilePath);
+
+    //     if (!inputFile.is_open()) {
+    //         std::cerr << "Error: Could not open input file " << inputFilePath << std::endl;
+    //         return;
+    //     }
+
+    //     if (!outputFile.is_open()) {
+    //         outputFile.open(outputFilePath);
+    //         std::cerr << "Error: Could not open output file " << outputFilePath << std::endl;
+    //         return;
+    //     }
+
+    //     // Copy the contents of the input file to the output file
+    //     std::string line;
+    //     while (std::getline(inputFile, line)) {
+    //         outputFile << line << std::endl;
+    //     }
+
+    //     // Append the scalar field data to the new file
+    //     outputFile << "POINT_DATA " << numNodes << std::endl;
+    //     outputFile << "SCALARS sol float" << std::endl;
+    //     outputFile << "LOOKUP_TABLE default" << std::endl;
+    //     for (int i = 0; i < values.size(); ++i) {
+    //         outputFile << values(i) << std::endl;
+    //     }
+
+    //     inputFile.close();
+    //     outputFile.close();
+    // }
     void addScalarField(const Eigen::Matrix<double, Eigen::Dynamic, 1>& values, 
                         const std::string& inputFilePath,
-                        const std::string& suffix) {
+                        const std::string& ic="heat",
+                        const int& bc=0,
+                        bool overallSolution=true) {
         if (values.size() != numNodes) {
             throw std::invalid_argument("The size of values must match the number of nodes in the mesh.");
         }
 
-        // Create the new file name by appending "_suffix.vtk" to the original file name
-        std::string outputFilePath = inputFilePath.substr(0, inputFilePath.find_last_of('.')) + "_" + suffix + ".vtk";
+        std::string suffix = overallSolution ? "_solution" : "";
+        std::string outputFilePath = inputFilePath.substr(0, inputFilePath.find_last_of('.')) + "_" + std::to_string(bc) + "_" + ic + suffix + ".vtk";
 
         // Open the input file and create the output file
         std::ifstream inputFile(inputFilePath);
@@ -358,7 +401,7 @@ public:
         outputFile.close();
     }
 
-    void updateBoundaryNodes() {
+    void updateBoundaryNodes(const int& boundaryCondition) {
         std::map<std::set<int>, int> faceCount;
         for (int i = 0; i < numElements; ++i) {
             // Each element has 4 faces
@@ -366,7 +409,7 @@ public:
                 std::set<int> face;
                 for (int k = 0; k < 4; ++k) {
                     if (k != j) {
-                        face.insert(connectivity(k, i));
+                        face.insert(connectivity(k, i)); // Assuming connectivity is a 2D array or similar structure
                     }
                 }
                 faceCount[face]++;
@@ -382,18 +425,30 @@ public:
             }
         }
 
-        // TAKE ALL BOUNDARY NODES
-        // boundaryNodes.assign(boundaryNodesSet.begin(), boundaryNodesSet.end());
-
-        // OR
-
-        // TAKE ONLY ONE FACE (z=0)
         boundaryNodes.clear();
-        for (int node : boundaryNodesSet) {
-            if (nodes(2, node) == 0) {
-                boundaryNodes.push_back(node);
+        switch (boundaryCondition) {
+            case 0:
+                // Include all boundary nodes
+                boundaryNodes.assign(boundaryNodesSet.begin(), boundaryNodesSet.end());
+                break;
+            case 1:
+                // Include only nodes with z=0
+                for (int node : boundaryNodesSet) {
+                    if (nodes(2, node) == 0) { // Assuming node position z is at index 2 in nodes
+                        boundaryNodes.push_back(node);
+                    }
+                }
+                break;
+            case 2:
+                // mesh.updateBoundaryNodes("vertex", "0,0,0"); // Assumes updateBoundaryNodes can handle additional specs
+                break;
+            case 3:
+                // mesh.updateBoundaryNodes("central-point", "0.5,0.5"); // Assumes updateBoundaryNodes can handle additional specs
+                break;
+            default:
+                std::cerr << "Invalid option. Please run the program again with a valid choice.\n";
+                return; // Exit with an error code
             }
-        }
     }
 
 private:
