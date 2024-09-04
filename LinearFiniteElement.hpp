@@ -210,7 +210,7 @@ public:
   @note It is assumed that the global matrix is already correctly initialized and
   that the diagonal elements at the specified indices exist.
   */
-void updateMatrixWithDirichletBoundary(GlobalMatrix &globalMatrix, const std::vector<long int> &indices) {
+  void updateMatrixWithDirichletBoundary(GlobalMatrix &globalMatrix, const std::vector<long int> &indices) {
     constexpr double TGV = 1e40;
     for (auto idx : indices) {
         // Check if the diagonal element at position (idx, idx) exists
@@ -222,7 +222,40 @@ void updateMatrixWithDirichletBoundary(GlobalMatrix &globalMatrix, const std::ve
             globalMatrix.insert(idx, idx) = TGV;
         }
     }
-}
+  }
+
+  /*!
+  @brief Update the global matrix with the twin point conditions.
+  @param globalMatrix The global matrix.
+  @param N_i_plus A vector of indices.
+  @param Z_i_minus A vector of indices.
+  @param alpha A sparse eigen matrix that provides coefficients for the update.
+  @note It is assumed that the global matrix is already correctly initialized.
+*/
+void updateTwinPoint(GlobalMatrix &globalMatrix, const std::vector<long int> &N_i_plus, const std::vector<long int> &Z_i_minus, const GlobalMatrix &alpha) {
+    constexpr double TGV = 1e40;
+
+    for (auto i : N_i_plus) {
+        // Update the diagonal element
+        if (globalMatrix.coeffRef(i, i) != 0.0) {
+            globalMatrix.coeffRef(i, i) += TGV;
+        } else {
+            globalMatrix.insert(i, i) = TGV;
+        }
+
+        // Update the off-diagonal elements
+        for (auto k : Z_i_minus) {
+            if (alpha.coeff(i, k) != 0.0) { // Only update if alpha has a non-zero value
+                if (globalMatrix.coeffRef(i, k) != 0.0) {
+                    globalMatrix.coeffRef(i, k) -= TGV * alpha.coeff(i, k);
+                } else {
+                    globalMatrix.insert(i, k) = -TGV * alpha.coeff(i, k);
+                }
+            }
+        }
+    }
+  }
+
 
 private:
   double measure_ = 0.0;

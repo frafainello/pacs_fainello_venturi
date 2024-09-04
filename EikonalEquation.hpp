@@ -35,7 +35,8 @@ public:
           rhs(Values::Zero(stiffnessMatrix.rows())), 
           linearFiniteElement(),
           localNodes(PHDIM, PHDIM+1),
-          globalNodeNumbers(PHDIM+1) 
+          globalNodeNumbers(PHDIM+1),
+          M(1.0 * Eigen::Matrix<double, PHDIM, PHDIM>::Identity())  // Initialize M as 2 * Identity matrix
           {}
     
     virtual ~EikonalEquation() {}
@@ -55,6 +56,12 @@ public:
         localNodes.setZero();
         globalNodeNumbers.resize(globalNodeNumbers.size(), 0);
 
+    }
+
+    // Function to compute the anisotropic norm
+    double anisotropicNorm(const Eigen::Matrix<double, 1, PHDIM>& u) const {
+        // Compute the anisotropic norm using the matrix M
+        return std::sqrt((u * M * u.transpose()).value());
     }
 
     void computeLocalReactionAndStiffness(int i) {
@@ -150,6 +157,7 @@ protected:
     apsc::LinearFiniteElement<PHDIM> linearFiniteElement;
     Nodes localNodes;
     Indexes globalNodeNumbers;
+    Eigen::Matrix<double, PHDIM, PHDIM> M;
 };
 
 template<std::size_t PHDIM, std::size_t INTRINSIC_DIM=PHDIM>
@@ -172,7 +180,8 @@ public:
 
     Values computeStiffnessTerm(int i) override {
         Eigen::Matrix<double, 1, PHDIM> grad = this->grad_w.row(i);
-        double stiffnessCoeff = (1.0 - grad.norm()) / (grad.norm() + this->gamma);
+        // double stiffnessCoeff = (1.0 - grad.norm()) / (grad.norm() + this->gamma);
+        double stiffnessCoeff = (1.0 - this->anisotropicNorm(grad)) / (this->anisotropicNorm(grad) + this->gamma);
         return stiffnessCoeff * (this->linearFiniteElement.getLocalStiffness() * this->local_w);
     }
     Values computeReactionTerm(int i) override {
@@ -203,7 +212,8 @@ public:
 
     Values computeStiffnessTerm(int i) override {
         Eigen::Matrix<double, 1, PHDIM> grad = this->grad_w.row(i);
-        double stiffnessCoeff = (1.0 - grad.norm()) / ((1.0 + this->r) * grad.norm() + this->gamma);
+        // double stiffnessCoeff = (1.0 - grad.norm()) / ((1.0 + this->r) * grad.norm() + this->gamma);
+        double stiffnessCoeff = (1.0 - this->anisotropicNorm(grad)) / ((1.0 + this->r) * this->anisotropicNorm(grad) + this->gamma);
         return stiffnessCoeff * (this->linearFiniteElement.getLocalStiffness() * this->local_w);
     }
     Values computeReactionTerm(int i) override {
@@ -237,14 +247,15 @@ public:
     Values computeStiffnessTerm(int i) override{
         Eigen::Matrix<double, 1, PHDIM> grad = this->grad_w.row(i);
         Eigen::Matrix<double, 1, PHDIM> localLagrangian = lagrangians.row(i);
-        double q_norm = (grad - localLagrangian/this->r).norm();
+        // double q_norm = (grad - localLagrangian/this->r).norm();
+        double q_norm = this->anisotropicNorm(grad - localLagrangian/this->r);
         double stiffnessCoeff = (1.0 - q_norm) / ((1.0 + this->r)*q_norm + this->gamma);
         return stiffnessCoeff * (this->linearFiniteElement.getLocalStiffness() * this->local_w);
     }
     Values computeReactionTerm(int i) override {
         Eigen::Matrix<double, 1, PHDIM> grad = this->grad_w.row(i);
         Eigen::Matrix<double, 1, PHDIM> localLagrangian = lagrangians.row(i);
-        double q_norm = (grad - localLagrangian/r).norm();
+        double q_norm = this->anisotropicNorm(grad - localLagrangian/r);
         double reactionCoeff = (q_norm - 1.0) / ((r * (1.0+r) * q_norm) + this->gamma);
         
         Values uu(PHDIM+1);
@@ -257,7 +268,17 @@ public:
     }
 
     void updateLagrangians(const Values& z) override {
-        Eigen::Matrix<double, Eigen::Dynamic, 1> q_norm = (this->grad_w - lagrangians/r).rowwise().norm();
+        // Eigen::Matrix<double, Eigen::Dynamic, 1> q_norm = (this->grad_w - lagrangians/r).rowwise().norm();
+        // With Anisotropic norm
+        Eigen::Matrix<double, Eigen::Dynamic, 1> q_norm(this->grad_w.rows());
+
+        // Compute the anisotropic norm for each row of the matrix ////
+        for (int i = 0; i < this->grad_w.rows(); ++i) {
+            Eigen::Matrix<double, 1, PHDIM> diff = this->grad_w.row(i) - lagrangians.row(i) / this->r;
+            q_norm(i) = this->anisotropicNorm(diff);
+        }
+        ///////
+
         // std::cout << "q_norm: \n" << q_norm << std::endl;
         
         Eigen::Matrix<double, Eigen::Dynamic, 1> c = (1.0 + this->r * q_norm.array()) / ((1 + this->r) * q_norm.array());
