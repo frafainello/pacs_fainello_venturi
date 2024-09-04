@@ -172,8 +172,7 @@ public:
 
     Values computeStiffnessTerm(int i) override {
         Eigen::Matrix<double, 1, PHDIM> grad = this->grad_w.row(i);
-        double norm_grad = grad.norm();
-        double stiffnessCoeff = (1.0 - norm_grad) / (norm_grad + this->gamma);
+        double stiffnessCoeff = (1.0 - grad.norm()) / (grad.norm() + this->gamma);
         return stiffnessCoeff * (this->linearFiniteElement.getLocalStiffness() * this->local_w);
     }
     Values computeReactionTerm(int i) override {
@@ -198,11 +197,13 @@ public:
                     const std::vector<Eigen::Matrix<double, PHDIM, PHDIM>>& gradientCoeff,
                     const Eigen::SparseLU<Eigen::SparseMatrix<double>>& solver,
                     double r)
-        : EikonalEquation<PHDIM>(mesh, w, stiffnessMatrix, gradientCoeff, solver), r(r) {}
+        : EikonalEquation<PHDIM>(mesh, w, stiffnessMatrix, gradientCoeff, solver), r(r) {
+            std::cout << "r_penalty: " << r << std::endl;
+        }
 
     Values computeStiffnessTerm(int i) override {
         Eigen::Matrix<double, 1, PHDIM> grad = this->grad_w.row(i);
-        double stiffnessCoeff = (1.0 - grad.norm()) / (grad.norm() + this->gamma);
+        double stiffnessCoeff = (1.0 - grad.norm()) / ((1.0 + this->r) * grad.norm() + this->gamma);
         return stiffnessCoeff * (this->linearFiniteElement.getLocalStiffness() * this->local_w);
     }
     Values computeReactionTerm(int i) override {
@@ -237,7 +238,7 @@ public:
         Eigen::Matrix<double, 1, PHDIM> grad = this->grad_w.row(i);
         Eigen::Matrix<double, 1, PHDIM> localLagrangian = lagrangians.row(i);
         double q_norm = (grad - localLagrangian/this->r).norm();
-        double stiffnessCoeff = (1.0 - q_norm) / ((1.0 + this->r)*(q_norm) + this->gamma);
+        double stiffnessCoeff = (1.0 - q_norm) / ((1.0 + this->r)*q_norm + this->gamma);
         return stiffnessCoeff * (this->linearFiniteElement.getLocalStiffness() * this->local_w);
     }
     Values computeReactionTerm(int i) override {

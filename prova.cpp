@@ -64,7 +64,7 @@ int main() {
     std::stringstream ss(input);
     if (!(ss >> choice) || choice < 1 || choice > 4) {
         choice = 1; // Default to 1 if input is invalid or not within the range
-        std::cout << "Invalid input. Defaulting to option 1." << std::endl;
+        std::cout << "Defaulting to option 1." << std::endl;
     }
 
     std::cout << "Selected option: " << choice << std::endl;
@@ -100,43 +100,59 @@ int main() {
     Eigen::SparseLU<Eigen::SparseMatrix<double>> solver;
     solver.compute(stiffnessMatrix); // Decompose the stiffness matrix with a direct solver
     
-    // // StandardEikonal<PHDIM> eikonal(mesh, w, stiffnessMatrix, gradientCoeff, solver);
+    // StandardEikonal<PHDIM> eikonal(mesh, w, stiffnessMatrix, gradientCoeff, solver);
     
-    // // double r = 0.001;
-    // // PenaltyEikonal<PHDIM> eikonal(mesh, w, stiffnessMatrix, gradientCoeff, solver, r);
+    // double r = 0.1;
+    // PenaltyEikonal<PHDIM> eikonal(mesh, w, stiffnessMatrix, gradientCoeff, solver, r);
 
     // double r = 5;
     // Eigen::Matrix<double, Eigen::Dynamic, PHDIM> lagrangians = Eigen::Matrix<double, Eigen::Dynamic, PHDIM>::Constant(mesh.getNumElements(), PHDIM, 0.0);
     // LagrangianEikonal<PHDIM> eikonal(mesh, w, stiffnessMatrix, gradientCoeff, solver, r, lagrangians);
 
-    int methodChoice;
+    int methodChoice = 1; // Default value
+
     std::cout << "\nSelect the eikonal method to use:\n";
     std::cout << "1. Standard Eikonal\n";
     std::cout << "2. Penalty Eikonal\n";
     std::cout << "3. Lagrangian Eikonal\n";
     std::cout << "Enter your choice (1-3, default: 1): ";
-    std::cin >> methodChoice;
 
-    if (std::cin.fail() || methodChoice < 1 || methodChoice > 3) {
-        methodChoice = 1; // Default to Standard Eikonal if input is invalid
-        std::cin.clear(); // Clear error flag
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore wrong input
+    std::getline(std::cin, input); // Read the whole line as string
+
+    // Attempt to parse the input as an integer
+    std::stringstream sss(input);
+    if (!(sss >> methodChoice) || methodChoice < 1 || methodChoice > 3) {
+        methodChoice = 1; // Default to 1 if input is invalid or not within the range
+        std::cout << "Defaulting to option 1." << std::endl;
     }
+    std::cout << "Selected option: " << methodChoice << std::endl;
 
-    StandardEikonal<PHDIM> eikonal(mesh, w, stiffnessMatrix, gradientCoeff, solver);
-    if (methodChoice == 2) {
-        double r_penalty = 0.001;
-        PenaltyEikonal<PHDIM> eikonal(mesh, w, stiffnessMatrix, gradientCoeff, solver, r_penalty);
+    std::unique_ptr<EikonalEquation<PHDIM>> eikonal = nullptr;
+    
+    if (methodChoice == 1) {
+        eikonal = std::make_unique<StandardEikonal<PHDIM>>(mesh, w, stiffnessMatrix, gradientCoeff, solver);
+        std::cout << "Standard Eikonal selected." << std::endl;
+    } else if (methodChoice == 2) {
+        double r_penalty = 0.1;
+        eikonal = std::make_unique<PenaltyEikonal<PHDIM>>(mesh, w, stiffnessMatrix, gradientCoeff, solver, r_penalty);
+        std::cout << "Penalty Eikonal selected." << std::endl;
+        // std::cout << eikonal << std::endl;
     } else if (methodChoice == 3) {
         double r_lagrangian = 5;
         Eigen::Matrix<double, Eigen::Dynamic, PHDIM> lagrangians = Eigen::Matrix<double, Eigen::Dynamic, PHDIM>::Constant(mesh.getNumElements(), PHDIM, 0.0);
-        LagrangianEikonal<PHDIM> eikonal(mesh, w, stiffnessMatrix, gradientCoeff, solver, r_lagrangian, lagrangians);
+        eikonal = std::make_unique<LagrangianEikonal<PHDIM>>(mesh, w, stiffnessMatrix, gradientCoeff, solver, r_lagrangian, lagrangians);
+        std::cout << "Lagrangian Eikonal selected." << std::endl;
+        // std::cout << eikonal << std::endl;
+    }
+    else {
+        std::cerr << "Invalid choice. Exiting..." << std::endl;
+        return 1;
     }
 
     for (int iter = 0; iter < maxIterations && !converged; ++iter) {
         std::cout << "-------------- Iteration " << iter + 1 << " --------------" << std::endl;
         
-        converged = eikonal.updateSolution();
+        converged = eikonal->updateSolution();
         if (converged) {
             std::cout << "Solution converged after " << iter + 1 << " iterations." << std::endl;
             mesh.addScalarField(w, mesh_file, "heat", choice, true);
