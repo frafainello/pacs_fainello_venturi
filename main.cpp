@@ -16,7 +16,7 @@
 
 
 //  ================== MAIN ==================
-int main(int argc, char **argv) {
+int main() {
 
     const std::size_t PHDIM = 3;
 
@@ -104,6 +104,7 @@ int main(int argc, char **argv) {
     // Solve the Eikonal Equation Iteratively
     Values w = initial_conditions;
 
+    bool converged = false;
     int maxIterations = 10000;
 
     Eigen::SparseLU<Eigen::SparseMatrix<double>> solver;
@@ -167,31 +168,21 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    MPI_Init(&argc, &argv);
-
-    int rank, size;
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    MPI_Comm_size(MPI_COMM_WORLD, &size);
-    
-    bool converged = false;
     for (int iter = 0; iter < maxIterations && !converged; ++iter) {
         std::cout << "-------------- Iteration " << iter + 1 << " --------------" << std::endl;
         
-        bool localConverged = eikonal->updateSolution(rank, size);
-        MPI_Allreduce(&localConverged, &converged, 1, MPI_C_BOOL, MPI_LAND, MPI_COMM_WORLD);
+        converged = eikonal->updateSolution();
         
-        if (converged && rank == 0) {
+        if (converged) {
             std::cout << "Solution converged after " << iter + 1 << " iterations." << std::endl;
             mesh.addScalarField(w, mesh_file, choiceString, itMethString, "heat");
             // std::cout << w << std::endl;
         }
     }
 
-    if (!converged && rank == 0) {
+    if (!converged) {
         std::cout << "Solution did not converge within the maximum number of iterations." << std::endl;
     }
-
-    MPI_Finalize();
 
     return 0;
 }
