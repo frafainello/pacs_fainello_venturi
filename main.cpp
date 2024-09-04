@@ -85,11 +85,10 @@ int main() {
     Eigen::SparseMatrix<double> stiffnessMatrix(mesh.getNumNodes(), mesh.getNumNodes());
     Eigen::SparseMatrix<double> massMatrix(mesh.getNumNodes(), mesh.getNumNodes());
     std::vector<std::vector<Eigen::Matrix<double, PHDIM, 1>>> reactionMatrix(mesh.getNumNodes(), std::vector<Eigen::Matrix<double, PHDIM, 1>>(mesh.getNumNodes()));
-    
-    std::vector<Eigen::Matrix<double, PHDIM, PHDIM>> gradientCoeff(mesh.getNumElements());
+
     Values globalIntegrals = Values::Constant(mesh.getNumNodes(), 0.0);
 
-    mesh.fillGlobalVariables(stiffnessMatrix, massMatrix, reactionMatrix, globalIntegrals, gradientCoeff);
+    mesh.fillGlobalVariables(stiffnessMatrix, massMatrix, reactionMatrix, globalIntegrals);
 
     // Solve the Heat Equation for initial conditions
     Values forcingTerm = Values::Constant(mesh.getNumNodes(), 1.0);
@@ -149,17 +148,17 @@ int main() {
 
     std::unique_ptr<EikonalEquation<PHDIM>> eikonal = nullptr;
     if (methodChoice == 1) {
-        eikonal = std::make_unique<StandardEikonal<PHDIM>>(mesh, w, stiffnessMatrix, gradientCoeff, solver);
+        eikonal = std::make_unique<StandardEikonal<PHDIM>>(mesh, w, stiffnessMatrix, solver);
         std::cout << "Standard Eikonal selected." << std::endl;
     } else if (methodChoice == 2) {
         double r_penalty = 0.1;
-        eikonal = std::make_unique<PenaltyEikonal<PHDIM>>(mesh, w, stiffnessMatrix, gradientCoeff, solver, r_penalty);
+        eikonal = std::make_unique<PenaltyEikonal<PHDIM>>(mesh, w, stiffnessMatrix, solver, r_penalty);
         std::cout << "Penalty Eikonal selected." << std::endl;
         // std::cout << eikonal << std::endl;
     } else if (methodChoice == 3) {
         double r_lagrangian = 5;
         Eigen::Matrix<double, Eigen::Dynamic, PHDIM> lagrangians = Eigen::Matrix<double, Eigen::Dynamic, PHDIM>::Constant(mesh.getNumElements(), PHDIM, 0.0);
-        eikonal = std::make_unique<LagrangianEikonal<PHDIM>>(mesh, w, stiffnessMatrix, gradientCoeff, solver, r_lagrangian, lagrangians);
+        eikonal = std::make_unique<LagrangianEikonal<PHDIM>>(mesh, w, stiffnessMatrix, solver, r_lagrangian, lagrangians);
         std::cout << "Lagrangian Eikonal selected." << std::endl;
         // std::cout << eikonal << std::endl;
     }

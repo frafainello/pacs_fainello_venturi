@@ -48,6 +48,18 @@ public:
         return boundaryNodes;
     }
 
+    const std::vector<Eigen::Matrix<double, PHDIM, PHDIM>>& getGradientCoeff() const {
+        return gradientCoeff;
+    }
+
+    const std::vector<Eigen::Matrix<double, PHDIM+1, PHDIM+1>>& getLocalStiffnessMatrices() const {
+        return localStiffnessMatrices;
+    }
+
+    const std::vector<std::vector<std::vector<Eigen::Matrix<double, PHDIM, 1>>>>& getLocalReactionMatrices() const {
+        return localReactionMatrices;
+    }
+
     // // Setters
     // void setNodes(const Nodes& nodes) {
     //     this->nodes = nodes;
@@ -115,6 +127,11 @@ public:
                 }
             }
         }
+
+        // Reserve memory for vectors
+        gradientCoeff.reserve(numElements);
+        localStiffnessMatrices.reserve(numElements);
+        localReactionMatrices.reserve(numElements);
     }
 
     void convertVTK(const std::string& inputFilePath, std::string outputFilePath) {
@@ -267,8 +284,7 @@ public:
     void fillGlobalVariables(Eigen::SparseMatrix<double>& stiffnessMatrix, 
                         Eigen::SparseMatrix<double>& massMatrix, 
                         std::vector<std::vector<Eigen::Matrix<double, PHDIM, 1>>>& reactionMatrix,
-                        Values& globalIntegrals,
-                        std::vector<Eigen::Matrix<double, PHDIM, PHDIM>>& gradientCoeff) {
+                        Values& globalIntegrals) {
                         
         Nodes localNodes(PHDIM, PHDIM+1);
         Indexes globalNodeNumbers(PHDIM+1);
@@ -305,7 +321,11 @@ public:
             linearFiniteElement.updateGlobalReactionMatrix(reactionMatrix);
 
             // Compute gradient coefficients
-            gradientCoeff[k] = linearFiniteElement.computeGradientCoeff();
+            gradientCoeff.push_back(linearFiniteElement.computeGradientCoeff());
+
+            // Compute local matrices
+            localStiffnessMatrices.push_back(linearFiniteElement.computeLocalStiffness());
+            localReactionMatrices.push_back(linearFiniteElement.computeLocalReaction());
         }
 
         // std::cout << "Global reaction matrix: " << std::endl << reactionMatrix << std::endl;
@@ -455,6 +475,9 @@ private:
     int numElements;
     int numNodes;
     Indexes boundaryNodes;    // Boundary nodes indices
+    std::vector<Eigen::Matrix<double, PHDIM, PHDIM>> gradientCoeff;
+    std::vector<Eigen::Matrix<double, PHDIM+1, PHDIM+1>> localStiffnessMatrices;
+    std::vector<std::vector<std::vector<Eigen::Matrix<double, PHDIM, 1>>>> localReactionMatrices;
 };
 
 #endif // MESHDATA_HPP

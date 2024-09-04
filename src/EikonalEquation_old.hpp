@@ -15,12 +15,14 @@ public:
     EikonalEquation(const MeshData<PHDIM>& mesh, 
                     Values& w, 
                     const Eigen::SparseMatrix<double>& stiffnessMatrix, 
+                    const std::vector<Eigen::Matrix<double, PHDIM, PHDIM>>& gradientCoeff,
                     const Eigen::SparseLU<Eigen::SparseMatrix<double>>& solver,
                     double gamma = 1e-3,
                     double tol = 1e-3)
         : mesh(mesh), 
           w(w), 
           stiffnessMatrix(stiffnessMatrix), 
+          gradientCoeff(gradientCoeff),
           solver(solver), 
           gamma(gamma), 
           tol(tol),
@@ -28,7 +30,7 @@ public:
           local_w(mesh.getConnectivity().rows()), // PHDIM+1
           localStiffness(mesh.getConnectivity().rows(), mesh.getConnectivity().rows()), // PHDIM+1 x PHDIM+1
           local_rhs(mesh.getConnectivity().rows()), // PHDIM+1
-          grad_w(this->mesh.getGradientCoeff().size(), PHDIM), // mesh.getNumElements() x PHDIM
+          grad_w(gradientCoeff.size(), PHDIM), // mesh.getNumElements() x PHDIM
         //   norm_grad_w(gradientCoeff.size(), 1),
           rhs(Values::Zero(stiffnessMatrix.rows())), 
           linearFiniteElement(),
@@ -62,34 +64,36 @@ public:
         return std::sqrt((u * M * u.transpose()).value());
     }
 
-    // void computeLocalReactionAndStiffness(int i) {
-    //     for (auto k = 0; k < PHDIM+1; ++k) // node numbering
-    //         {
-    //         globalNodeNumbers[k] = mesh.getConnectivity()(k, i);
-    //         for (auto j = 0; j < PHDIM; ++j) {// local node coordinates
-    //             localNodes(j, k) = mesh.getNodes()(j, mesh.getConnectivity()(k, i));
-    //         }
-    //     }
+    void computeLocalReactionAndStiffness(int i) {
+        for (auto k = 0; k < PHDIM+1; ++k) // node numbering
+            {
+            globalNodeNumbers[k] = mesh.getConnectivity()(k, i);
+            for (auto j = 0; j < PHDIM; ++j) {// local node coordinates
+                localNodes(j, k) = mesh.getNodes()(j, mesh.getConnectivity()(k, i));
+            }
+        }
         
-    //     // Compute local nodes and update global node numbers
-    //     linearFiniteElement.update(localNodes);
-    //     linearFiniteElement.updateGlobalNodeNumbers(globalNodeNumbers);
+        // Compute local nodes and update global node numbers
+        linearFiniteElement.update(localNodes);
+        linearFiniteElement.updateGlobalNodeNumbers(globalNodeNumbers);
         
-    //     // Compute the local stiffness matrix and update the global stiffness matrix
-    //     linearFiniteElement.computeLocalStiffness();
-    //     linearFiniteElement.computeLocalReaction();
-    //     // linearFiniteElement.computeLocalMass();
-    // }
+        // Compute the local stiffness matrix and update the global stiffness matrix
+        linearFiniteElement.computeLocalStiffness();
+        linearFiniteElement.computeLocalReaction();
+        // linearFiniteElement.computeLocalMass();
+    }
 
     void computeLocalRhs(int i) {
         
+        computeLocalReactionAndStiffness(i);
+
         // compute local w
         for (int j = 0; j < mesh.getConnectivity().col(i).size(); j++) {
             local_w(j) = w(mesh.getConnectivity().col(i)(j));
         }
         
         // compute local gradient
-        grad_w.row(i) = apsc::computeGradient<PHDIM>(this->mesh.getGradientCoeff()[i], local_w);
+        grad_w.row(i) = apsc::computeGradient<PHDIM>(gradientCoeff[i], local_w);
         // double norm_grad = grad_w.row(i).norm();
         // norm_grad_w.coeffRef(i) = grad.norm(); // scalar
         
@@ -108,7 +112,7 @@ public:
     bool updateSolution() {
         
         reset_attributes();
-        for(int i = 0; i < this->mesh.getGradientCoeff().size(); i++) {
+        for(int i = 0; i < gradientCoeff.size(); i++) {
             computeLocalRhs(i);
             updateGlobalRhs(i);
         }
@@ -138,6 +142,7 @@ protected:
     MeshData<PHDIM> mesh;
     Values& w;
     const Eigen::SparseMatrix<double>& stiffnessMatrix;
+    const std::vector<Eigen::Matrix<double, PHDIM, PHDIM>>& gradientCoeff;
     const Eigen::SparseLU<Eigen::SparseMatrix<double>>& solver;
     double gamma;
     double tol;
@@ -169,14 +174,15 @@ public:
     StandardEikonal(MeshData<PHDIM>& mesh,
                     Values& w,
                     const Eigen::SparseMatrix<double>& stiffnessMatrix,
+                    const std::vector<Eigen::Matrix<double, PHDIM, PHDIM>>& gradientCoeff,
                     const Eigen::SparseLU<Eigen::SparseMatrix<double>>& solver)
-        : EikonalEquation<PHDIM>(mesh, w, stiffnessMatrix, solver) {}
+        : EikonalEquation<PHDIM>(mesh, w, stiffnessMatrix, gradientCoeff, solver) {}
 
     Values computeStiffnessTerm(int i) override {
         Eigen::Matrix<double, 1, PHDIM> grad = this->grad_w.row(i);
         // double stiffnessCoeff = (1.0 - grad.norm()) / (grad.norm() + this->gamma);
         double stiffnessCoeff = (1.0 - this->anisotropicNorm(grad)) / (this->anisotropicNorm(grad) + this->gamma);
-        return stiffnessCoeff * (this->mesh.getLocalStiffnessMatrices()[i] * this->local_w);
+        return stiffnessCoeff * (this->linearFiniteElement.getLocalStiffness() * this->local_w);
     }
     Values computeReactionTerm(int i) override {
         return Values::Zero(PHDIM+1);
@@ -197,9 +203,10 @@ public:
     PenaltyEikonal(MeshData<PHDIM>& mesh,
                     Values& w,
                     const Eigen::SparseMatrix<double>& stiffnessMatrix,
+                    const std::vector<Eigen::Matrix<double, PHDIM, PHDIM>>& gradientCoeff,
                     const Eigen::SparseLU<Eigen::SparseMatrix<double>>& solver,
                     double r)
-        : EikonalEquation<PHDIM>(mesh, w, stiffnessMatrix, solver), r(r) {
+        : EikonalEquation<PHDIM>(mesh, w, stiffnessMatrix, gradientCoeff, solver), r(r) {
             std::cout << "r_penalty: " << r << std::endl;
         }
 
@@ -207,7 +214,7 @@ public:
         Eigen::Matrix<double, 1, PHDIM> grad = this->grad_w.row(i);
         // double stiffnessCoeff = (1.0 - grad.norm()) / ((1.0 + this->r) * grad.norm() + this->gamma);
         double stiffnessCoeff = (1.0 - this->anisotropicNorm(grad)) / ((1.0 + this->r) * this->anisotropicNorm(grad) + this->gamma);
-        return stiffnessCoeff * (this->mesh.getLocalStiffnessMatrices()[i] * this->local_w);
+        return stiffnessCoeff * (this->linearFiniteElement.getLocalStiffness() * this->local_w);
     }
     Values computeReactionTerm(int i) override {
         return Values::Zero(PHDIM+1);
@@ -230,11 +237,12 @@ public:
     LagrangianEikonal(MeshData<PHDIM>& mesh,
                 Values& w,
                 const Eigen::SparseMatrix<double>& stiffnessMatrix,
+                const std::vector<Eigen::Matrix<double, PHDIM, PHDIM>>& gradientCoeff,
                 const Eigen::SparseLU<Eigen::SparseMatrix<double>>& solver,
                 double r,
                 Eigen::Matrix<double, Eigen::Dynamic, PHDIM>& lagrangians
                 )
-        : EikonalEquation<PHDIM>(mesh, w, stiffnessMatrix, solver), r(r), lagrangians(lagrangians) {}
+        : EikonalEquation<PHDIM>(mesh, w, stiffnessMatrix, gradientCoeff, solver), r(r), lagrangians(lagrangians) {}
         
     Values computeStiffnessTerm(int i) override{
         Eigen::Matrix<double, 1, PHDIM> grad = this->grad_w.row(i);
@@ -242,7 +250,7 @@ public:
         // double q_norm = (grad - localLagrangian/this->r).norm();
         double q_norm = this->anisotropicNorm(grad - localLagrangian/this->r);
         double stiffnessCoeff = (1.0 - q_norm) / ((1.0 + this->r)*q_norm + this->gamma);
-        return stiffnessCoeff * (this->mesh.getLocalStiffnessMatrices()[i] * this->local_w);
+        return stiffnessCoeff * (this->linearFiniteElement.getLocalStiffness() * this->local_w);
     }
     Values computeReactionTerm(int i) override {
         Eigen::Matrix<double, 1, PHDIM> grad = this->grad_w.row(i);
@@ -253,7 +261,7 @@ public:
         Values uu(PHDIM+1);
         for (int j = 0; j < PHDIM+1; j++) {
             for (int k = 0; k < PHDIM+1; k++) {
-                uu(j) += this->mesh.getLocalReactionMatrices()[i][j][k].dot(localLagrangian.transpose()); // (PHDIMx1) x (PHDIMx1)
+                uu(j) += this->linearFiniteElement.getLocalReaction()[j][k].dot(localLagrangian.transpose()); // (PHDIMx1) x (PHDIMx1)
             }
         }
         return reactionCoeff * uu;
@@ -286,11 +294,11 @@ public:
         Values local_z = Values::Zero(this->mesh.getConnectivity().rows());
         Eigen::Matrix<double, Eigen::Dynamic, PHDIM> grad_z(this->mesh.getNumElements(), PHDIM);
 
-        for(int i = 0; i < this->mesh.getGradientCoeff().size(); i++) {
+        for(int i = 0; i < this->gradientCoeff.size(); i++) {
             for (int j = 0; j < this->mesh.getConnectivity().col(i).size(); j++) {
                 local_z(j) = z(this->mesh.getConnectivity().col(i)(j));
                 }
-            grad_z.row(i) = apsc::computeGradient<PHDIM>(this->mesh.getGradientCoeff()[i], local_z);
+            grad_z.row(i) = apsc::computeGradient<PHDIM>(this->gradientCoeff[i], local_z);
 
             lagrangians.row(i) = lagrangianCoeff(i)*lagrangians.row(i) + gradzCoeff(i)*grad_z.row(i);
         }
