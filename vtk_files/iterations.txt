@@ -1,0 +1,4 @@
+refinement it_std it_pen it_lag
+5 55 58 162
+10 71 75 180
+20 97 100 

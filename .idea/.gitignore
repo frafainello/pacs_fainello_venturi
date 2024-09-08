@@ -9,3 +9,5 @@
 
 # Ignore executables
 *.[oO]*
+
+*.png

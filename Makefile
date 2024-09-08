@@ -1,5 +1,5 @@
 # Compiler and flags
-CXX = g++
+CXX = mpic++
 CXXFLAGS = -std=c++17 -DNDEBUG
 
 # Directories
@@ -44,7 +44,7 @@ endif
 # Source files
 SRC_FILES = $(wildcard $(SRC_DIR)/*.cpp) \
             $(wildcard $(SRC_DIR)/*/*.cpp) \
-            main.cpp
+            main_parallel.cpp
 
 OBJ_FILES = $(SRC_FILES:%.cpp=$(BUILD_DIR)/%.o)
 

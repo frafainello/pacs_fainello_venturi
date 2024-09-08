@@ -1,6 +1,8 @@
 #ifndef EIKONAL_EQUATION_HPP
 #define EIKONAL_EQUATION_HPP
 
+#include <mpi.h>
+
 template<std::size_t PHDIM, std::size_t INTRINSIC_DIM=PHDIM>
 class EikonalEquation {
 public:
@@ -25,6 +27,7 @@ public:
           gamma(gamma), 
           tol(tol),
 
+          z(mesh.getNumNodes()),  
           local_w(mesh.getConnectivity().rows()), // PHDIM+1
           localStiffness(mesh.getConnectivity().rows(), mesh.getConnectivity().rows()), // PHDIM+1 x PHDIM+1
           local_rhs(mesh.getConnectivity().rows()), // PHDIM+1
@@ -84,6 +87,7 @@ public:
     void computeLocalRhs(int i) {
         
         // compute local w
+
         for (int j = 0; j < mesh.getConnectivity().col(i).size(); j++) {
             local_w(j) = w(mesh.getConnectivity().col(i)(j));
         }
@@ -105,29 +109,79 @@ public:
         }
     }
 
-    bool updateSolution() {
+    bool updateSolution(const int rank, const int size) {
         
         reset_attributes();
-        for(int i = 0; i < this->mesh.getGradientCoeff().size(); i++) {
+        int n = this->mesh.getGradientCoeff().size();
+
+        int local_n = n / size;
+        int start = rank * local_n;
+        int end = (rank == size - 1) ? n : start + local_n; // Last process handles the remainder
+        
+        double start_time, end_time, elapsed_time; // Variables for timing
+        start_time = MPI_Wtime();
+        for (int i = start; i < end; i++) {
             computeLocalRhs(i);
             updateGlobalRhs(i);
         }
         
-        // Update for Dirichlet BC. If == 0, set with value*TGV, where TGV=1e40
-        for (int idx : mesh.getBoundaryNodes()) {
-            rhs(idx) = 0.0 * 1e40;
+        Values global_rhs(rhs.size());
+        MPI_Reduce(rhs.data(), global_rhs.data(), rhs.size(), MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+        end_time = MPI_Wtime();
+        elapsed_time = end_time - start_time;
+        if (rank == 0) std::cout << "Time taken for rhs with " << size << " cores is " << elapsed_time << " s" << std::endl;
+
+        Eigen::Matrix<double, Eigen::Dynamic, PHDIM> global_grad_w(grad_w.size() / PHDIM, PHDIM);
+        MPI_Reduce(grad_w.data(), global_grad_w.data(), grad_w.size(), MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+
+        bool localConverged = true; // Initialize to true for ranks other than 0
+
+        if (rank == 0) { // Only the master process handles the solution update
+            rhs = global_rhs;
+            grad_w = global_grad_w;
+            // Continue with the rest of the updateSolution as before
+            for (int idx : mesh.getBoundaryNodes()) {
+                rhs(idx) = 0.0 * 1e40;
+            }
+            
+            z = solver.solve(rhs);
+            w += z;
+            std::cout << "z : " << z.norm() << std::endl;
+            updateLagrangians(z);
+
+            localConverged = (z.norm() < tol);
         }
+    
+        // Broadcast the updated value of w from rank 0 to all other ranks
+        MPI_Bcast(w.data(), w.size(), MPI_DOUBLE, 0, MPI_COMM_WORLD);
+        // std::cout << "Rank:" << rank << " Maximum value of w: " << w.maxCoeff() << std::endl;
+        return localConverged;
+    }
+
+    // Method to return the maximum and minimum of the norm of the residual z
+    std::tuple<double, double, double, double> getMetrics() {
+        // This method should be called only by rank 0
+        double maxZ = z.maxCoeff();
+        double minZ = z.minCoeff();
         
-        // Solve the lienar system
-        Values z = solver.solve(rhs);
+        // Compute norms for each row of grad_w
+        double maxGrad = -std::numeric_limits<double>::infinity();
+        double minGrad = std::numeric_limits<double>::infinity();
 
-        // Update the solution
-        w += z;
-        std::cout << "z : " << z.norm() << std::endl;
+        for (int i = 0; i < grad_w.rows(); ++i) {
+            Eigen::Matrix<double, 1, PHDIM> gradientRow = grad_w.row(i);
+            double norm = anisotropicNorm(gradientRow);
 
-        updateLagrangians(z);
-
-        return (z.norm() < tol);
+            if (norm > maxGrad) {
+                maxGrad = norm;
+            }
+            if (norm < minGrad) {
+                minGrad = norm;
+            }
+    }
+        
+        // Return the result as a pair
+        return std::make_tuple(maxZ, minZ, maxGrad, minGrad);
     }
 
     virtual Values computeStiffnessTerm(int i) = 0;
@@ -137,6 +191,7 @@ public:
 protected:
     MeshData<PHDIM> mesh;
     Values& w;
+    Values z;
     const Eigen::SparseMatrix<double>& stiffnessMatrix;
     const Eigen::SparseLU<Eigen::SparseMatrix<double>>& solver;
     double gamma;

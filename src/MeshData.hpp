@@ -282,7 +282,6 @@ public:
     }
 
     void fillGlobalVariables(Eigen::SparseMatrix<double>& stiffnessMatrix, 
-                        Eigen::SparseMatrix<double>& massMatrix, 
                         std::vector<std::vector<Eigen::Matrix<double, PHDIM, 1>>>& reactionMatrix,
                         Values& globalIntegrals) {
                         
@@ -312,9 +311,9 @@ public:
             linearFiniteElement.computeLocalStiffness();
             linearFiniteElement.updateGlobalStiffnessMatrix(stiffnessMatrix);
 
-            // Compute the local mass matrix and update the global mass matrix
-            linearFiniteElement.computeLocalMass();
-            linearFiniteElement.updateGlobalMassMatrix(massMatrix);
+            // // Compute the local mass matrix and update the global mass matrix
+            // linearFiniteElement.computeLocalMass();
+            // linearFiniteElement.updateGlobalMassMatrix(massMatrix);
 
             // Compute the local reaction matrix and update the global reaction matrix
             linearFiniteElement.computeLocalReaction();
@@ -378,14 +377,13 @@ public:
     // }
     void addScalarField(const Eigen::Matrix<double, Eigen::Dynamic, 1>& values, 
                         const std::string& inputFilePath,
-                        const std::string& bc,
-                        const std::string& iterativeMethod,
-                        const std::string& ic="heat") {
+                        const std::string& outputFilePath) {
+
         if (values.size() != numNodes) {
             throw std::invalid_argument("The size of values must match the number of nodes in the mesh.");
         }
 
-        std::string outputFilePath = inputFilePath.substr(0, inputFilePath.find_last_of('.')) + "_" + bc + "_" + ic + iterativeMethod + ".vtk";
+        // std::string outputFilePath = inputFilePath.substr(0, inputFilePath.find_last_of('.')) + "_" + bc + "_" + ic + iterativeMethod + ".vtk";
 
         // Open the input file and create the output file
         std::ifstream inputFile(inputFilePath);
@@ -455,9 +453,47 @@ public:
                 }
                 break;
             case 2:
+                // Include only the center node of the face with z=0
+                {
+                    std::vector<int> z0Nodes;
+                    for (int node : boundaryNodesSet) {
+                        if (nodes(2, node) == 0) { // Check for z=0 nodes
+                            z0Nodes.push_back(node);
+                        }
+                    }
+
+                    if (!z0Nodes.empty()) {
+                        // Calculate the geometric center by averaging coordinates
+                        double centerX = 0.0, centerY = 0.0;
+                        for (int node : z0Nodes) {
+                            centerX += nodes(0, node); // X coordinate
+                            centerY += nodes(1, node); // Y coordinate
+                        }
+                        centerX /= z0Nodes.size();
+                        centerY /= z0Nodes.size();
+
+                        // Find the node closest to the calculated center
+                        int centerNode = z0Nodes[0];
+                        double minDistance = std::numeric_limits<double>::max();
+                        for (int node : z0Nodes) {
+                            double distance = std::sqrt(std::pow(nodes(0, node) - centerX, 2) + std::pow(nodes(1, node) - centerY, 2));
+                            if (distance < minDistance) {
+                                minDistance = distance;
+                                centerNode = node;
+                            }
+                        }
+                        boundaryNodes.push_back(centerNode);
+                    }
+                }
                 break;
             case 3:
-                // mesh.updateBoundaryNodes("vertex", "0,0,0"); // Assumes updateBoundaryNodes can handle additional specs
+                // Include only the vertex at the origin (0, 0, 0)
+                for (int node : boundaryNodesSet) {
+                    if (nodes(0, node) == 0 && nodes(1, node) == 0 && nodes(2, node) == 0) {
+                        boundaryNodes.push_back(node);
+                        break; // No need to search further, there is only one origin
+                    }
+                }
                 break;
             case 4:
                 // Include all boundary nodes
@@ -469,15 +505,16 @@ public:
             }
     }
 
+    std::vector<Eigen::Matrix<double, PHDIM, PHDIM>> gradientCoeff;
+    std::vector<Eigen::Matrix<double, PHDIM+1, PHDIM+1>> localStiffnessMatrices;
+    std::vector<std::vector<std::vector<Eigen::Matrix<double, PHDIM, 1>>>> localReactionMatrices;
+
 private:
     Nodes nodes;              // Node coordinates (x, y, z)
     Elements connectivity;    // Element connectivity
     int numElements;
     int numNodes;
     Indexes boundaryNodes;    // Boundary nodes indices
-    std::vector<Eigen::Matrix<double, PHDIM, PHDIM>> gradientCoeff;
-    std::vector<Eigen::Matrix<double, PHDIM+1, PHDIM+1>> localStiffnessMatrices;
-    std::vector<std::vector<std::vector<Eigen::Matrix<double, PHDIM, 1>>>> localReactionMatrices;
-};
+    };
 
 #endif // MESHDATA_HPP
