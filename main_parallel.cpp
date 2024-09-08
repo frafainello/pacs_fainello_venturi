@@ -147,7 +147,7 @@ int main(int argc, char **argv) {
     int w_size = 0;
 
     const std::string bc = choiceString;
-    const std::string ic="likeBC";
+    const std::string ic="heat_anisotropic";
     std::string outputFilePath = mesh_file.substr(0, mesh_file.find_last_of('.')) + "/initial_conditions/" + bc + "_" + ic + "_ic.vtk";
 
 
@@ -159,10 +159,10 @@ int main(int argc, char **argv) {
         std::cout << "Computing initial condition...\n";
         Values forcingTerm = Values::Constant(mesh.getNumNodes(), 1.0);
         InitialConditions<PHDIM> initialConditions;
-        // Values initial_conditions = initialConditions.HeatEquation(stiffnessMatrix, 
-        //                                                             globalIntegrals,
-        //                                                             forcingTerm, 
-        //                                                             mesh.getBoundaryNodes());
+        Values initial_conditions = initialConditions.HeatEquation(stiffnessMatrix, 
+                                                                    globalIntegrals,
+                                                                    forcingTerm, 
+                                                                    mesh.getBoundaryNodes());
         
         // Random
         // std::srand(42);
@@ -170,13 +170,13 @@ int main(int argc, char **argv) {
         // initial_conditions.setRandom();
         
         // "Like" BC
-        Values initial_conditions = Values::Constant(mesh.getNumNodes(), 1.0);
-        // Set specified indices to 0.0
-        for (long int index : mesh.getBoundaryNodes()) {
-            if (index >= 0 && index < mesh.getNumNodes()) {  // Ensure index is within bounds
-                initial_conditions(static_cast<int>(index)) = 0.0;
-            }
-        }
+        // Values initial_conditions = Values::Constant(mesh.getNumNodes(), 1.0);
+        // // Set specified indices to 0.0
+        // for (long int index : mesh.getBoundaryNodes()) {
+        //     if (index >= 0 && index < mesh.getNumNodes()) {  // Ensure index is within bounds
+        //         initial_conditions(static_cast<int>(index)) = 0.0;
+        //     }
+        // }
 
 
         mesh.addScalarField(initial_conditions, mesh_file, outputFilePath);

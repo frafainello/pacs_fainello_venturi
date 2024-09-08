@@ -1,7 +1,7 @@
 # plot_iterations.gp
 
 # Input file path
-file = "vtk_files/iterations.txt"
+file = "iterations.txt"
 
 title1 = 'Standard'
 title2 = 'Penalty'
@@ -11,7 +11,7 @@ title3 = 'Lagrangian'
 set terminal pngcairo size 800,600 enhanced font 'Arial, 12'
 
 # Plot titles, axis labels, and legends
-set output 'plots/iteration.png'
+set output 'iteration_heat.png'
 set title "Iterations for convergence"
 set xlabel "Refinement"
 set ylabel "Iterations"

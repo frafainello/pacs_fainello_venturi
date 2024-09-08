@@ -13,6 +13,13 @@
 #include <map>
 #include <iostream>
 
+/**
+ * @brief A class to represent mesh data in finite element analysis.
+ * 
+ * @tparam PHDIM Physical dimension of the mesh.
+ * @tparam INTRINSIC_DIM Intrinsic dimension of the mesh (default: PHDIM).
+ */
+
 template<std::size_t PHDIM, std::size_t INTRINSIC_DIM=PHDIM>
 class MeshData {
 
@@ -25,58 +32,81 @@ public:
     using Elements = typename Traits::Elements;
     using Values = typename Traits::Values;
 
+    /**
+     * @brief Default constructor initializing the mesh data.
+     */
     MeshData() : numElements(0), numNodes(0) {}
 
     // Getters
+    /**
+     * @brief Gets the nodes of the mesh.
+     * @return The nodes matrix.
+     */
     Nodes getNodes() const {
         return nodes;
     }
 
+    /**
+     * @brief Gets the element connectivity of the mesh.
+     * @return Reference to the element connectivity matrix.
+     */
     const Elements& getConnectivity() const {
         return connectivity;
     }
 
+    /**
+     * @brief Gets the number of elements in the mesh.
+     * @return The number of elements.
+     */
     int getNumElements() const {
         return numElements;
     }
 
+    /**
+     * @brief Gets the number of nodes in the mesh.
+     * @return The number of nodes.
+     */
     int getNumNodes() const {
         return numNodes;
     }
 
+    /**
+     * @brief Gets the indices of the boundary nodes.
+     * @return Reference to the vector of boundary node indices.
+     */
     const Indexes& getBoundaryNodes() const {
         return boundaryNodes;
     }
 
+    /**
+     * @brief Gets the gradient coefficient matrices.
+     * @return A constant reference to the vector of gradient coefficient matrices.
+     */
     const std::vector<Eigen::Matrix<double, PHDIM, PHDIM>>& getGradientCoeff() const {
         return gradientCoeff;
     }
 
+    /**
+     * @brief Gets the local stiffness matrices.
+     * @return A constant reference to the vector of local stiffness matrices.
+     */
     const std::vector<Eigen::Matrix<double, PHDIM+1, PHDIM+1>>& getLocalStiffnessMatrices() const {
         return localStiffnessMatrices;
     }
 
+    /**
+     * @brief Gets the local reaction matrices.
+     * @return A constant reference to the vector of local reaction matrices.
+     */
     const std::vector<std::vector<std::vector<Eigen::Matrix<double, PHDIM, 1>>>>& getLocalReactionMatrices() const {
         return localReactionMatrices;
     }
 
-    // // Setters
-    // void setNodes(const Nodes& nodes) {
-    //     this->nodes = nodes;
-    // }
 
-    // void setConnectivity(const Elements& connectivity) {
-    //     this->connectivity = connectivity;
-    // }
-
-    // void setNumElements(int numElements) {
-    //     this->numElements = numElements;
-    // }
-
-    // void setNumNodes(int numNodes) {
-    //     this->numNodes = numNodes;
-    // }
-
+    /**
+     * @brief Reads mesh data from a file.
+     * @param filename The name of the file containing mesh data.
+     */
     void readMesh(const std::string& filename) {
         // Read mesh from file
         std::ifstream file(filename);
@@ -86,10 +116,6 @@ public:
         }
 
         // Read element connectivity and nodes
-        // Nodes nodes; // 3 rows --> x, y, z, num_cols = numNodes
-        // Elements connectivity; // 4 rows --> 4 nodes of the tetrahedron, num_cols = numElements
-        // int numElements;
-        // int numNodes;
         std::string line;
         std::istringstream ss;
         while (std::getline(file, line)) {
@@ -134,6 +160,11 @@ public:
         localReactionMatrices.reserve(numElements);
     }
 
+    /**
+     * @brief Converts a VTK file format to a different format.
+     * @param inputFilePath The path to the input VTK file.
+     * @param outputFilePath The path to the output file.
+     */
     void convertVTK(const std::string& inputFilePath, std::string outputFilePath) {
         std::cout << "Entered in convertVTK:" << std::endl;
         std::ifstream inputFile(inputFilePath);
@@ -281,6 +312,12 @@ public:
         outputFile.close();
     }
 
+    /**
+     * @brief Fills global variables used in finite element computations.
+     * @param stiffnessMatrix The global stiffness matrix to be filled.
+     * @param reactionMatrix The global reaction matrix to be filled.
+     * @param globalIntegrals The global integrals to be computed and filled.
+     */
     void fillGlobalVariables(Eigen::SparseMatrix<double>& stiffnessMatrix, 
                         std::vector<std::vector<Eigen::Matrix<double, PHDIM, 1>>>& reactionMatrix,
                         Values& globalIntegrals) {
@@ -311,10 +348,6 @@ public:
             linearFiniteElement.computeLocalStiffness();
             linearFiniteElement.updateGlobalStiffnessMatrix(stiffnessMatrix);
 
-            // // Compute the local mass matrix and update the global mass matrix
-            // linearFiniteElement.computeLocalMass();
-            // linearFiniteElement.updateGlobalMassMatrix(massMatrix);
-
             // Compute the local reaction matrix and update the global reaction matrix
             linearFiniteElement.computeLocalReaction();
             linearFiniteElement.updateGlobalReactionMatrix(reactionMatrix);
@@ -327,54 +360,18 @@ public:
             localReactionMatrices.push_back(linearFiniteElement.computeLocalReaction());
         }
 
-        // std::cout << "Global reaction matrix: " << std::endl << reactionMatrix << std::endl;
-
         // Impose Dirichlet boundary conditions on the stiffness matrix
         linearFiniteElement.updateMatrixWithDirichletBoundary(stiffnessMatrix, getBoundaryNodes());
     }
 
-    // void addScalarField(const Eigen::Matrix<double, Eigen::Dynamic, 1>& values, 
-    //                     const std::string& inputFilePath,
-    //                     const std::string& suffix) {
-    //     if (values.size() != numNodes) {
-    //         throw std::invalid_argument("The size of values must match the number of nodes in the mesh.");
-    //     }
 
-    //     // Create the new file name by appending "_suffix.vtk" to the original file name
-    //     std::string outputFilePath = inputFilePath.substr(0, inputFilePath.find_last_of('.')) + "_" + suffix + ".vtk";
-
-    //     // Open the input file and create the output file
-    //     std::ifstream inputFile(inputFilePath);
-    //     std::ofstream outputFile(outputFilePath);
-
-    //     if (!inputFile.is_open()) {
-    //         std::cerr << "Error: Could not open input file " << inputFilePath << std::endl;
-    //         return;
-    //     }
-
-    //     if (!outputFile.is_open()) {
-    //         outputFile.open(outputFilePath);
-    //         std::cerr << "Error: Could not open output file " << outputFilePath << std::endl;
-    //         return;
-    //     }
-
-    //     // Copy the contents of the input file to the output file
-    //     std::string line;
-    //     while (std::getline(inputFile, line)) {
-    //         outputFile << line << std::endl;
-    //     }
-
-    //     // Append the scalar field data to the new file
-    //     outputFile << "POINT_DATA " << numNodes << std::endl;
-    //     outputFile << "SCALARS sol float" << std::endl;
-    //     outputFile << "LOOKUP_TABLE default" << std::endl;
-    //     for (int i = 0; i < values.size(); ++i) {
-    //         outputFile << values(i) << std::endl;
-    //     }
-
-    //     inputFile.close();
-    //     outputFile.close();
-    // }
+    /**
+     * @brief Adds a scalar field to the mesh data and writes it to a VTK file.
+     * @param values The scalar field values to be added.
+     * @param inputFilePath The input VTK file path.
+     * @param outputFilePath The output VTK file path.
+     * @throws std::invalid_argument if the size of values does not match the number of nodes.
+     */
     void addScalarField(const Eigen::Matrix<double, Eigen::Dynamic, 1>& values, 
                         const std::string& inputFilePath,
                         const std::string& outputFilePath) {
@@ -418,6 +415,10 @@ public:
         outputFile.close();
     }
 
+    /**
+     * @brief Updates the boundary nodes based on a given boundary condition.
+     * @param boundaryCondition The boundary condition to be applied.
+     */
     void updateBoundaryNodes(const int& boundaryCondition) {
         std::map<std::set<int>, int> faceCount;
         for (int i = 0; i < numElements; ++i) {
@@ -505,15 +506,39 @@ public:
             }
     }
 
+    /**
+     * @brief Stores gradient coefficient matrices for each element.
+     */
     std::vector<Eigen::Matrix<double, PHDIM, PHDIM>> gradientCoeff;
+    /**
+     * @brief Stores local stiffness matrices for each element.
+     */
     std::vector<Eigen::Matrix<double, PHDIM+1, PHDIM+1>> localStiffnessMatrices;
+    /**
+     * @brief Stores local reaction matrices for each element.
+     */
     std::vector<std::vector<std::vector<Eigen::Matrix<double, PHDIM, 1>>>> localReactionMatrices;
 
 private:
+    /**
+     * @brief Coordinates of nodes in the mesh.
+     */
     Nodes nodes;              // Node coordinates (x, y, z)
+    /**
+     * @brief Connectivity of the elements in the mesh.
+     */
     Elements connectivity;    // Element connectivity
+    /**
+     * @brief Number of elements in the mesh.
+     */
     int numElements;
+    /**
+     * @brief Number of nodes in the mesh.
+     */
     int numNodes;
+    /**
+     * @brief Indices of the boundary nodes.
+     */
     Indexes boundaryNodes;    // Boundary nodes indices
     };
 

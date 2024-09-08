@@ -38,7 +38,12 @@ public:
           localNodes(PHDIM, PHDIM+1),
           globalNodeNumbers(PHDIM+1),
           M(1.0 * Eigen::Matrix<double, PHDIM, PHDIM>::Identity())  // Initialize M as 2 * Identity matrix
-          {}
+          {
+            // Modify the diagonal elements of M if needed
+            M(0, 0) = 1.0;  
+            M(1, 1) = 5.0;
+            if (PHDIM > 2) M(2, 2) = 1.0;  
+          }
     
     virtual ~EikonalEquation() {}
 
@@ -118,8 +123,6 @@ public:
         int start = rank * local_n;
         int end = (rank == size - 1) ? n : start + local_n; // Last process handles the remainder
         
-        double start_time, end_time, elapsed_time; // Variables for timing
-        start_time = MPI_Wtime();
         for (int i = start; i < end; i++) {
             computeLocalRhs(i);
             updateGlobalRhs(i);
@@ -127,10 +130,7 @@ public:
         
         Values global_rhs(rhs.size());
         MPI_Reduce(rhs.data(), global_rhs.data(), rhs.size(), MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
-        end_time = MPI_Wtime();
-        elapsed_time = end_time - start_time;
-        if (rank == 0) std::cout << "Time taken for rhs with " << size << " cores is " << elapsed_time << " s" << std::endl;
-
+        
         Eigen::Matrix<double, Eigen::Dynamic, PHDIM> global_grad_w(grad_w.size() / PHDIM, PHDIM);
         MPI_Reduce(grad_w.data(), global_grad_w.data(), grad_w.size(), MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
 
