@@ -17,36 +17,9 @@ public:
     using Values = typename Traits::Values;
     using AnisotropyM = typename Traits::AnisotropyM;
 
-    // Constructor initializing mesh data, values, and solver
-    EikonalEquation(const MeshData<PHDIM>& mesh, 
-                    Values& w, 
-                    const Eigen::SparseMatrix<double>& stiffnessMatrix, 
-                    const Eigen::SparseLU<Eigen::SparseMatrix<double>>& solver,
-                    double gamma = 1e-3,
-                    double tol = 1e-3)
-        : mesh(mesh), 
-          w(w), 
-          stiffnessMatrix(stiffnessMatrix), 
-          solver(solver), 
-          gamma(gamma), 
-          tol(tol),
-
-          z(mesh.getNumNodes()),  
-          local_w(PHDIM+1),
-          localStiffness(PHDIM+1, PHDIM+1),
-          local_rhs(PHDIM+1),
-          grad_w(this->mesh.getNumElements(), PHDIM),
-          rhs(Values::Zero(mesh.getNumNodes())), 
-          linearFiniteElement(),
-          localNodes(PHDIM, PHDIM+1),
-          globalNodeNumbers(PHDIM+1),
-          M(1.0 * Eigen::Matrix<double, PHDIM, PHDIM>::Identity()),
-          maxGrad(-std::numeric_limits<double>::infinity()),
-          minGrad(std::numeric_limits<double>::infinity())
-          {}
-    
     // Virtual destructor to allow proper cleanup in derived classes
     virtual ~EikonalEquation() {}
+    
 
     // Distributes computation of rhs across MPI processes and updates solution
     bool updateSolution(const int rank, const int size) {
@@ -126,6 +99,35 @@ public:
 
 
 protected:
+    // Constructor initializing mesh data, values, and solver
+    EikonalEquation(const MeshData<PHDIM>& mesh, 
+                    Values& w, 
+                    const Eigen::SparseMatrix<double>& stiffnessMatrix, 
+                    const Eigen::SparseLU<Eigen::SparseMatrix<double>>& solver,
+                    double gamma = 1e-3,
+                    double tol = 1e-3)
+        : mesh(mesh), 
+          w(w), 
+          stiffnessMatrix(stiffnessMatrix), 
+          solver(solver), 
+          gamma(gamma), 
+          tol(tol),
+
+          z(mesh.getNumNodes()),  
+          local_w(PHDIM+1),
+          localStiffness(PHDIM+1, PHDIM+1),
+          local_rhs(PHDIM+1),
+          grad_w(this->mesh.getNumElements(), PHDIM),
+          rhs(Values::Zero(mesh.getNumNodes())), 
+          linearFiniteElement(),
+          localNodes(PHDIM, PHDIM+1),
+          globalNodeNumbers(PHDIM+1),
+          M(1.0 * Eigen::Matrix<double, PHDIM, PHDIM>::Identity()),
+          maxGrad(-std::numeric_limits<double>::infinity()),
+          minGrad(std::numeric_limits<double>::infinity())
+          {}
+    
+    
     MeshData<PHDIM> mesh;
     Values rhs; // Global right-hand side
     Values& w; // Solution
@@ -275,7 +277,6 @@ public:
                     const Eigen::SparseLU<Eigen::SparseMatrix<double>>& solver,
                     double r)
         : EikonalEquation<PHDIM>(mesh, w, stiffnessMatrix, solver), r(r) {
-            std::cout << "r_penalty: " << r << std::endl;
         }
 
     // Compute the stiffness term for the i-th element
