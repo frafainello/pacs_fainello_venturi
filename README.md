@@ -1,10 +1,36 @@
 # PACS Project - Eikonal Equation
 
-### Author: Francesco Fainello, Francesca Venturi
+### Authors: Francesco Fainello, Francesca Venturi
 
 ## Project Overview
 
-## Problem Statement
+This project focuses on developing efficient, implicit numerical methods for solving the **Eikonal equation**, which is fundamental in modeling wave propagation and computing distance functions. The Eikonal equation has applications across a wide range of fields, including:
+
+- Seismology
+- Geospatial physics
+- Computer vision
+
+The **Eikonal Equation** is expressed as:
+
+```math
+\|\nabla u(x)\| = F(x)
+```
+
+Where:
+- \( u(x) \) is the distance function.
+- \( F(x) \) represents the wavefront propagation speed.
+
+To solve this, we derive the following **variational formulation**:
+
+```math
+E(u(x)) = \int_{\Omega} \left( \|\nabla u(x)\| - 1 \right)^2 \, dx
+```
+
+This energy functional is minimized to compute the solution for the Eikonal equation.
+
+### Implicit Techniques
+
+The project emphasizes implicit techniques based on **variational formulations**, which are generally more robust and flexible in handling complex boundary conditions and anisotropic media. These methods offer significant advantages over traditional explicit approaches, such as the fast marching method, by better managing the nonlinearity and complexity found in real-world problems.
 
 ## Usage Instructions
 
@@ -61,8 +87,15 @@ To set up and run the solver, follow these steps:
 7. **Execution:**
    - Execute the main simulation by running:
      ```bash
-     ./main_executable
+     mpirun -np ./main_executable
      ```
+
+9. **Generating Plots:**
+   - To generate the plots you will find in the report, run:
+     ```bash
+     cd plots
+     ./plots.sh
+     ```    
 
 8. **Generating Documentation:**
    - To generate documentation, run:
@@ -77,6 +110,3 @@ To set up and run the solver, follow these steps:
      ```
 
 These steps will guide you through setting up, compiling, and running the solver, along with generating documentation and cleaning up your build environment.
-
-
-## Folder Structure
