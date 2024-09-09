@@ -2,9 +2,26 @@
 
 ### Author: Francesco Fainello, Francesca Venturi
 
-## Project Overview
+### Project Overview
 
-## Problem Statement
+This project is centred on developing efficient, implicit numerical methods for solving the **Eikonal equation**, which plays a key role in modelling wave propagation and computing distance functions. Applications of the Eikonal equation span across diverse fields such as seismology, geospatial physics, and computer vision. 
+
+The **Eikonal Equation** reads:
+   \[
+   \|\nabla u(x)\| = F(x)
+   \]
+where \( u(x) \) is the distance function and \( F(x) \) represents the wavefront propagation speed. This leads to the following variational formulation:
+\[
+   E(u(x)) = \int_{\Omega} \left( \|\nabla u(x)\| - 1 \right)^2 \, dx
+   \]
+   This energy functional is minimized to solve the Eikonal equation.
+
+
+The focus of this project is on implicit techniques based on **variational formulations**, which are more robust and flexible when dealing with complex boundary conditions and anisotropic media compared to traditional explicit methods like the fast marching method.
+
+### Problem Statement
+
+Accurate solutions of the Eikonal equation are crucial for simulations in complex domains, such as subsurface geological structures. However, explicit methods often fail to handle the nonlinearities and discontinuities in real-world models. This project addresses these limitations by applying **energy minimization principles** and employing **iterative methods** such as the **Alternating Direction Method of Multipliers (ADMM)** and **relaxation of Laplacian iterations**.
 
 ## Usage Instructions
 
