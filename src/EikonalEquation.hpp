@@ -17,11 +17,14 @@ public:
     using Values = typename Traits::Values;
     using AnisotropyM = typename Traits::AnisotropyM;
 
-    // Virtual destructor to allow proper cleanup in derived classes
+    // Virtual destructor to allow proper cleanu  p in derived classes
     virtual ~EikonalEquation() {}
     
 
-    // Distributes computation of rhs across MPI processes and updates solution
+    /// Distributes computation of rhs across MPI processes and updates solution.
+    /// @param rank The rank of the current MPI process.
+    /// @param size The total number of MPI processes.
+    /// @return True if the local solution converged; otherwise, false.
     bool updateSolution(const int rank, const int size) {
         
         // Reset attributes for each update
@@ -88,7 +91,9 @@ public:
         return localConverged;
     }
 
-    // Computes solution metrics like max/min values of z and gradient norms
+    /// Computes solution metrics like max/min values of z and gradient norms.
+    /// This method should be called only by rank 0.
+    /// @return A tuple containing the norm of z, maximum gradient norm, and minimum gradient norm.
     std::tuple<double, double, double> getMetrics() {
         // This method should be called only by rank 0
         double Z = z.norm();
@@ -100,6 +105,12 @@ public:
 
 protected:
     // Constructor initializing mesh data, values, and solver
+    /// @param mesh The mesh data for the problem.
+    /// @param w Reference to the solution vector.
+    /// @param stiffnessMatrix The global stiffness matrix.
+    /// @param solver The sparse solver to be used.
+    /// @param gamma Stabilization parameter.
+    /// @param tol Convergence tolerance.
     EikonalEquation(const MeshData<PHDIM>& mesh, 
                     Values& w, 
                     const Eigen::SparseMatrix<double>& stiffnessMatrix, 
@@ -127,41 +138,53 @@ protected:
           minGrad(std::numeric_limits<double>::infinity())
           {}
     
-    
-    MeshData<PHDIM> mesh;
-    Values rhs; // Global right-hand side
-    Values& w; // Solution
-    Values z; // Incremental update
-    const Eigen::SparseMatrix<double>& stiffnessMatrix;
-    const Eigen::SparseLU<Eigen::SparseMatrix<double>>& solver;
-    double gamma; // Stabilization parameter
-    double tol; // Convergence tolerance
+    /// Attributes related to mesh, values, and solver
+    MeshData<PHDIM> mesh; ///< Mesh data for the problem.
+    Values rhs; ///< Global right-hand side
+    Values& w; ///< Solution
+    Values z; ///< Incremental update
+    const Eigen::SparseMatrix<double>& stiffnessMatrix; ///< Global stiffness matrix.
+    const Eigen::SparseLU<Eigen::SparseMatrix<double>>& solver; ///< Sparse solver for the system.
+    double gamma; ///< Stabilization parameter
+    double tol; ///< Convergence tolerance
 
     // Local variables for each element of the mesh
-    Values local_w;
-    Eigen::SparseMatrix<double> localStiffness;
-    Values local_rhs;
-    Eigen::Matrix<double, Eigen::Dynamic, PHDIM> grad_w;
-    apsc::LinearFiniteElement<PHDIM> linearFiniteElement;
-    Nodes localNodes;
-    Indexes globalNodeNumbers;
+    Values local_w; ///< Local solution vector.
+    Eigen::SparseMatrix<double> localStiffness; ///< Local stiffness matrix.
+    Values local_rhs; ///< Local right-hand side vector.
+    Eigen::Matrix<double, Eigen::Dynamic, PHDIM> grad_w; ///< Gradient of w for each element.
+    apsc::LinearFiniteElement<PHDIM> linearFiniteElement; ///< Linear finite element for local operations.
+    Nodes localNodes; ///< Local nodes for each element.
+    Indexes globalNodeNumbers; ///< Global node numbers corresponding to local nodes.
 
     // Anisotropy matrix
-    AnisotropyM M;
+    AnisotropyM M; ///< Anisotropy matrix for the problem.
 
-    // Virtual functions to be implemented by derived classes
+    /// Virtual function to compute the stiffness term for the i-th element.
+    /// Must be implemented by derived classes.
+    /// @param i The index of the element.
+    /// @return The computed stiffness term.
     virtual Values computeStiffnessTerm(int i) = 0;
+    /// Virtual function to compute the reaction term for the i-th element.
+    /// Must be implemented by derived classes.
+    /// @param i The index of the element.
+    /// @return The computed reaction term.
     virtual Values computeReactionTerm(int i) = 0;
+    /// Virtual function to update the Lagrangian multipliers for each element.
+    /// Must be implemented by derived classes.
+    /// @param z The incremental update to the solution.
     virtual void updateLagrangians(const Values& z) = 0;
 
     // Computes the anisotropic norm of a vector using the matrix M
+    /// @param u The input vector.
+    /// @return The anisotropic norm.   
     double anisotropicNorm(const Eigen::Matrix<double, 1, PHDIM>& u) const {
         return std::sqrt((u * M * u.transpose()).value());
     }
 
     // Saving for plots
-    double maxGrad;
-    double minGrad;
+    double maxGrad; ///< Maximum gradient norm.
+    double minGrad; ///< Minimum gradient norm.
 
 private:
 
@@ -185,6 +208,7 @@ private:
     }
 
     // Computes the local right-hand side (rhs) for the i-th element
+    /// @param i The index of the element.
     void computeLocalRhs(int i) {
         
         // Collect local w values
@@ -214,6 +238,7 @@ private:
     }
 
     // Updates the global right-hand side with local rhs values
+    /// @param i The index of the element.
     void updateGlobalRhs(int i) {
         for (int j = 0; j < PHDIM+1; ++j) {
             // Accumulate local rhs into global rhs
