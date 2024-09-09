@@ -1,27 +1,77 @@
 # PACS Project - Eikonal Equation
 
-### Author: Francesco Fainello, Francesca Venturi
+### Authors: Francesco Fainello, Francesca Venturi
 
-### Project Overview
+## Project Overview
 
-This project is centred on developing efficient, implicit numerical methods for solving the **Eikonal equation**, which plays a key role in modelling wave propagation and computing distance functions. Applications of the Eikonal equation span across diverse fields such as seismology, geospatial physics, and computer vision. 
+This project focuses on developing efficient, implicit numerical methods for solving the **Eikonal equation**, which is fundamental in modeling wave propagation and computing distance functions. The Eikonal equation has applications across a wide range of fields, including:
 
-The **Eikonal Equation** reads:
-   \[
+- Seismology
+- Geospatial physics
+- Computer vision
+
+The **Eikonal Equation** is expressed as:
+
+```math
+\|\nabla u(x)\| = F(x)
+```
+
+Where:
+- \( u(x) \) is the distance function.
+- \( F(x) \) represents the wavefront propagation speed.
+
+To solve this, we derive the following **variational formulation**:
+
+```math
+E(u(x)) = \int_{\Omega} \left( \|\nabla u(x)\| - 1 \right)^2 \, dx
+```
+
+This energy functional is minimized to compute the solution for the Eikonal equation.
+
+### Implicit Techniques
+
+The project emphasizes implicit techniques based on **variational formulations**, which are generally more robust and flexible in handling complex boundary conditions and anisotropic media. These methods offer significant advantages over traditional explicit approaches, such as the fast marching method, by better managing the nonlinearity and complexity found in real-world problems.
+
+## Problem Statement
+
+Accurately solving the Eikonal equation is crucial for simulations in complex domains like **subsurface geological structures**. Traditional explicit methods often struggle with:
+- Nonlinearities
+- Boundary conditions
+- Anisotropic media
+
+This project aims to overcome these limitations by leveraging **energy minimization principles** and applying **iterative methods** like:
+
+- **Alternating Direction Method of Multipliers (ADMM)**
+- **Relaxation of Laplacian iterations**
+
+These methods allow for efficient, scalable solutions that can be applied to a variety of complex scenarios where explicit methods may fail or be inefficient.
+
+## Key Mathematical Formulations
+
+1. **Eikonal Equation**:
+   ```math
    \|\nabla u(x)\| = F(x)
-   \]
-where \( u(x) \) is the distance function and \( F(x) \) represents the wavefront propagation speed. This leads to the following variational formulation:
-\[
+   ```
+
+2. **Variational Formulation**:
+   ```math
    E(u(x)) = \int_{\Omega} \left( \|\nabla u(x)\| - 1 \right)^2 \, dx
-   \]
-   This energy functional is minimized to solve the Eikonal equation.
+   ```
 
+3. **Anisotropic Eikonal Equation** (used for media with directionally dependent wave speeds):
+   ```math
+   E(u(x)) = \int_{\Omega} \left( \|\nabla u(x)\|_M - 1 \right)^2 \, dx
+   ```
+   Where \( M \) is a symmetric positive-definite tensor representing the anisotropy of the medium.
 
-The focus of this project is on implicit techniques based on **variational formulations**, which are more robust and flexible when dealing with complex boundary conditions and anisotropic media compared to traditional explicit methods like the fast marching method.
+4. **Euler-Lagrange Equation** (arising from minimizing the functional):
+   ```math
+   \frac{\partial F}{\partial u} - \sum_{i=1}^{n} \frac{\partial}{\partial x_i} \left( \frac{\partial F}{\partial u_{x_i}} \right) = 0
+   ```
 
-### Problem Statement
+---
 
-Accurate solutions of the Eikonal equation are crucial for simulations in complex domains, such as subsurface geological structures. However, explicit methods often fail to handle the nonlinearities and discontinuities in real-world models. This project addresses these limitations by applying **energy minimization principles** and employing **iterative methods** such as the **Alternating Direction Method of Multipliers (ADMM)** and **relaxation of Laplacian iterations**.
+This project demonstrates how implicit variational methods can provide more reliable and flexible solutions for the Eikonal equation, especially in complex, anisotropic environments.
 
 ## Usage Instructions
 
