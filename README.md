@@ -80,48 +80,46 @@ To set up and run the solver, follow these steps:
      ```
    - This will generate the executable files needed to run simulations.
 
-7. **Execution**
+## 7. **Execution**
 
-### Steps to Run the Simulation:
+   a. **Prepare the Environment**:  
+      Make sure that all the necessary libraries and dependencies are installed. The simulation is designed to be run in a parallel computing environment using **MPI**.
 
-a. **Prepare the Environment**:  
-   Make sure that all the necessary libraries and dependencies are installed. The simulation is designed to be run in a parallel computing environment using **MPI**.
+   b. **Run the Simulation**:  
+      To execute the main simulation, use the following command:
 
-b. **Run the Simulation**:  
-   To execute the main simulation, use the following command:
+      ```bash
+      mpirun -np <num_processes> ./main_executable
+      ```
 
-   ```bash
-   mpirun -np <num_processes> ./main_executable
-   ```
+   #### Input Configuration
 
-### Input Configuration
+   During execution, the user will be prompted to provide input options for the simulation setup. The steps are outlined below:
 
-During execution, the user will be prompted to provide input options for the simulation setup. The steps are outlined below:
+   c. **Mesh Input**:  
+      You will be asked to input the name of the `.vtk` file containing the mesh data. If no input is provided, the default file `mesh_10.vtk` will be used. This default mesh represents a **unitary cube** divided into 10 uniform intervals along each edge.
 
-c. **Mesh Input**:  
-   You will be asked to input the name of the `.vtk` file containing the mesh data. If no input is provided, the default file `mesh_10.vtk` will be used. This default mesh represents a **unitary cube** divided into 10 uniform intervals along each edge.
+      Example prompt:
+      ```
+      Enter the name of the .vtk file containing the mesh (default: mesh_10.vtk):
+      ```
 
-   Example prompt:
-   ```
-   Enter the name of the .vtk file containing the mesh (default: mesh_10.vtk):
-   ```
+   d. **Boundary Conditions**:  
+      You will be asked to choose the boundary conditions to impose on the problem. The available options are:
+      - **1**: Dirichlet Null BCs on the bottom face (z=0)  
+      - **2**: Dirichlet Null BCs on the central point of the bottom face (z=0, x=0.5, y=0.5)  
+      - **3**: Dirichlet Null BCs on one vertex (x=0, y=0, z=0)  
+      - **4**: Dirichlet Null BCs on the whole boundary  
 
-d. **Boundary Conditions**:  
-   You will be asked to choose the boundary conditions to impose on the problem. The available options are:
-   - **1**: Dirichlet Null BCs on the bottom face (z=0)  
-   - **2**: Dirichlet Null BCs on the central point of the bottom face (z=0, x=0.5, y=0.5)  
-   - **3**: Dirichlet Null BCs on one vertex (x=0, y=0, z=0)  
-   - **4**: Dirichlet Null BCs on the whole boundary  
+      If no input is provided, **Option 1** is used by default.
 
-   If no input is provided, **Option 1** is used by default.
+   e. **Method Selection**:  
+      Next, you will be asked to select the method for solving the Eikonal equation. The possible options are:
+      - **1**: Standard Eikonal  (Method of Laplacian Iterations)
+      - **2**: Penalty Eikonal  (Relaxation of Laplacian Iterations)
+      - **3**: Lagrangian Eikonal  (Alternating Direction Method of Lagrange Multipliers)
 
-e. **Method Selection**:  
-   Next, you will be asked to select the method for solving the Eikonal equation. The possible options are:
-   - **1**: Standard Eikonal  (Method of Laplacian Iterations)
-   - **2**: Penalty Eikonal  (Relaxation of Laplacian Iterations)
-   - **3**: Lagrangian Eikonal  (Alternating Direction Method of Lagrange Multipliers)
-
-   If no input is provided, **Option 1 (Standard Eikonal)** is selected by default.
+      If no input is provided, **Option 1 (Standard Eikonal)** is selected by default.
 
 8. **Generating Plots:**
    - To generate the plots you will find in the report, run:
