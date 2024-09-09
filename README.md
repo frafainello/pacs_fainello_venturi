@@ -46,31 +46,6 @@ This project aims to overcome these limitations by leveraging **energy minimizat
 
 These methods allow for efficient, scalable solutions that can be applied to a variety of complex scenarios where explicit methods may fail or be inefficient.
 
-## Key Mathematical Formulations
-
-1. **Eikonal Equation**:
-   ```math
-   \|\nabla u(x)\| = F(x)
-   ```
-
-2. **Variational Formulation**:
-   ```math
-   E(u(x)) = \int_{\Omega} \left( \|\nabla u(x)\| - 1 \right)^2 \, dx
-   ```
-
-3. **Anisotropic Eikonal Equation** (used for media with directionally dependent wave speeds):
-   ```math
-   E(u(x)) = \int_{\Omega} \left( \|\nabla u(x)\|_M - 1 \right)^2 \, dx
-   ```
-   Where \( M \) is a symmetric positive-definite tensor representing the anisotropy of the medium.
-
-4. **Euler-Lagrange Equation** (arising from minimizing the functional):
-   ```math
-   \frac{\partial F}{\partial u} - \sum_{i=1}^{n} \frac{\partial}{\partial x_i} \left( \frac{\partial F}{\partial u_{x_i}} \right) = 0
-   ```
-
----
-
 This project demonstrates how implicit variational methods can provide more reliable and flexible solutions for the Eikonal equation, especially in complex, anisotropic environments.
 
 ## Usage Instructions
