@@ -32,22 +32,6 @@ This energy functional is minimized to compute the solution for the Eikonal equa
 
 The project emphasizes implicit techniques based on **variational formulations**, which are generally more robust and flexible in handling complex boundary conditions and anisotropic media. These methods offer significant advantages over traditional explicit approaches, such as the fast marching method, by better managing the nonlinearity and complexity found in real-world problems.
 
-## Problem Statement
-
-Accurately solving the Eikonal equation is crucial for simulations in complex domains like **subsurface geological structures**. Traditional explicit methods often struggle with:
-- Nonlinearities
-- Boundary conditions
-- Anisotropic media
-
-This project aims to overcome these limitations by leveraging **energy minimization principles** and applying **iterative methods** like:
-
-- **Alternating Direction Method of Multipliers (ADMM)**
-- **Relaxation of Laplacian iterations**
-
-These methods allow for efficient, scalable solutions that can be applied to a variety of complex scenarios where explicit methods may fail or be inefficient.
-
-This project demonstrates how implicit variational methods can provide more reliable and flexible solutions for the Eikonal equation, especially in complex, anisotropic environments.
-
 ## Usage Instructions
 
 To set up and run the solver, follow these steps:
@@ -103,8 +87,15 @@ To set up and run the solver, follow these steps:
 7. **Execution:**
    - Execute the main simulation by running:
      ```bash
-     ./main_executable
+     mpirun -np ./main_executable
      ```
+
+9. **Generating Plots:**
+   - To generate the plots you will find in the report, run:
+     ```bash
+     cd plots
+     ./plots.sh
+     ```    
 
 8. **Generating Documentation:**
    - To generate documentation, run:
@@ -119,6 +110,3 @@ To set up and run the solver, follow these steps:
      ```
 
 These steps will guide you through setting up, compiling, and running the solver, along with generating documentation and cleaning up your build environment.
-
-
-## Folder Structure
