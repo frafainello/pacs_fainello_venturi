@@ -1,16 +1,12 @@
-# PACS Project - Eikonal Equation
+# PACS Project - Eikonal Equation Solver
 
 ### Authors: Francesco Fainello, Francesca Venturi
 
 ## Project Overview
 
-This project focuses on developing efficient, implicit numerical methods for solving the **Eikonal equation**, which is fundamental in modeling wave propagation and computing distance functions. The Eikonal equation has applications across a wide range of fields, including:
+This project focuses on developing efficient, implicit numerical methods for solving the **Eikonal equation**, a fundamental equation in modeling wave propagation and computing distance functions. The Eikonal equation has broad applications across fields such as: seismology, geospatial physics and computer vision.
 
-- Seismology
-- Geospatial physics
-- Computer vision
-
-The **Eikonal Equation** is expressed as:
+The **Eikonal Equation** is given by:
 
 ```math
 \|\nabla u(x)\| = F(x)
@@ -28,16 +24,22 @@ E(u(x)) = \int_{\Omega} \left( \|\nabla u(x)\| - 1 \right)^2 \, dx
 
 This energy functional is minimized to compute the solution for the Eikonal equation.
 
-### Implicit Techniques
+## Problem Statement
 
-The project emphasizes implicit techniques based on **variational formulations**, which are generally more robust and flexible in handling complex boundary conditions and anisotropic media. These methods offer significant advantages over traditional explicit approaches, such as the fast marching method, by better managing the nonlinearity and complexity found in real-world problems.
+This project addresses the numerical solution of this equation by employing **energy minimization principles** and applying **iterative methods** such as:
+- **Method of Laplacian Iterations**
+- **Relaxation of Laplacian Iterations**
+- **Alternating Direction Method of Lagrange Multipliers (ADMM)**
 
+These methods allow for efficient, scalable solutions applicable to a variety of complex scenarios.
+
+---
 ## Usage Instructions
 
 To set up and run the solver, follow these steps:
 
 1. **Create a Project Directory:**
-    -  First, create a directory where all the necessary files will be created and dowloaded:
+    -  First, create a directory where all the necessary files will be created and downloaded:
         ```bash
         mkdir project
         ```
@@ -78,32 +80,63 @@ To set up and run the solver, follow these steps:
      ```
    - This will generate the executable files needed to run simulations.
 
-<!-- 7. **Set Library Path:**
-   - Set the library path to include the `lib` directory:
-     ```bash
-     LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$(pwd)/lib
-     ``` -->
+## 7. **Execution**
 
-7. **Execution:**
-   - Execute the main simulation by running:
-     ```bash
-     mpirun -np ./main_executable
-     ```
+### Steps to Run the Simulation:
 
-9. **Generating Plots:**
+a. **Prepare the Environment**:  
+   Make sure that all the necessary libraries and dependencies are installed. The simulation is designed to be run in a parallel computing environment using **MPI**.
+
+b. **Run the Simulation**:  
+   To execute the main simulation, use the following command:
+
+   ```bash
+   mpirun -np <num_processes> ./main_executable
+   ```
+
+### Input Configuration
+
+During execution, the user will be prompted to provide input options for the simulation setup. The steps are outlined below:
+
+c. **Mesh Input**:  
+   You will be asked to input the name of the `.vtk` file containing the mesh data. If no input is provided, the default file `mesh_10.vtk` will be used. This default mesh represents a **unitary cube** divided into 10 uniform intervals along each edge.
+
+   Example prompt:
+   ```
+   Enter the name of the .vtk file containing the mesh (default: mesh_10.vtk):
+   ```
+
+d. **Boundary Conditions**:  
+   You will be asked to choose the boundary conditions to impose on the problem. The available options are:
+   - **1**: Dirichlet Null BCs on the bottom face (z=0)  
+   - **2**: Dirichlet Null BCs on the central point of the bottom face (z=0, x=0.5, y=0.5)  
+   - **3**: Dirichlet Null BCs on one vertex (x=0, y=0, z=0)  
+   - **4**: Dirichlet Null BCs on the whole boundary  
+
+   If no input is provided, **Option 1** is used by default.
+
+e. **Method Selection**:  
+   Next, you will be asked to select the method for solving the Eikonal equation. The possible options are:
+   - **1**: Standard Eikonal  (Method of Laplacian Iterations)
+   - **2**: Penalty Eikonal  (Relaxation of Laplacian Iterations)
+   - **3**: Lagrangian Eikonal  (Alternating Direction Method of Lagrange Multipliers)
+
+   If no input is provided, **Option 1 (Standard Eikonal)** is selected by default.
+
+8. **Generating Plots:**
    - To generate the plots you will find in the report, run:
      ```bash
      cd plots
      ./plots.sh
      ```    
 
-8. **Generating Documentation:**
+9. **Generating Documentation:**
    - To generate documentation, run:
      ```bash
      make docs
      ```
 
-9. **Cleaning the Build:**
+10. **Cleaning the Build:**
    - To clean up the build files, use:
      ```bash
      make clean
