@@ -13,6 +13,18 @@
 #include <map>
 #include <iostream>
 
+/**
+ * @class InitialConditions
+ * @brief This class provides methods for setting initial conditions and solving equations for a finite element mesh.
+ * 
+ * The class is templated to handle dimensions PHDIM and INTRINSIC_DIM, allowing for flexibility in different physical
+ * and geometric configurations. It includes methods for computing initial conditions, such as those for solving the
+ * heat equation.
+ * 
+ * @tparam PHDIM The physical dimension of the problem.
+ * @tparam INTRINSIC_DIM The intrinsic dimension of the elements in the mesh (defaults to PHDIM).
+ */
+
 template<std::size_t PHDIM, std::size_t INTRINSIC_DIM=PHDIM>
 class InitialConditions {
 
@@ -21,45 +33,40 @@ public:
     using Values = typename Traits::Values;
     using Indexes = typename Traits::Indexes;
 
+    /**
+     * @brief Default constructor for InitialConditions.
+     */
     InitialConditions() = default;
 
+    /**
+     * @brief Solves the heat equation using a sparse linear solver.
+     * 
+     * This method computes the solution for a heat equation by solving a linear system of equations,
+     * taking into account boundary conditions provided as input. The solution is obtained using
+     * LU decomposition for sparse matrices.
+     * 
+     * @param stiffnessMatrix The global stiffness matrix of the mesh.
+     * @param Integrals Vector of integral values for each node.
+     * @param forcingTerm Vector representing the forcing term in the heat equation.
+     * @param boundaryIndices Indices of the nodes where boundary conditions are applied.
+     * @return The computed values of the solution at each node.
+     */
     Values HeatEquation(const Eigen::SparseMatrix<double>& stiffnessMatrix, 
                         const Values& Integrals,
                         const Values& forcingTerm,
                         const Indexes& boundaryIndices) const {
-        // Eigen::SparseMatrix<double> modifiedStiffnessMatrix = stiffnessMatrix;
 
         // Right-hand side vector of the equation, all ones
         Values rhs = forcingTerm * Integrals;
 
         // Apply null Dirichlet boundary conditions
         for (int idx : boundaryIndices) {
-            // // Zero out the row
-            // for (Eigen::SparseMatrix<double>::InnerIterator it(modifiedStiffnessMatrix, idx); it; ++it) {
-            //     it.valueRef() = 0.0;
-            // }
-
-            // // Zero out the column
-            // for (int k = 0; k < modifiedStiffnessMatrix.outerSize(); ++k) {
-            //     for (Eigen::SparseMatrix<double>::InnerIterator it(modifiedStiffnessMatrix, k); it; ++it) {
-            //         if (it.row() == idx) {
-            //             it.valueRef() = 0.0;
-            //         }
-            //     }
-            // }
-
-            // // Set diagonal element to 1
-            // modifiedStiffnessMatrix.coeffRef(idx, idx) = 1.0;
-
-            // Set corresponding rhs element to 0
             rhs[idx] = 0.0 * 1e40;
         }
 
         // Compute the solution
-        // Eigen::ConjugateGradient<Eigen::SparseMatrix<double>, Eigen::Lower|Eigen::Upper> solver;
         Eigen::SparseLU<Eigen::SparseMatrix<double>> solver;
 
-        // Values solution = solver.compute(modifiedStiffnessMatrix).solve(rhs);
         solver.compute(stiffnessMatrix);
         Values solution = solver.solve(rhs);
 
@@ -68,7 +75,6 @@ public:
     }
 
 private:
-    // You can add other private members here if needed
 
 };
 

@@ -15,6 +15,20 @@
 #include <mpi.h>
 
 //  ================== MAIN ==================
+/**
+ * @brief Entry point of the program.
+ * 
+ * Initializes MPI and performs the following steps:
+ * 1. Reads input mesh file and boundary conditions.
+ * 2. Sets up mesh and computes global matrices.
+ * 3. Solves initial conditions using the heat equation.
+ * 4. Broadcasts necessary data to all MPI processes.
+ * 5. Initializes and executes the chosen Eikonal solver.
+ * 
+ * @param argc Number of command-line arguments.
+ * @param argv Array of command-line arguments.
+ * @return int Exit status of the program.
+ */
 int main(int argc, char **argv) {
 
     // Initialize MPI
@@ -147,7 +161,7 @@ int main(int argc, char **argv) {
     int w_size = 0;
 
     const std::string bc = choiceString;
-    const std::string ic="heat_anisotropic";
+    const std::string ic="heat";
     std::string outputFilePath = mesh_file.substr(0, mesh_file.find_last_of('.')) + "/initial_conditions/" + bc + "_" + ic + "_ic.vtk";
 
 
@@ -220,8 +234,6 @@ int main(int argc, char **argv) {
         MPI_Bcast(rows.data(), tripletSize, MPI_INT, 0, MPI_COMM_WORLD);
         MPI_Bcast(cols.data(), tripletSize, MPI_INT, 0, MPI_COMM_WORLD);
         MPI_Bcast(values.data(), tripletSize, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-        // std::cout << "Rank " << rank << "stiffness" << stiffnessMatrix << std::endl;
-        // std::cout << "Rank " << rank << "values stiffness" << values.data() << std::endl;
     } else {
         int tripletSize;
         MPI_Bcast(&tripletSize, 1, MPI_INT, 0, MPI_COMM_WORLD);
@@ -239,8 +251,6 @@ int main(int argc, char **argv) {
             tripletList[i] = Eigen::Triplet<double>(rows[i], cols[i], values[i]);
         }
         stiffnessMatrix.setFromTriplets(tripletList.begin(), tripletList.end());
-        // std::cout << "Rank " << rank << "stiffness" << stiffnessMatrix << std::endl;
-        // std::cout << "Rank " << rank << "values stiffness" << values.data() << std::endl;
     }
 
     // Broadcasting reaction matrix
@@ -288,11 +298,6 @@ int main(int argc, char **argv) {
         MPI_Bcast(&flatSize, 1, MPI_INT, 0, MPI_COMM_WORLD);
         MPI_Bcast(flatGradientCoeff.data(), flatSize, MPI_DOUBLE, 0, MPI_COMM_WORLD);
         
-        // std::cout << "Rank" << rank << " mesh.gradientCoeff: ";
-        // for (const auto& elem : mesh.gradientCoeff) {
-        //     std::cout << elem << std::endl;
-        // }
-   
     } else {
         int flatSize;
         MPI_Bcast(&flatSize, 1, MPI_INT, 0, MPI_COMM_WORLD);
@@ -310,10 +315,6 @@ int main(int argc, char **argv) {
             }
             mesh.gradientCoeff.push_back(tempMatrix);  // Assign the filled matrix to the vector
         }
-        // std::cout << "Rank" << rank << " mesh.gradientCoeff: ";
-        // for (const auto& elem : mesh.gradientCoeff) {
-        //     std::cout << elem << std::endl;
-        // }
     }
 
     // Flatten localStiffnessMatrices (std::vector<Eigen::Matrix<double, PHDIM+1, PHDIM+1>>)
@@ -344,10 +345,7 @@ int main(int argc, char **argv) {
             mesh.localStiffnessMatrices.push_back(tempMatrix);  // Assign the filled matrix to the vector
         }
     }
-    // std::cout << "Rank" << rank << " mesh.localStiffnessMatrices: ";
-    // for (const auto& elem : mesh.localStiffnessMatrices) {
-    //     std::cout << elem << std::endl;
-    // }
+
 
     // Flatten localReactionMatrices (std::vector<std::vector<std::vector<Eigen::Matrix<double, PHDIM, 1>>>>)
     if (rank == 0) {
@@ -364,19 +362,6 @@ int main(int argc, char **argv) {
         int flatSize = flatLocalReactionMatrices.size();
         MPI_Bcast(&flatSize, 1, MPI_INT, 0, MPI_COMM_WORLD);
         MPI_Bcast(flatLocalReactionMatrices.data(), flatSize, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-
-        // std::cout << "Rank" << rank << std::endl;
-        // for (const auto& vec2D : mesh.localReactionMatrices) {
-        //     std::cout << "{ ";
-        //     for (const auto& vec1D : vec2D) {
-        //         std::cout << "{ ";
-        //         for (const auto& elem : vec1D) {
-        //             std::cout << elem << " ";
-        //         }
-        //         std::cout << "} ";
-        //     }
-        //     std::cout << "}" << std::endl;
-        // }
 
     } else {
         int flatSize;
@@ -404,19 +389,6 @@ int main(int argc, char **argv) {
             }
             mesh.localReactionMatrices.push_back(tempTensor);
         }
-
-        // std::cout << "Rank" << rank << std::endl;
-        // for (const auto& vec2D : mesh.localReactionMatrices) {
-        //     std::cout << "{ ";
-        //     for (const auto& vec1D : vec2D) {
-        //         std::cout << "{ ";
-        //         for (const auto& elem : vec1D) {
-        //             std::cout << elem << " ";
-        //         }
-        //         std::cout << "} ";
-        //     }
-        //     std::cout << "}" << std::endl;
-        // }
     }
 
     //  ================== SOLVER AND EIKONAL CLASS ==================
@@ -452,7 +424,7 @@ int main(int argc, char **argv) {
     std::string num_ranks_str = std::to_string(size);
     outputFilePath = mesh_file.substr(0, mesh_file.find_last_of('.')) + "/metrics/np" + num_ranks_str + '_' + bc + "_" + ic + itMethString + ".txt";
     std::ofstream metricsFile(outputFilePath); // Open file for writing metrics
-    const std::string HEADER = "Iteration max_z min_z max_grad min_grad";
+    const std::string HEADER = "Iteration norm_z max_grad min_grad";
     if (rank == 0) {
         // Write header to file
         metricsFile << HEADER << '\n';
@@ -475,8 +447,7 @@ int main(int argc, char **argv) {
             
             metricsFile << std::get<0>(metrics) << ' '
                         << std::get<1>(metrics) << ' '
-                        << std::get<2>(metrics) << ' '
-                        << std::get<3>(metrics) << '\n';
+                        << std::get<2>(metrics) << '\n';
                         
             if (converged) {
                 std::cout << "Solution converged after " << iter + 1 << " iterations." << std::endl;

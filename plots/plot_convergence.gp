@@ -20,16 +20,13 @@ set output 'convergence_z_heat.png'
 set title "Convergence plot for increment"
 set xlabel "Iterations"
 set ylabel "Increment"
-set yrange [-0.003:0.003]
+set yrange [*:0.1]
 set grid
 
 # First plot: iterations vs max_z and min_z
-plot file1 using 1:2 with linespoints lt 1 pt 7 lc rgb "red" title sprintf("%s - max", title1), \
-     file1 using 1:3 with linespoints lt 1 pt 5 lc rgb "red" title sprintf("%s - min", title1), \
-     file2 using 1:2 with linespoints lt 2 pt 7 lc rgb "blue" title sprintf("%s - max", title2), \
-     file2 using 1:3 with linespoints lt 2 pt 5 lc rgb "blue" title sprintf("%s - min", title2), \
-     file3 using 1:2 with linespoints lt 3 pt 7 lc rgb "green" title sprintf("%s - max", title3), \
-     file3 using 1:3 with linespoints lt 3 pt 5 lc rgb "green" title sprintf("%s - min", title3), \
+plot file1 using 1:2 with linespoints lt 1 pt 7 lc rgb "red" title title1, \
+     file2 using 1:2 with linespoints lt 2 pt 7 lc rgb "blue" title title2, \
+     file3 using 1:2 with linespoints lt 3 pt 7 lc rgb "green" title title3, \
      0 with lines ls 1 notitle # Add dashed line at y = 0
 
 
@@ -41,12 +38,12 @@ set ylabel "Gradient norms"
 set yrange [0.8:1.2]
 set grid
 
-plot file1 using 1:4 with linespoints lt 1 pt 7 lc rgb "red" title sprintf("%s - max", title1), \
-     file1 using 1:5 with linespoints lt 1 pt 5 lc rgb "red" title sprintf("%s - min", title1), \
-     file2 using 1:4 with linespoints lt 2 pt 7 lc rgb "blue" title sprintf("%s - max", title2), \
-     file2 using 1:5 with linespoints lt 2 pt 5 lc rgb "blue" title sprintf("%s - min", title2), \
-     file3 using 1:4 with linespoints lt 3 pt 7 lc rgb "green" title sprintf("%s - max", title3), \
-     file3 using 1:5 with linespoints lt 3 pt 5 lc rgb "green" title sprintf("%s - min", title3), \
+plot file1 using 1:3 with linespoints lt 1 pt 7 lc rgb "red" title sprintf("%s - max", title1), \
+     file1 using 1:4 with linespoints lt 1 pt 5 lc rgb "red" title sprintf("%s - min", title1), \
+     file2 using 1:3 with linespoints lt 2 pt 7 lc rgb "blue" title sprintf("%s - max", title2), \
+     file2 using 1:4 with linespoints lt 2 pt 5 lc rgb "blue" title sprintf("%s - min", title2), \
+     file3 using 1:3 with linespoints lt 3 pt 7 lc rgb "green" title sprintf("%s - max", title3), \
+     file3 using 1:4 with linespoints lt 3 pt 5 lc rgb "green" title sprintf("%s - min", title3), \
      1 with lines ls 1 notitle # Add dashed line at y = 1
 
 set output

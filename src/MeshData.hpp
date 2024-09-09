@@ -342,7 +342,6 @@ public:
             // Compute integrals and update global matrices
             linearFiniteElement.computeLocalIntegral();
             linearFiniteElement.updateGlobalIntegrals(globalIntegrals);
-            // std::cout << "Global integrals: " << std::endl << globalIntegrals << std::endl;
 
             // Compute stiffness and update global stiffness matrix
             linearFiniteElement.computeLocalStiffness();

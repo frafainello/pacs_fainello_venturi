@@ -19,14 +19,12 @@ set output 'convergence_z_faceIC.png'
 set title "Convergence plot for increment"
 set xlabel "Iterations"
 set ylabel "Increment"
-set yrange [-0.003:0.003]
+set yrange [*:0.1]
 set grid
 
 # First plot: iterations vs max_z and min_z
-plot file1 using 1:2 with linespoints lt 1 pt 7 lc rgb "red" title sprintf("%s - max", title1), \
-     file1 using 1:3 with linespoints lt 1 pt 5 lc rgb "red" title sprintf("%s - min", title1), \
-     file2 using 1:2 with linespoints lt 2 pt 7 lc rgb "blue" title sprintf("%s - max", title2), \
-     file2 using 1:3 with linespoints lt 2 pt 5 lc rgb "blue" title sprintf("%s - min", title2), \
+plot file1 using 1:2 with linespoints lt 1 pt 7 lc rgb "red" title title1, \
+     file2 using 1:2 with linespoints lt 2 pt 7 lc rgb "blue" title title2, \
      0 with lines ls 1 notitle # Add dashed line at y = 0
 
 
@@ -38,10 +36,10 @@ set ylabel "Gradient norms"
 set yrange [0.5:1.3]
 set grid
 
-plot file1 using 1:4 with linespoints lt 1 pt 7 lc rgb "red" title sprintf("%s - max", title1), \
-     file1 using 1:5 with linespoints lt 1 pt 5 lc rgb "red" title sprintf("%s - min", title1), \
-     file2 using 1:4 with linespoints lt 2 pt 7 lc rgb "blue" title sprintf("%s - max", title2), \
-     file2 using 1:5 with linespoints lt 2 pt 5 lc rgb "blue" title sprintf("%s - min", title2), \
+plot file1 using 1:3 with linespoints lt 1 pt 7 lc rgb "red" title sprintf("%s - max", title1), \
+     file1 using 1:4 with linespoints lt 1 pt 5 lc rgb "red" title sprintf("%s - min", title1), \
+     file2 using 1:3 with linespoints lt 2 pt 7 lc rgb "blue" title sprintf("%s - max", title2), \
+     file2 using 1:4 with linespoints lt 2 pt 5 lc rgb "blue" title sprintf("%s - min", title2), \
      1 with lines ls 1 notitle # Add dashed line at y = 1
     
 set output
