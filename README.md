@@ -59,28 +59,14 @@ To set up and run the solver, follow these steps:
      cd pacs_fainello_venturi
      ```
 
-4. **Load Necessary Modules:**
-   - Before proceeding with the installation, load the required modules by running:
-     ```bash
-     chmod +x scripts/load_modules.sh
-     scripts/load_modules.sh
-     ```
-
-5. **Installation:**
-   - Run:
-     ```bash
-     make install
-     ```
-   - This command installs the necessary dependencies and prepares the environment.
-
-6. **Compilation:**
+4. **Compilation:**
    - Compile the code by running:
      ```bash
      make
      ```
    - This will generate the executable files needed to run simulations.
 
-7. **Execution**
+5. **Execution**
 
    a. **Prepare the Environment**:  
       Make sure that all the necessary libraries and dependencies are installed. The simulation is designed to be run in a parallel computing environment using **MPI**.
@@ -121,20 +107,20 @@ To set up and run the solver, follow these steps:
 
       If no input is provided, **Option 1 (Standard Eikonal)** is selected by default.
 
-8. **Generating Plots:**
+6. **Generating Plots:**
    - To generate the plots you will find in the report, run:
      ```bash
      cd plots
      ./plots.sh
      ```    
 
-9. **Generating Documentation:**
+7. **Generating Documentation:**
    - To generate documentation, run:
      ```bash
      make docs
      ```
 
-10. **Cleaning the Build:**
+8. **Cleaning the Build:**
    - To clean up the build files, use:
      ```bash
      make clean
