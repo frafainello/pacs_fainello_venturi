@@ -80,7 +80,7 @@ To set up and run the solver, follow these steps:
      ```
    - This will generate the executable files needed to run simulations.
 
-## 7. **Execution**
+7. **Execution**
 
    a. **Prepare the Environment**:  
       Make sure that all the necessary libraries and dependencies are installed. The simulation is designed to be run in a parallel computing environment using **MPI**.
