@@ -18,27 +18,8 @@ PACS_MUPARSER_DIR = $(PACS_EXTRAS_DIR)/muparser/include/
 PACS_JSON_DIR = $(PACS_EXTRAS_DIR)/json/include/nlohmann/
 PACS_LIB_DIR = $(PACS_ROOT)/Examples/lib
 
-# Optional include directories (conditionally added)
-ifneq (,$(shell grep -rl '#include "json.hpp"' $(SRC_DIR)))
-CXXFLAGS += -I$(INCLUDE_DIR)/nlohmann
-endif
-
 ifneq (,$(shell grep -rl '#include <Eigen/' $(SRC_DIR)))
 CXXFLAGS += -I${mkEigenInc}
-endif
-
-ifneq (,$(shell grep -rl '#include "GetPot"' $(SRC_DIR)))
-CXXFLAGS += -I$(INCLUDE_DIR)
-endif
-
-ifneq (,$(shell grep -rl '#include "boost/' $(SRC_DIR)))
-CXXFLAGS += -I${mkBoostInc}
-LDFLAGS += -L${mkBoostLib} -lboost_iostreams -lboost_system -lboost_filesystem
-endif
-
-ifneq (,$(shell grep -rl '"utils/muparser_fun.hpp"' $(SRC_DIR)))
-CXXFLAGS += -I$(INCLUDE_DIR)
-LDFLAGS += -L$(LIB_DIR) -lmuparser
 endif
 
 # Source files
@@ -73,21 +54,6 @@ clean:
 	find $(INCLUDE_DIR) -type f ! -name '.gitignore' -delete
 	find $(INCLUDE_DIR) -type d -empty -delete
 	rm -rf $(LIB_DIR)/*
-
-# Install headers, libraries, and run script
-install:
-	# Copy GetPot and gnuplot headers
-	cp $(PACS_ROOT)/Examples/src/Utilities/GetPot $(INCLUDE_DIR)/
-	cp $(PACS_ROOT)/Examples/src/Utilities/gnuplot-iostream.hpp $(INCLUDE_DIR)/
-	# Copy json headers
-	cp -r $(PACS_JSON_DIR) $(INCLUDE_DIR)/
-	# Copy muparser headers
-	cp $(PACS_MUPARSER_DIR)*.h $(INCLUDE_DIR)/
-	# Run install_PACS.sh for muparser
-	cd $(PACS_EXTRAS_DIR)/muparser && ./install_PACS.sh && cd -
-	# Copy muparser shared libraries
-	mkdir -p $(LIB_DIR)
-	cp $(PACS_LIB_DIR)/libmuparser.so* $(LIB_DIR)/
 
 # Phony targets
 .PHONY: all clean docs install
