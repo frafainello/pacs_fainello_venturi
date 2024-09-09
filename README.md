@@ -80,7 +80,7 @@ To set up and run the solver, follow these steps:
      ```
    - This will generate the executable files needed to run simulations.
 
-## 7. **Execution**
+7. **Execution**
 
 ### Steps to Run the Simulation:
 
