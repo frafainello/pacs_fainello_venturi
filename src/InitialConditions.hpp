@@ -74,6 +74,29 @@ public:
         return solution;
     }
 
+    /**
+     * @brief Returns initial solution constant = 1, except for = 0 where Dirichlet BC are applied
+     * 
+     * 
+     * @param numNodes Length of required vector
+     * @param boundaryIndices Indices of the nodes where boundary conditions are applied.
+     * @return The computed values of the solution at each node.
+     */
+    Values likeBC(const int numNodes,
+                  const Indexes& boundaryIndices) const {
+
+        Values initial_conditions = Values::Constant(numNodes, 1.0);
+        // Set specified indices to 0.0
+        for (long int index : boundaryIndices) {
+            if (index >= 0 && index < numNodes) {  // Ensure index is within bounds
+                initial_conditions(static_cast<int>(index)) = 0.0;
+            }
+        }
+
+        // Return the computed values
+        return initial_conditions;
+    }
+
 private:
 
 };

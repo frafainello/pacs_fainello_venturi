@@ -178,19 +178,11 @@ int main(int argc, char **argv) {
                                                                     forcingTerm, 
                                                                     mesh.getBoundaryNodes());
         
-        // Random
-        // std::srand(42);
-        // Values initial_conditions = Values(mesh.getNumNodes());
-        // initial_conditions.setRandom();
         
         // "Like" BC
-        // Values initial_conditions = Values::Constant(mesh.getNumNodes(), 1.0);
-        // // Set specified indices to 0.0
-        // for (long int index : mesh.getBoundaryNodes()) {
-        //     if (index >= 0 && index < mesh.getNumNodes()) {  // Ensure index is within bounds
-        //         initial_conditions(static_cast<int>(index)) = 0.0;
-        //     }
-        // }
+        // Values initial_conditions = initialConditions.HeatEquation(mesh.getNumNodes(),
+                                                                    // mesh.getBoundaryNodes());
+        
 
 
         mesh.addScalarField(initial_conditions, mesh_file, outputFilePath);
