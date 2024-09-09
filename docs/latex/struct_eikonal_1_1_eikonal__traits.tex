@@ -1,0 +1,98 @@
+\hypertarget{struct_eikonal_1_1_eikonal__traits}{}\doxysection{Eikonal\+::Eikonal\+\_\+traits$<$ P\+H\+D\+IM, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM $>$ Struct Template Reference}
+\label{struct_eikonal_1_1_eikonal__traits}\index{Eikonal::Eikonal\_traits$<$ PHDIM, INTRINSIC\_DIM $>$@{Eikonal::Eikonal\_traits$<$ PHDIM, INTRINSIC\_DIM $>$}}
+
+
+Traits for the Eikonal equation.  
+
+
+
+
+{\ttfamily \#include $<$Eikonal\+\_\+traits.\+hpp$>$}
+
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{struct_eikonal_1_1_eikonal__traits_a9e09a19a6eb361cd966698099ada27ec}\label{struct_eikonal_1_1_eikonal__traits_a9e09a19a6eb361cd966698099ada27ec}} 
+using \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_a9e09a19a6eb361cd966698099ada27ec}{Index}} = long int
+\begin{DoxyCompactList}\small\item\em Index type used to address indexes. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{struct_eikonal_1_1_eikonal__traits_ac57339576b8924742a0b8c5ea70731ce}\label{struct_eikonal_1_1_eikonal__traits_ac57339576b8924742a0b8c5ea70731ce}} 
+using \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_ac57339576b8924742a0b8c5ea70731ce}{Indexes}} = std\+::vector$<$ \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_a9e09a19a6eb361cd966698099ada27ec}{Index}} $>$
+\begin{DoxyCompactList}\small\item\em A generic vector of indexes. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{struct_eikonal_1_1_eikonal__traits_a549508b9da692c2831c85c76fce6711f}\label{struct_eikonal_1_1_eikonal__traits_a549508b9da692c2831c85c76fce6711f}} 
+using \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_a549508b9da692c2831c85c76fce6711f}{Node}} = Eigen\+::\+Matrix$<$ double, P\+H\+D\+IM, 1, Eigen\+::\+Col\+Major $>$
+\begin{DoxyCompactList}\small\item\em The array storing the coordinate of a node ~\newline
+ \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{struct_eikonal_1_1_eikonal__traits_a030f2b2ca768b68ed56c06983c573240}\label{struct_eikonal_1_1_eikonal__traits_a030f2b2ca768b68ed56c06983c573240}} 
+using \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_a030f2b2ca768b68ed56c06983c573240}{Nodes}} = Eigen\+::\+Matrix$<$ double, P\+H\+D\+IM, Eigen\+::\+Dynamic, Eigen\+::\+Col\+Major $>$
+\begin{DoxyCompactList}\small\item\em The array storing the coordinates of the nodes. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{struct_eikonal_1_1_eikonal__traits_a6a7bd3509ab3d3b9d4c935f57b405050}\label{struct_eikonal_1_1_eikonal__traits_a6a7bd3509ab3d3b9d4c935f57b405050}} 
+using \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_a6a7bd3509ab3d3b9d4c935f57b405050}{Values}} = Eigen\+::\+Matrix$<$ double, Eigen\+::\+Dynamic, 1 $>$
+\begin{DoxyCompactList}\small\item\em The array storing values at the the nodes. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{struct_eikonal_1_1_eikonal__traits_ae938549407f21c243e6f806dbd46e1a9}\label{struct_eikonal_1_1_eikonal__traits_ae938549407f21c243e6f806dbd46e1a9}} 
+{\footnotesize template$<$class T $>$ }\\using {\bfseries allocator} = std\+::allocator$<$ T $>$
+\item 
+\mbox{\Hypertarget{struct_eikonal_1_1_eikonal__traits_a82b9cb4a479b63c0b3bf50df3108fb6e}\label{struct_eikonal_1_1_eikonal__traits_a82b9cb4a479b63c0b3bf50df3108fb6e}} 
+using \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_a82b9cb4a479b63c0b3bf50df3108fb6e}{AnisotropyM}} = Eigen\+::\+Matrix$<$ double, P\+H\+D\+IM, P\+H\+D\+IM $>$
+\begin{DoxyCompactList}\small\item\em The array storing the anisotropy matrix M. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{struct_eikonal_1_1_eikonal__traits_af29597b5c9318b9d74a73daf15ace68d}\label{struct_eikonal_1_1_eikonal__traits_af29597b5c9318b9d74a73daf15ace68d}} 
+using \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_af29597b5c9318b9d74a73daf15ace68d}{Element}} = Eigen\+::\+Matrix$<$ \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_a9e09a19a6eb361cd966698099ada27ec}{Index}}, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM+1, 1 $>$
+\begin{DoxyCompactList}\small\item\em The array storing the indexes of the nodes of an element. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{struct_eikonal_1_1_eikonal__traits_a0946abfa91c0bdb6c702231c02ea8413}\label{struct_eikonal_1_1_eikonal__traits_a0946abfa91c0bdb6c702231c02ea8413}} 
+using {\bfseries Elements} = Eigen\+::\+Matrix$<$ \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_a9e09a19a6eb361cd966698099ada27ec}{Index}}, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM+1, Eigen\+::\+Dynamic $>$
+\item 
+\mbox{\Hypertarget{struct_eikonal_1_1_eikonal__traits_a6ef5d364c278ad9f80c90618e438a35f}\label{struct_eikonal_1_1_eikonal__traits_a6ef5d364c278ad9f80c90618e438a35f}} 
+using \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_a6ef5d364c278ad9f80c90618e438a35f}{Ridges}} = Eigen\+::\+Matrix$<$ \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_a9e09a19a6eb361cd966698099ada27ec}{Index}}, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM-\/1, Eigen\+::\+Dynamic $>$
+\begin{DoxyCompactList}\small\item\em The array storing the indexes of the nodes describing an elements of co-\/dimension 2\+: edges of the mesh if intrinsic dimension is 3, not used if intrinsic dimension is 2. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{struct_eikonal_1_1_eikonal__traits_a9969a958089ae98cb24c425b94a5231e}\label{struct_eikonal_1_1_eikonal__traits_a9969a958089ae98cb24c425b94a5231e}} 
+using \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_a9969a958089ae98cb24c425b94a5231e}{Elements\+\_\+ridges}} = Eigen\+::\+Matrix$<$ \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_a9e09a19a6eb361cd966698099ada27ec}{Index}}, 3 $\ast$(I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM -\/ 1), Eigen\+::\+Dynamic $>$
+\begin{DoxyCompactList}\small\item\em The array storing the indexes of the ridges of the elements of the mesh\+: 6 if intrinsic dimension is 3, not used if intrinsic dimension is 2. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{struct_eikonal_1_1_eikonal__traits_a0c2ece175fe46f5451de4b1cffa6ad94}\label{struct_eikonal_1_1_eikonal__traits_a0c2ece175fe46f5451de4b1cffa6ad94}} 
+using \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_a0c2ece175fe46f5451de4b1cffa6ad94}{Faces}} = Eigen\+::\+Matrix$<$ \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_a9e09a19a6eb361cd966698099ada27ec}{Index}}, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM, Eigen\+::\+Dynamic $>$
+\begin{DoxyCompactList}\small\item\em The array storing the indexes of the nodes describing an element of codimension 1\+: faces if implicit dimension is 3, edges if intrinsic dimension is 2. \end{DoxyCompactList}\item 
+using \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_a87867896036ab3cdef71676bd70f9194}{Elements\+\_\+faces}} = Eigen\+::\+Matrix$<$ \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_a9e09a19a6eb361cd966698099ada27ec}{Index}}, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM+1, Eigen\+::\+Dynamic $>$
+\item 
+\mbox{\Hypertarget{struct_eikonal_1_1_eikonal__traits_abd096da81ba58f03b8548a43bc7d192d}\label{struct_eikonal_1_1_eikonal__traits_abd096da81ba58f03b8548a43bc7d192d}} 
+using \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_abd096da81ba58f03b8548a43bc7d192d}{Vector}} = Eigen\+::\+Matrix$<$ \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_a9e09a19a6eb361cd966698099ada27ec}{Index}}, Eigen\+::\+Dynamic, 1 $>$
+\begin{DoxyCompactList}\small\item\em A generic vector of double. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{struct_eikonal_1_1_eikonal__traits_a1de2646668cbb797cd15b03edf43f434}\label{struct_eikonal_1_1_eikonal__traits_a1de2646668cbb797cd15b03edf43f434}} 
+using \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_a1de2646668cbb797cd15b03edf43f434}{List\+Of\+Vectors}} = std\+::vector$<$ \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_abd096da81ba58f03b8548a43bc7d192d}{Vector}} $>$
+\begin{DoxyCompactList}\small\item\em A list of vectors. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{struct_eikonal_1_1_eikonal__traits_a56d2a23a7b9b02ed229b64fed03725c6}\label{struct_eikonal_1_1_eikonal__traits_a56d2a23a7b9b02ed229b64fed03725c6}} 
+using \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_a56d2a23a7b9b02ed229b64fed03725c6}{set\+Data}} = std\+::vector$<$ bool $>$
+\begin{DoxyCompactList}\small\item\em A vector of boolean used as a mask. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{struct_eikonal_1_1_eikonal__traits_a95ae8a3f7898af4abc026d2eb94e9ef9}\label{struct_eikonal_1_1_eikonal__traits_a95ae8a3f7898af4abc026d2eb94e9ef9}} 
+using \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_a95ae8a3f7898af4abc026d2eb94e9ef9}{Boolean\+Matrix}} = Eigen\+::\+Sparse\+Matrix$<$ long int, Eigen\+::\+Col\+Major $>$
+\begin{DoxyCompactList}\small\item\em A sparse matrix of boolean. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$std\+::size\+\_\+t P\+H\+D\+IM, std\+::size\+\_\+t I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM = P\+H\+D\+IM$>$\newline
+struct Eikonal\+::\+Eikonal\+\_\+traits$<$ P\+H\+D\+I\+M, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+I\+M $>$}
+
+Traits for the Eikonal equation. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em P\+H\+D\+IM} & physical dimension of the domain \\
+\hline
+{\em I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM} & intrinsic dimension of the domain\\
+\hline
+\end{DoxyTemplParams}
+The traits are used to define the types used in the Eikonal equation \begin{DoxyNote}{Note}
+The traits are defined for a physical dimension P\+H\+D\+IM and an intrinsic dimension I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM The intrinsic dimension is the dimension of the manifold on which the Eikonal equation is solved. The physical dimension is the dimension of the embedding space. The intrinsic dimension is always less or equal to the physical dimension and, by default is equal to the physical dimension. Intrinsic dimension must be $>$1 
+\end{DoxyNote}
+
+
+\doxysubsection{Member Typedef Documentation}
+\mbox{\Hypertarget{struct_eikonal_1_1_eikonal__traits_a87867896036ab3cdef71676bd70f9194}\label{struct_eikonal_1_1_eikonal__traits_a87867896036ab3cdef71676bd70f9194}} 
+\index{Eikonal::Eikonal\_traits$<$ PHDIM, INTRINSIC\_DIM $>$@{Eikonal::Eikonal\_traits$<$ PHDIM, INTRINSIC\_DIM $>$}!Elements\_faces@{Elements\_faces}}
+\index{Elements\_faces@{Elements\_faces}!Eikonal::Eikonal\_traits$<$ PHDIM, INTRINSIC\_DIM $>$@{Eikonal::Eikonal\_traits$<$ PHDIM, INTRINSIC\_DIM $>$}}
+\doxysubsubsection{\texorpdfstring{Elements\_faces}{Elements\_faces}}
+{\footnotesize\ttfamily template$<$std\+::size\+\_\+t P\+H\+D\+IM, std\+::size\+\_\+t I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM = P\+H\+D\+IM$>$ \\
+using \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits}{Eikonal\+::\+Eikonal\+\_\+traits}}$<$ P\+H\+D\+IM, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM $>$\+::\mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_a87867896036ab3cdef71676bd70f9194}{Elements\+\_\+faces}} =  Eigen\+::\+Matrix$<$\mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_a9e09a19a6eb361cd966698099ada27ec}{Index}}, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM+1, Eigen\+::\+Dynamic$>$}
+
+The array storing the indexes of the faces (elements of codimension 1) of the elements of the mesh\+: 4 per element if intrinsic dimension is 3, 3 if intrinsic dimension is 2 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/Eikonal\+\_\+traits.\+hpp\end{DoxyCompactItemize}

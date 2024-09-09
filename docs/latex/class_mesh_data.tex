@@ -1,0 +1,306 @@
+\hypertarget{class_mesh_data}{}\doxysection{Mesh\+Data$<$ P\+H\+D\+IM, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM $>$ Class Template Reference}
+\label{class_mesh_data}\index{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$@{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$}}
+
+
+A class to represent mesh data in finite element analysis.  
+
+
+
+
+{\ttfamily \#include $<$Mesh\+Data.\+hpp$>$}
+
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_mesh_data_a79cded77e1a7860ae4d5956cdccdb8fc}\label{class_mesh_data_a79cded77e1a7860ae4d5956cdccdb8fc}} 
+using {\bfseries Traits} = \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits}{Eikonal\+::\+Eikonal\+\_\+traits}}$<$ P\+H\+D\+IM, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM $>$
+\item 
+\mbox{\Hypertarget{class_mesh_data_ab28e312cffaef8f303e6d8af0dbb03b1}\label{class_mesh_data_ab28e312cffaef8f303e6d8af0dbb03b1}} 
+using {\bfseries Index} = typename \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_a9e09a19a6eb361cd966698099ada27ec}{Traits\+::\+Index}}
+\item 
+\mbox{\Hypertarget{class_mesh_data_a8523a92c39866e320c5f6e6de1c76a8f}\label{class_mesh_data_a8523a92c39866e320c5f6e6de1c76a8f}} 
+using {\bfseries Indexes} = typename \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_ac57339576b8924742a0b8c5ea70731ce}{Traits\+::\+Indexes}}
+\item 
+\mbox{\Hypertarget{class_mesh_data_a596e95c559fc0840ec61eb5836c66398}\label{class_mesh_data_a596e95c559fc0840ec61eb5836c66398}} 
+using {\bfseries Nodes} = typename \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_a030f2b2ca768b68ed56c06983c573240}{Traits\+::\+Nodes}}
+\item 
+\mbox{\Hypertarget{class_mesh_data_af1af4ff5bbdcab58dd90530f7731bd96}\label{class_mesh_data_af1af4ff5bbdcab58dd90530f7731bd96}} 
+using {\bfseries Elements} = typename Traits\+::\+Elements
+\item 
+\mbox{\Hypertarget{class_mesh_data_a1d908404d4939e81593dd21edacf5511}\label{class_mesh_data_a1d908404d4939e81593dd21edacf5511}} 
+using {\bfseries Values} = typename \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_a6a7bd3509ab3d3b9d4c935f57b405050}{Traits\+::\+Values}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_mesh_data_ab204664b543c5ece5564303d1dfd870f}\label{class_mesh_data_ab204664b543c5ece5564303d1dfd870f}} 
+\mbox{\hyperlink{class_mesh_data_ab204664b543c5ece5564303d1dfd870f}{Mesh\+Data}} ()
+\begin{DoxyCompactList}\small\item\em Default constructor initializing the mesh data. \end{DoxyCompactList}\item 
+Nodes \mbox{\hyperlink{class_mesh_data_a300e38df3f46799a9f8e8fa9e7885302}{get\+Nodes}} () const
+\begin{DoxyCompactList}\small\item\em Gets the nodes of the mesh. \end{DoxyCompactList}\item 
+const Elements \& \mbox{\hyperlink{class_mesh_data_a071ce006d62dc54fa6d8c382741e7de0}{get\+Connectivity}} () const
+\begin{DoxyCompactList}\small\item\em Gets the element connectivity of the mesh. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{class_mesh_data_adb6b85e8a2dde84e16055b6b5082b9d5}{get\+Num\+Elements}} () const
+\begin{DoxyCompactList}\small\item\em Gets the number of elements in the mesh. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{class_mesh_data_a648d26edb13dc57efe678690aded0f52}{get\+Num\+Nodes}} () const
+\begin{DoxyCompactList}\small\item\em Gets the number of nodes in the mesh. \end{DoxyCompactList}\item 
+const Indexes \& \mbox{\hyperlink{class_mesh_data_a5368cf602de227a11fba6dcdcd3b25fc}{get\+Boundary\+Nodes}} () const
+\begin{DoxyCompactList}\small\item\em Gets the indices of the boundary nodes. \end{DoxyCompactList}\item 
+const std\+::vector$<$ Eigen\+::\+Matrix$<$ double, P\+H\+D\+IM, P\+H\+D\+IM $>$ $>$ \& \mbox{\hyperlink{class_mesh_data_af2819353ea4a0bcac11491b54f3684ac}{get\+Gradient\+Coeff}} () const
+\begin{DoxyCompactList}\small\item\em Gets the gradient coefficient matrices. \end{DoxyCompactList}\item 
+const std\+::vector$<$ Eigen\+::\+Matrix$<$ double, P\+H\+D\+IM+1, P\+H\+D\+IM+1 $>$ $>$ \& \mbox{\hyperlink{class_mesh_data_a8a005f483f0c594058c05b97b921311e}{get\+Local\+Stiffness\+Matrices}} () const
+\begin{DoxyCompactList}\small\item\em Gets the local stiffness matrices. \end{DoxyCompactList}\item 
+const std\+::vector$<$ std\+::vector$<$ std\+::vector$<$ Eigen\+::\+Matrix$<$ double, P\+H\+D\+IM, 1 $>$ $>$ $>$ $>$ \& \mbox{\hyperlink{class_mesh_data_a8bacf3cebbc9f176913ec6275a0ed0b7}{get\+Local\+Reaction\+Matrices}} () const
+\begin{DoxyCompactList}\small\item\em Gets the local reaction matrices. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_mesh_data_abde9712764cc285c9986078a7b16864e}{read\+Mesh}} (const std\+::string \&filename)
+\begin{DoxyCompactList}\small\item\em Reads mesh data from a file. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_mesh_data_a9f6787e1cb6e75e9b35a8f44c7672c66}{convert\+V\+TK}} (const std\+::string \&input\+File\+Path, std\+::string output\+File\+Path)
+\begin{DoxyCompactList}\small\item\em Converts a V\+TK file format to a different format. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_mesh_data_aaa32800ddca13e571fe9060b528da17a}{fill\+Global\+Variables}} (Eigen\+::\+Sparse\+Matrix$<$ double $>$ \&stiffness\+Matrix, std\+::vector$<$ std\+::vector$<$ Eigen\+::\+Matrix$<$ double, P\+H\+D\+IM, 1 $>$$>$$>$ \&reaction\+Matrix, Values \&global\+Integrals)
+\begin{DoxyCompactList}\small\item\em Fills global variables used in finite element computations. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_mesh_data_af6091cce5a83a4e212890624052d3468}{add\+Scalar\+Field}} (const Eigen\+::\+Matrix$<$ double, Eigen\+::\+Dynamic, 1 $>$ \&values, const std\+::string \&input\+File\+Path, const std\+::string \&output\+File\+Path)
+\begin{DoxyCompactList}\small\item\em Adds a scalar field to the mesh data and writes it to a V\+TK file. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_mesh_data_aae7aa717c28103c968eed6911339f74c}{update\+Boundary\+Nodes}} (const int \&boundary\+Condition)
+\begin{DoxyCompactList}\small\item\em Updates the boundary nodes based on a given boundary condition. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_mesh_data_aec2c2f4e56df1c96613762ddddad6553}\label{class_mesh_data_aec2c2f4e56df1c96613762ddddad6553}} 
+std\+::vector$<$ Eigen\+::\+Matrix$<$ double, P\+H\+D\+IM, P\+H\+D\+IM $>$ $>$ \mbox{\hyperlink{class_mesh_data_aec2c2f4e56df1c96613762ddddad6553}{gradient\+Coeff}}
+\begin{DoxyCompactList}\small\item\em Stores gradient coefficient matrices for each element. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_mesh_data_a8bebaa39e8c6de9be602f4f368f9f4a7}\label{class_mesh_data_a8bebaa39e8c6de9be602f4f368f9f4a7}} 
+std\+::vector$<$ Eigen\+::\+Matrix$<$ double, P\+H\+D\+IM+1, P\+H\+D\+IM+1 $>$ $>$ \mbox{\hyperlink{class_mesh_data_a8bebaa39e8c6de9be602f4f368f9f4a7}{local\+Stiffness\+Matrices}}
+\begin{DoxyCompactList}\small\item\em Stores local stiffness matrices for each element. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_mesh_data_a03d2ec6242d253588e296204240a76f4}\label{class_mesh_data_a03d2ec6242d253588e296204240a76f4}} 
+std\+::vector$<$ std\+::vector$<$ std\+::vector$<$ Eigen\+::\+Matrix$<$ double, P\+H\+D\+IM, 1 $>$ $>$ $>$ $>$ \mbox{\hyperlink{class_mesh_data_a03d2ec6242d253588e296204240a76f4}{local\+Reaction\+Matrices}}
+\begin{DoxyCompactList}\small\item\em Stores local reaction matrices for each element. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$std\+::size\+\_\+t P\+H\+D\+IM, std\+::size\+\_\+t I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM = P\+H\+D\+IM$>$\newline
+class Mesh\+Data$<$ P\+H\+D\+I\+M, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+I\+M $>$}
+
+A class to represent mesh data in finite element analysis. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em P\+H\+D\+IM} & Physical dimension of the mesh. \\
+\hline
+{\em I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM} & Intrinsic dimension of the mesh (default\+: P\+H\+D\+IM). \\
+\hline
+\end{DoxyTemplParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_mesh_data_af6091cce5a83a4e212890624052d3468}\label{class_mesh_data_af6091cce5a83a4e212890624052d3468}} 
+\index{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$@{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$}!addScalarField@{addScalarField}}
+\index{addScalarField@{addScalarField}!MeshData$<$ PHDIM, INTRINSIC\_DIM $>$@{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$}}
+\doxysubsubsection{\texorpdfstring{addScalarField()}{addScalarField()}}
+{\footnotesize\ttfamily template$<$std\+::size\+\_\+t P\+H\+D\+IM, std\+::size\+\_\+t I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM = P\+H\+D\+IM$>$ \\
+void \mbox{\hyperlink{class_mesh_data}{Mesh\+Data}}$<$ P\+H\+D\+IM, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM $>$\+::add\+Scalar\+Field (\begin{DoxyParamCaption}\item[{const Eigen\+::\+Matrix$<$ double, Eigen\+::\+Dynamic, 1 $>$ \&}]{values,  }\item[{const std\+::string \&}]{input\+File\+Path,  }\item[{const std\+::string \&}]{output\+File\+Path }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Adds a scalar field to the mesh data and writes it to a V\+TK file. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em values} & The scalar field values to be added. \\
+\hline
+{\em input\+File\+Path} & The input V\+TK file path. \\
+\hline
+{\em output\+File\+Path} & The output V\+TK file path. \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em std\+::invalid\+\_\+argument} & if the size of values does not match the number of nodes. \\
+\hline
+\end{DoxyExceptions}
+\mbox{\Hypertarget{class_mesh_data_a9f6787e1cb6e75e9b35a8f44c7672c66}\label{class_mesh_data_a9f6787e1cb6e75e9b35a8f44c7672c66}} 
+\index{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$@{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$}!convertVTK@{convertVTK}}
+\index{convertVTK@{convertVTK}!MeshData$<$ PHDIM, INTRINSIC\_DIM $>$@{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$}}
+\doxysubsubsection{\texorpdfstring{convertVTK()}{convertVTK()}}
+{\footnotesize\ttfamily template$<$std\+::size\+\_\+t P\+H\+D\+IM, std\+::size\+\_\+t I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM = P\+H\+D\+IM$>$ \\
+void \mbox{\hyperlink{class_mesh_data}{Mesh\+Data}}$<$ P\+H\+D\+IM, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM $>$\+::convert\+V\+TK (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{input\+File\+Path,  }\item[{std\+::string}]{output\+File\+Path }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Converts a V\+TK file format to a different format. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input\+File\+Path} & The path to the input V\+TK file. \\
+\hline
+{\em output\+File\+Path} & The path to the output file. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_mesh_data_aaa32800ddca13e571fe9060b528da17a}\label{class_mesh_data_aaa32800ddca13e571fe9060b528da17a}} 
+\index{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$@{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$}!fillGlobalVariables@{fillGlobalVariables}}
+\index{fillGlobalVariables@{fillGlobalVariables}!MeshData$<$ PHDIM, INTRINSIC\_DIM $>$@{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$}}
+\doxysubsubsection{\texorpdfstring{fillGlobalVariables()}{fillGlobalVariables()}}
+{\footnotesize\ttfamily template$<$std\+::size\+\_\+t P\+H\+D\+IM, std\+::size\+\_\+t I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM = P\+H\+D\+IM$>$ \\
+void \mbox{\hyperlink{class_mesh_data}{Mesh\+Data}}$<$ P\+H\+D\+IM, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM $>$\+::fill\+Global\+Variables (\begin{DoxyParamCaption}\item[{Eigen\+::\+Sparse\+Matrix$<$ double $>$ \&}]{stiffness\+Matrix,  }\item[{std\+::vector$<$ std\+::vector$<$ Eigen\+::\+Matrix$<$ double, P\+H\+D\+IM, 1 $>$$>$$>$ \&}]{reaction\+Matrix,  }\item[{Values \&}]{global\+Integrals }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Fills global variables used in finite element computations. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em stiffness\+Matrix} & The global stiffness matrix to be filled. \\
+\hline
+{\em reaction\+Matrix} & The global reaction matrix to be filled. \\
+\hline
+{\em global\+Integrals} & The global integrals to be computed and filled. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_mesh_data_a5368cf602de227a11fba6dcdcd3b25fc}\label{class_mesh_data_a5368cf602de227a11fba6dcdcd3b25fc}} 
+\index{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$@{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$}!getBoundaryNodes@{getBoundaryNodes}}
+\index{getBoundaryNodes@{getBoundaryNodes}!MeshData$<$ PHDIM, INTRINSIC\_DIM $>$@{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$}}
+\doxysubsubsection{\texorpdfstring{getBoundaryNodes()}{getBoundaryNodes()}}
+{\footnotesize\ttfamily template$<$std\+::size\+\_\+t P\+H\+D\+IM, std\+::size\+\_\+t I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM = P\+H\+D\+IM$>$ \\
+const Indexes\& \mbox{\hyperlink{class_mesh_data}{Mesh\+Data}}$<$ P\+H\+D\+IM, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM $>$\+::get\+Boundary\+Nodes (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets the indices of the boundary nodes. 
+
+\begin{DoxyReturn}{Returns}
+Reference to the vector of boundary node indices. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_mesh_data_a071ce006d62dc54fa6d8c382741e7de0}\label{class_mesh_data_a071ce006d62dc54fa6d8c382741e7de0}} 
+\index{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$@{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$}!getConnectivity@{getConnectivity}}
+\index{getConnectivity@{getConnectivity}!MeshData$<$ PHDIM, INTRINSIC\_DIM $>$@{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$}}
+\doxysubsubsection{\texorpdfstring{getConnectivity()}{getConnectivity()}}
+{\footnotesize\ttfamily template$<$std\+::size\+\_\+t P\+H\+D\+IM, std\+::size\+\_\+t I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM = P\+H\+D\+IM$>$ \\
+const Elements\& \mbox{\hyperlink{class_mesh_data}{Mesh\+Data}}$<$ P\+H\+D\+IM, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM $>$\+::get\+Connectivity (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets the element connectivity of the mesh. 
+
+\begin{DoxyReturn}{Returns}
+Reference to the element connectivity matrix. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_mesh_data_af2819353ea4a0bcac11491b54f3684ac}\label{class_mesh_data_af2819353ea4a0bcac11491b54f3684ac}} 
+\index{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$@{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$}!getGradientCoeff@{getGradientCoeff}}
+\index{getGradientCoeff@{getGradientCoeff}!MeshData$<$ PHDIM, INTRINSIC\_DIM $>$@{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$}}
+\doxysubsubsection{\texorpdfstring{getGradientCoeff()}{getGradientCoeff()}}
+{\footnotesize\ttfamily template$<$std\+::size\+\_\+t P\+H\+D\+IM, std\+::size\+\_\+t I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM = P\+H\+D\+IM$>$ \\
+const std\+::vector$<$Eigen\+::\+Matrix$<$double, P\+H\+D\+IM, P\+H\+D\+IM$>$ $>$\& \mbox{\hyperlink{class_mesh_data}{Mesh\+Data}}$<$ P\+H\+D\+IM, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM $>$\+::get\+Gradient\+Coeff (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets the gradient coefficient matrices. 
+
+\begin{DoxyReturn}{Returns}
+A constant reference to the vector of gradient coefficient matrices. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_mesh_data_a8bacf3cebbc9f176913ec6275a0ed0b7}\label{class_mesh_data_a8bacf3cebbc9f176913ec6275a0ed0b7}} 
+\index{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$@{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$}!getLocalReactionMatrices@{getLocalReactionMatrices}}
+\index{getLocalReactionMatrices@{getLocalReactionMatrices}!MeshData$<$ PHDIM, INTRINSIC\_DIM $>$@{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$}}
+\doxysubsubsection{\texorpdfstring{getLocalReactionMatrices()}{getLocalReactionMatrices()}}
+{\footnotesize\ttfamily template$<$std\+::size\+\_\+t P\+H\+D\+IM, std\+::size\+\_\+t I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM = P\+H\+D\+IM$>$ \\
+const std\+::vector$<$std\+::vector$<$std\+::vector$<$Eigen\+::\+Matrix$<$double, P\+H\+D\+IM, 1$>$ $>$ $>$ $>$\& \mbox{\hyperlink{class_mesh_data}{Mesh\+Data}}$<$ P\+H\+D\+IM, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM $>$\+::get\+Local\+Reaction\+Matrices (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets the local reaction matrices. 
+
+\begin{DoxyReturn}{Returns}
+A constant reference to the vector of local reaction matrices. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_mesh_data_a8a005f483f0c594058c05b97b921311e}\label{class_mesh_data_a8a005f483f0c594058c05b97b921311e}} 
+\index{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$@{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$}!getLocalStiffnessMatrices@{getLocalStiffnessMatrices}}
+\index{getLocalStiffnessMatrices@{getLocalStiffnessMatrices}!MeshData$<$ PHDIM, INTRINSIC\_DIM $>$@{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$}}
+\doxysubsubsection{\texorpdfstring{getLocalStiffnessMatrices()}{getLocalStiffnessMatrices()}}
+{\footnotesize\ttfamily template$<$std\+::size\+\_\+t P\+H\+D\+IM, std\+::size\+\_\+t I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM = P\+H\+D\+IM$>$ \\
+const std\+::vector$<$Eigen\+::\+Matrix$<$double, P\+H\+D\+IM+1, P\+H\+D\+IM+1$>$ $>$\& \mbox{\hyperlink{class_mesh_data}{Mesh\+Data}}$<$ P\+H\+D\+IM, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM $>$\+::get\+Local\+Stiffness\+Matrices (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets the local stiffness matrices. 
+
+\begin{DoxyReturn}{Returns}
+A constant reference to the vector of local stiffness matrices. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_mesh_data_a300e38df3f46799a9f8e8fa9e7885302}\label{class_mesh_data_a300e38df3f46799a9f8e8fa9e7885302}} 
+\index{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$@{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$}!getNodes@{getNodes}}
+\index{getNodes@{getNodes}!MeshData$<$ PHDIM, INTRINSIC\_DIM $>$@{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$}}
+\doxysubsubsection{\texorpdfstring{getNodes()}{getNodes()}}
+{\footnotesize\ttfamily template$<$std\+::size\+\_\+t P\+H\+D\+IM, std\+::size\+\_\+t I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM = P\+H\+D\+IM$>$ \\
+Nodes \mbox{\hyperlink{class_mesh_data}{Mesh\+Data}}$<$ P\+H\+D\+IM, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM $>$\+::get\+Nodes (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets the nodes of the mesh. 
+
+\begin{DoxyReturn}{Returns}
+The nodes matrix. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_mesh_data_adb6b85e8a2dde84e16055b6b5082b9d5}\label{class_mesh_data_adb6b85e8a2dde84e16055b6b5082b9d5}} 
+\index{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$@{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$}!getNumElements@{getNumElements}}
+\index{getNumElements@{getNumElements}!MeshData$<$ PHDIM, INTRINSIC\_DIM $>$@{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$}}
+\doxysubsubsection{\texorpdfstring{getNumElements()}{getNumElements()}}
+{\footnotesize\ttfamily template$<$std\+::size\+\_\+t P\+H\+D\+IM, std\+::size\+\_\+t I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM = P\+H\+D\+IM$>$ \\
+int \mbox{\hyperlink{class_mesh_data}{Mesh\+Data}}$<$ P\+H\+D\+IM, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM $>$\+::get\+Num\+Elements (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets the number of elements in the mesh. 
+
+\begin{DoxyReturn}{Returns}
+The number of elements. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_mesh_data_a648d26edb13dc57efe678690aded0f52}\label{class_mesh_data_a648d26edb13dc57efe678690aded0f52}} 
+\index{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$@{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$}!getNumNodes@{getNumNodes}}
+\index{getNumNodes@{getNumNodes}!MeshData$<$ PHDIM, INTRINSIC\_DIM $>$@{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$}}
+\doxysubsubsection{\texorpdfstring{getNumNodes()}{getNumNodes()}}
+{\footnotesize\ttfamily template$<$std\+::size\+\_\+t P\+H\+D\+IM, std\+::size\+\_\+t I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM = P\+H\+D\+IM$>$ \\
+int \mbox{\hyperlink{class_mesh_data}{Mesh\+Data}}$<$ P\+H\+D\+IM, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM $>$\+::get\+Num\+Nodes (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets the number of nodes in the mesh. 
+
+\begin{DoxyReturn}{Returns}
+The number of nodes. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_mesh_data_abde9712764cc285c9986078a7b16864e}\label{class_mesh_data_abde9712764cc285c9986078a7b16864e}} 
+\index{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$@{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$}!readMesh@{readMesh}}
+\index{readMesh@{readMesh}!MeshData$<$ PHDIM, INTRINSIC\_DIM $>$@{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$}}
+\doxysubsubsection{\texorpdfstring{readMesh()}{readMesh()}}
+{\footnotesize\ttfamily template$<$std\+::size\+\_\+t P\+H\+D\+IM, std\+::size\+\_\+t I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM = P\+H\+D\+IM$>$ \\
+void \mbox{\hyperlink{class_mesh_data}{Mesh\+Data}}$<$ P\+H\+D\+IM, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM $>$\+::read\+Mesh (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{filename }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Reads mesh data from a file. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em filename} & The name of the file containing mesh data. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_mesh_data_aae7aa717c28103c968eed6911339f74c}\label{class_mesh_data_aae7aa717c28103c968eed6911339f74c}} 
+\index{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$@{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$}!updateBoundaryNodes@{updateBoundaryNodes}}
+\index{updateBoundaryNodes@{updateBoundaryNodes}!MeshData$<$ PHDIM, INTRINSIC\_DIM $>$@{MeshData$<$ PHDIM, INTRINSIC\_DIM $>$}}
+\doxysubsubsection{\texorpdfstring{updateBoundaryNodes()}{updateBoundaryNodes()}}
+{\footnotesize\ttfamily template$<$std\+::size\+\_\+t P\+H\+D\+IM, std\+::size\+\_\+t I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM = P\+H\+D\+IM$>$ \\
+void \mbox{\hyperlink{class_mesh_data}{Mesh\+Data}}$<$ P\+H\+D\+IM, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM $>$\+::update\+Boundary\+Nodes (\begin{DoxyParamCaption}\item[{const int \&}]{boundary\+Condition }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Updates the boundary nodes based on a given boundary condition. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em boundary\+Condition} & The boundary condition to be applied. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/Mesh\+Data.\+hpp\end{DoxyCompactItemize}

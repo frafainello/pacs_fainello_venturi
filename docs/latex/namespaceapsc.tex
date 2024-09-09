@@ -1,0 +1,271 @@
+\hypertarget{namespaceapsc}{}\doxysection{apsc Namespace Reference}
+\label{namespaceapsc}\index{apsc@{apsc}}
+
+
+Computing the gradient of the linear interpolant on a simplex.  
+
+
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classapsc_1_1_linear_finite_element}{Linear\+Finite\+Element}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$unsigned int N$>$ }\\auto \mbox{\hyperlink{namespaceapsc_aee1affdba94cb7beebdd0ccb3c3a4210}{compute\+Grad\+Coeff}} (const Eigen\+::\+Matrix$<$ double, N, N+1 $>$ \&vertices) -\/$>$ Eigen\+::\+Matrix$<$ double, N, N $>$
+\begin{DoxyCompactList}\small\item\em Compute the coefficients of the gradient of the interpolant. \end{DoxyCompactList}\item 
+{\footnotesize template$<$unsigned int N$>$ }\\auto \mbox{\hyperlink{namespaceapsc_a91d2c4617800c2079d44574761516583}{compute\+Local\+Stiffness\+With\+Gradient}} (const Eigen\+::\+Matrix$<$ double, N, N $>$ \&grad\+Coeff, double const \&measure, double const \&factor=1.\+0) -\/$>$ Eigen\+::\+Matrix$<$ double, N+1, N+1 $>$
+\begin{DoxyCompactList}\small\item\em Compute the local stiffness matrix if you already have the gradients of the shape functions. \end{DoxyCompactList}\item 
+{\footnotesize template$<$unsigned int N$>$ }\\auto \mbox{\hyperlink{namespaceapsc_a532cf51193ca48749d4bbe4f83b73e63}{compute\+Local\+Stiffness}} (const Eigen\+::\+Matrix$<$ double, N, N+1 $>$ \&vertices, double measure, double factor=1.\+0) -\/$>$ Eigen\+::\+Matrix$<$ double, N+1, N+1 $>$
+\begin{DoxyCompactList}\small\item\em Compute the local stiffness matrix for a linear finite element. \end{DoxyCompactList}\item 
+{\footnotesize template$<$unsigned int N$>$ }\\constexpr auto \mbox{\hyperlink{namespaceapsc_a52ea7e9060ba75700086a952af1bc9e5}{factorial}} () -\/$>$ unsigned int
+\begin{DoxyCompactList}\small\item\em Compute the factorial of a number via a constexpr function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$unsigned int N$>$ }\\auto \mbox{\hyperlink{namespaceapsc_acf5d8b105f9fa95716398c88472b3302}{compute\+Measure}} (const Eigen\+::\+Matrix$<$ double, N, N+1 $>$ \&vertices) -\/$>$ double
+\begin{DoxyCompactList}\small\item\em Compute the measure of a simplex. \end{DoxyCompactList}\item 
+{\footnotesize template$<$unsigned int N$>$ }\\auto \mbox{\hyperlink{namespaceapsc_af1c21447fa29278c086034243397730b}{compute\+Local\+Mass}} (double measure, double factor=1.\+0) -\/$>$ Eigen\+::\+Matrix$<$ double, N+1, N+1 $>$
+\begin{DoxyCompactList}\small\item\em Compute the mass matrix for a linear finite element. \end{DoxyCompactList}\item 
+{\footnotesize template$<$unsigned int N$>$ }\\auto \mbox{\hyperlink{namespaceapsc_a1b9bc808b47b1c47d17602ef6220ee4e}{compute\+Local\+Lumped\+Mass}} (double measure, double factor=1.\+0) -\/$>$ Eigen\+::\+Matrix$<$ double, N+1, N+1 $>$
+\begin{DoxyCompactList}\small\item\em Compute the local lumpedmass matrix of a linear finite element. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespaceapsc_a42f834a0a5fc6f626c2951fd3e23ad00}\label{namespaceapsc_a42f834a0a5fc6f626c2951fd3e23ad00}} 
+{\footnotesize template$<$unsigned int N$>$ }\\auto {\bfseries compute\+Local\+Mass\+With\+Source} (double measure, const Eigen\+::\+Matrix$<$ double, N+1, 1 $>$ \&source) -\/$>$ Eigen\+::\+Matrix$<$ double, N+1, N+1 $>$
+\item 
+\mbox{\Hypertarget{namespaceapsc_af1012d758a3247c46763cbf9ac45c613}\label{namespaceapsc_af1012d758a3247c46763cbf9ac45c613}} 
+{\footnotesize template$<$unsigned int N$>$ }\\auto {\bfseries compute\+Local\+Reaction\+With\+Gradient} (const Eigen\+::\+Matrix$<$ double, N, N $>$ \&grad\+Coeff, double const \&measure, double const \&factor=1.\+0) -\/$>$ std\+::vector$<$ std\+::vector$<$ Eigen\+::\+Matrix$<$ double, N, 1 $>$$>$$>$
+\item 
+\mbox{\Hypertarget{namespaceapsc_a43f570e5670679e4cfb82d6cb18091f7}\label{namespaceapsc_a43f570e5670679e4cfb82d6cb18091f7}} 
+{\footnotesize template$<$unsigned int N$>$ }\\auto {\bfseries compute\+Local\+Reaction} (const Eigen\+::\+Matrix$<$ double, N, N+1 $>$ \&vertices, double measure, double factor=1.\+0) -\/$>$ std\+::vector$<$ std\+::vector$<$ Eigen\+::\+Matrix$<$ double, N, 1 $>$$>$$>$
+\item 
+{\footnotesize template$<$unsigned int N$>$ }\\auto \mbox{\hyperlink{namespaceapsc_a047fcd0834244c30ca48133ed87ec7cc}{compute\+Gradient}} (const Eigen\+::\+Matrix$<$ double, N, N $>$ \&Coefficients, const Eigen\+::\+Matrix$<$ double, N+1, 1 $>$ \&values) -\/$>$ Eigen\+::\+Matrix$<$ double, N, 1 $>$
+\begin{DoxyCompactList}\small\item\em Compute the gradient of the linear interpolant. \end{DoxyCompactList}\item 
+{\footnotesize template$<$unsigned int N$>$ }\\auto \mbox{\hyperlink{namespaceapsc_a7bb524c4d3e3265a3c23d431709c2706}{fix\+Grad}} (Eigen\+::\+Matrix$<$ double, N, 1 $>$ grad) -\/$>$ Eigen\+::\+Matrix$<$ double, N, 1 $>$
+\begin{DoxyCompactList}\small\item\em Fix the gradient so that its norm is one. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Computing the gradient of the linear interpolant on a simplex. 
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{namespaceapsc_aee1affdba94cb7beebdd0ccb3c3a4210}\label{namespaceapsc_aee1affdba94cb7beebdd0ccb3c3a4210}} 
+\index{apsc@{apsc}!computeGradCoeff@{computeGradCoeff}}
+\index{computeGradCoeff@{computeGradCoeff}!apsc@{apsc}}
+\doxysubsubsection{\texorpdfstring{computeGradCoeff()}{computeGradCoeff()}}
+{\footnotesize\ttfamily template$<$unsigned int N$>$ \\
+auto apsc\+::compute\+Grad\+Coeff (\begin{DoxyParamCaption}\item[{const Eigen\+::\+Matrix$<$ double, N, N+1 $>$ \&}]{vertices }\end{DoxyParamCaption}) -\/$>$ Eigen\+::\+Matrix$<$double, N, N$>$ }
+
+
+
+Compute the coefficients of the gradient of the interpolant. 
+
+It computes the N times N matrix that when with the vector containing the differences in values if provides the gradient for the linear interpolant on an N dimensional simplex
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em N} & The dimension of the space \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em vertices} & The vertices of the simplex \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{namespaceapsc_a047fcd0834244c30ca48133ed87ec7cc}\label{namespaceapsc_a047fcd0834244c30ca48133ed87ec7cc}} 
+\index{apsc@{apsc}!computeGradient@{computeGradient}}
+\index{computeGradient@{computeGradient}!apsc@{apsc}}
+\doxysubsubsection{\texorpdfstring{computeGradient()}{computeGradient()}}
+{\footnotesize\ttfamily template$<$unsigned int N$>$ \\
+auto apsc\+::compute\+Gradient (\begin{DoxyParamCaption}\item[{const Eigen\+::\+Matrix$<$ double, N, N $>$ \&}]{Coefficients,  }\item[{const Eigen\+::\+Matrix$<$ double, N+1, 1 $>$ \&}]{values }\end{DoxyParamCaption}) -\/$>$ Eigen\+::\+Matrix$<$double, N, 1$>$ }
+
+
+
+Compute the gradient of the linear interpolant. 
+
+It computes the gradient of the linear interpolant on an N dimensional simplex given the coefficients of the gradient and the values
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em N} & The dimension of the space \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em Coefficients} & The coefficients of the gradient \\
+\hline
+{\em values} & The differences in values \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{namespaceapsc_a1b9bc808b47b1c47d17602ef6220ee4e}\label{namespaceapsc_a1b9bc808b47b1c47d17602ef6220ee4e}} 
+\index{apsc@{apsc}!computeLocalLumpedMass@{computeLocalLumpedMass}}
+\index{computeLocalLumpedMass@{computeLocalLumpedMass}!apsc@{apsc}}
+\doxysubsubsection{\texorpdfstring{computeLocalLumpedMass()}{computeLocalLumpedMass()}}
+{\footnotesize\ttfamily template$<$unsigned int N$>$ \\
+auto apsc\+::compute\+Local\+Lumped\+Mass (\begin{DoxyParamCaption}\item[{double}]{measure,  }\item[{double}]{factor = {\ttfamily 1.0} }\end{DoxyParamCaption}) -\/$>$ Eigen\+::\+Matrix$<$double, N + 1, N + 1$>$ }
+
+
+
+Compute the local lumpedmass matrix of a linear finite element. 
+
+It computes the local lumped mass matrix for a linear finite element on an N dimensional simplex given the measure of the simplex, and a possible constant elemental multiplicative factor. 
+\begin{DoxyTemplParams}{Template Parameters}
+{\em N} & The dimension of the space \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em measure} & The measure of the simplex \\
+\hline
+{\em factor} & The constant multiplicative factor \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The elemental lumped mass matrix 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespaceapsc_af1c21447fa29278c086034243397730b}\label{namespaceapsc_af1c21447fa29278c086034243397730b}} 
+\index{apsc@{apsc}!computeLocalMass@{computeLocalMass}}
+\index{computeLocalMass@{computeLocalMass}!apsc@{apsc}}
+\doxysubsubsection{\texorpdfstring{computeLocalMass()}{computeLocalMass()}}
+{\footnotesize\ttfamily template$<$unsigned int N$>$ \\
+auto apsc\+::compute\+Local\+Mass (\begin{DoxyParamCaption}\item[{double}]{measure,  }\item[{double}]{factor = {\ttfamily 1.0} }\end{DoxyParamCaption}) -\/$>$ Eigen\+::\+Matrix$<$double, N + 1, N + 1$>$ }
+
+
+
+Compute the mass matrix for a linear finite element. 
+
+It computes the (consistent) mass matrix for a linear finite element on an N dimensional simplex given the measure of the simplex, and a possible constant elemental multiplicative factor. 
+\begin{DoxyTemplParams}{Template Parameters}
+{\em N} & The dimension of the space \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em measure} & The measure of the simplex \\
+\hline
+{\em factor} & The constant multiplicative factor \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The elemental mass matrix 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespaceapsc_a532cf51193ca48749d4bbe4f83b73e63}\label{namespaceapsc_a532cf51193ca48749d4bbe4f83b73e63}} 
+\index{apsc@{apsc}!computeLocalStiffness@{computeLocalStiffness}}
+\index{computeLocalStiffness@{computeLocalStiffness}!apsc@{apsc}}
+\doxysubsubsection{\texorpdfstring{computeLocalStiffness()}{computeLocalStiffness()}}
+{\footnotesize\ttfamily template$<$unsigned int N$>$ \\
+auto apsc\+::compute\+Local\+Stiffness (\begin{DoxyParamCaption}\item[{const Eigen\+::\+Matrix$<$ double, N, N+1 $>$ \&}]{vertices,  }\item[{double}]{measure,  }\item[{double}]{factor = {\ttfamily 1.0} }\end{DoxyParamCaption}) -\/$>$ Eigen\+::\+Matrix$<$double, N + 1, N + 1$>$ }
+
+
+
+Compute the local stiffness matrix for a linear finite element. 
+
+It computes the local stiffness matrix for a linear finite element on an N dimensional simplex given the coordinate of the vertices, the measure of the simplex, and a possible constant elemental multiplicative factor. 
+\begin{DoxyTemplParams}{Template Parameters}
+{\em N} & The dimension of the space \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em vertices} & The vertices of the simplex \\
+\hline
+{\em measure} & The measure of the simplex \\
+\hline
+{\em factor} & The constant multiplicative factor \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The elemental stiffness matrix 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespaceapsc_a91d2c4617800c2079d44574761516583}\label{namespaceapsc_a91d2c4617800c2079d44574761516583}} 
+\index{apsc@{apsc}!computeLocalStiffnessWithGradient@{computeLocalStiffnessWithGradient}}
+\index{computeLocalStiffnessWithGradient@{computeLocalStiffnessWithGradient}!apsc@{apsc}}
+\doxysubsubsection{\texorpdfstring{computeLocalStiffnessWithGradient()}{computeLocalStiffnessWithGradient()}}
+{\footnotesize\ttfamily template$<$unsigned int N$>$ \\
+auto apsc\+::compute\+Local\+Stiffness\+With\+Gradient (\begin{DoxyParamCaption}\item[{const Eigen\+::\+Matrix$<$ double, N, N $>$ \&}]{grad\+Coeff,  }\item[{double const \&}]{measure,  }\item[{double const \&}]{factor = {\ttfamily 1.0} }\end{DoxyParamCaption}) -\/$>$ Eigen\+::\+Matrix$<$double, N + 1, N + 1$>$ }
+
+
+
+Compute the local stiffness matrix if you already have the gradients of the shape functions. 
+
+It computes the local stiffness matrix for a linear finite element on an N dimensional simplex given the gradients of the shape functions obtained by compute\+Grad\+Coeff, the measure of the simplex, and a possible constant elemental multiplicative factor. 
+\begin{DoxyTemplParams}{Template Parameters}
+{\em N} & The dimension of the space \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em grad\+Coeff} & The gradients of the shape functions computed with compute\+Grad\+Coeff \\
+\hline
+{\em measure} & The measure of the simplex \\
+\hline
+{\em factor} & The constant multiplicative factor \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The elemental stiffness matrix 
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+This version is useful if you have already computed the gradients of the shape functions and you want to avoid recomputing them Note that the matrix grad\+Coeff contains the gradients of the shape functions 1 to N in its columns, excluding the gradient of shape function 0 since the latter is just the negative sum of the other gradients 
+\end{DoxyNote}
+\mbox{\Hypertarget{namespaceapsc_acf5d8b105f9fa95716398c88472b3302}\label{namespaceapsc_acf5d8b105f9fa95716398c88472b3302}} 
+\index{apsc@{apsc}!computeMeasure@{computeMeasure}}
+\index{computeMeasure@{computeMeasure}!apsc@{apsc}}
+\doxysubsubsection{\texorpdfstring{computeMeasure()}{computeMeasure()}}
+{\footnotesize\ttfamily template$<$unsigned int N$>$ \\
+auto apsc\+::compute\+Measure (\begin{DoxyParamCaption}\item[{const Eigen\+::\+Matrix$<$ double, N, N+1 $>$ \&}]{vertices }\end{DoxyParamCaption}) -\/$>$ double }
+
+
+
+Compute the measure of a simplex. 
+
+It computes the measure of an N dimensional simplex given the vertices 
+\begin{DoxyTemplParams}{Template Parameters}
+{\em N} & The dimension of the space \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em vertices} & The vertices of the simplex \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The measure of the simplex 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespaceapsc_a52ea7e9060ba75700086a952af1bc9e5}\label{namespaceapsc_a52ea7e9060ba75700086a952af1bc9e5}} 
+\index{apsc@{apsc}!factorial@{factorial}}
+\index{factorial@{factorial}!apsc@{apsc}}
+\doxysubsubsection{\texorpdfstring{factorial()}{factorial()}}
+{\footnotesize\ttfamily template$<$unsigned int N$>$ \\
+constexpr auto apsc\+::factorial (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) -\/$>$ unsigned int \hspace{0.3cm}{\ttfamily [constexpr]}}
+
+
+
+Compute the factorial of a number via a constexpr function. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em N} & The number to compute the factorial of \\
+\hline
+\end{DoxyTemplParams}
+\mbox{\Hypertarget{namespaceapsc_a7bb524c4d3e3265a3c23d431709c2706}\label{namespaceapsc_a7bb524c4d3e3265a3c23d431709c2706}} 
+\index{apsc@{apsc}!fixGrad@{fixGrad}}
+\index{fixGrad@{fixGrad}!apsc@{apsc}}
+\doxysubsubsection{\texorpdfstring{fixGrad()}{fixGrad()}}
+{\footnotesize\ttfamily template$<$unsigned int N$>$ \\
+auto apsc\+::fix\+Grad (\begin{DoxyParamCaption}\item[{Eigen\+::\+Matrix$<$ double, N, 1 $>$}]{grad }\end{DoxyParamCaption}) -\/$>$ Eigen\+::\+Matrix$<$double, N, 1$>$ }
+
+
+
+Fix the gradient so that its norm is one. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em N} & The dimension of the space \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em grad} & The gradient \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The gradient with norm one 
+\end{DoxyReturn}

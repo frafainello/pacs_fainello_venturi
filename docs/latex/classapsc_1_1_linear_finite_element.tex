@@ -1,0 +1,307 @@
+\hypertarget{classapsc_1_1_linear_finite_element}{}\doxysection{apsc\+::Linear\+Finite\+Element$<$ N $>$ Class Template Reference}
+\label{classapsc_1_1_linear_finite_element}\index{apsc::LinearFiniteElement$<$ N $>$@{apsc::LinearFiniteElement$<$ N $>$}}
+
+
+{\ttfamily \#include $<$Linear\+Finite\+Element.\+hpp$>$}
+
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classapsc_1_1_linear_finite_element_a13a635146416598eb01bf88b35853fc2}\label{classapsc_1_1_linear_finite_element_a13a635146416598eb01bf88b35853fc2}} 
+using {\bfseries Node} = Eigen\+::\+Matrix$<$ double, N, 1 $>$
+\item 
+\mbox{\Hypertarget{classapsc_1_1_linear_finite_element_a8ea3fd2049cf5a0e4541f5727be497e8}\label{classapsc_1_1_linear_finite_element_a8ea3fd2049cf5a0e4541f5727be497e8}} 
+using {\bfseries Nodes} = Eigen\+::\+Matrix$<$ double, N, N+1 $>$
+\item 
+\mbox{\Hypertarget{classapsc_1_1_linear_finite_element_ad5ccd2921c9cf6a496e30dda9689af84}\label{classapsc_1_1_linear_finite_element_ad5ccd2921c9cf6a496e30dda9689af84}} 
+using {\bfseries Index} = long int
+\item 
+\mbox{\Hypertarget{classapsc_1_1_linear_finite_element_a3c392db8c3bbcb6321bd1cbd9f750250}\label{classapsc_1_1_linear_finite_element_a3c392db8c3bbcb6321bd1cbd9f750250}} 
+using {\bfseries Indexes} = std\+::vector$<$ Index $>$
+\item 
+\mbox{\Hypertarget{classapsc_1_1_linear_finite_element_a1ff272d48598780d71e64ac4a5b6de6b}\label{classapsc_1_1_linear_finite_element_a1ff272d48598780d71e64ac4a5b6de6b}} 
+using {\bfseries Local\+Matrix} = Eigen\+::\+Matrix$<$ double, N+1, N+1 $>$
+\item 
+\mbox{\Hypertarget{classapsc_1_1_linear_finite_element_a43279e080c3129443c07d665868a5a9e}\label{classapsc_1_1_linear_finite_element_a43279e080c3129443c07d665868a5a9e}} 
+using {\bfseries Global\+Matrix} = Eigen\+::\+Sparse\+Matrix$<$ double $>$
+\item 
+\mbox{\Hypertarget{classapsc_1_1_linear_finite_element_a16fedb2b699549644274c60aacc811c8}\label{classapsc_1_1_linear_finite_element_a16fedb2b699549644274c60aacc811c8}} 
+using {\bfseries Local\+Vector} = Eigen\+::\+Matrix$<$ double, N+1, 1 $>$
+\item 
+\mbox{\Hypertarget{classapsc_1_1_linear_finite_element_aefd18dfbe661f7a0556edd5ad94fc7a8}\label{classapsc_1_1_linear_finite_element_aefd18dfbe661f7a0556edd5ad94fc7a8}} 
+using {\bfseries Global\+Vector} = Eigen\+::\+Matrix$<$ double, Eigen\+::\+Dynamic, 1 $>$
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classapsc_1_1_linear_finite_element_a86f653fc06571b389403bff5c6dcd236}{Linear\+Finite\+Element}} ()=default
+\begin{DoxyCompactList}\small\item\em Constructor. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classapsc_1_1_linear_finite_element_a26d94765a2152bc94919243f8527ac2a}\label{classapsc_1_1_linear_finite_element_a26d94765a2152bc94919243f8527ac2a}} 
+auto {\bfseries get\+Nodes} () const
+\item 
+\mbox{\Hypertarget{classapsc_1_1_linear_finite_element_a4d9446a3b93f027119a688aca7f11333}\label{classapsc_1_1_linear_finite_element_a4d9446a3b93f027119a688aca7f11333}} 
+auto {\bfseries get\+Global\+Node\+Numbers} () const
+\item 
+\mbox{\Hypertarget{classapsc_1_1_linear_finite_element_a79d3bec84c52c71b06fb5f03daf46e97}\label{classapsc_1_1_linear_finite_element_a79d3bec84c52c71b06fb5f03daf46e97}} 
+auto {\bfseries get\+Local\+Stiffness} () const
+\item 
+\mbox{\Hypertarget{classapsc_1_1_linear_finite_element_aedd32383ae07c8b4e9d162bdef73bb62}\label{classapsc_1_1_linear_finite_element_aedd32383ae07c8b4e9d162bdef73bb62}} 
+auto {\bfseries get\+Local\+Reaction} () const
+\item 
+\mbox{\Hypertarget{classapsc_1_1_linear_finite_element_a9b63a9b4201a962ccaa0dcbf15df4731}\label{classapsc_1_1_linear_finite_element_a9b63a9b4201a962ccaa0dcbf15df4731}} 
+void \mbox{\hyperlink{classapsc_1_1_linear_finite_element_a9b63a9b4201a962ccaa0dcbf15df4731}{update}} (const Nodes \&nodes)
+\begin{DoxyCompactList}\small\item\em Update the nodes. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classapsc_1_1_linear_finite_element_aa1865667a419c0d3e014f7d57f5f1e8b}\label{classapsc_1_1_linear_finite_element_aa1865667a419c0d3e014f7d57f5f1e8b}} 
+void \mbox{\hyperlink{classapsc_1_1_linear_finite_element_aa1865667a419c0d3e014f7d57f5f1e8b}{update\+Global\+Node\+Numbers}} (const Indexes \&global\+Node\+Numbers)
+\begin{DoxyCompactList}\small\item\em update the global node numbers \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classapsc_1_1_linear_finite_element_a59d6d6bc8e9c1e1cb760a5ddd7193f38}\label{classapsc_1_1_linear_finite_element_a59d6d6bc8e9c1e1cb760a5ddd7193f38}} 
+void {\bfseries compute\+Local\+Integral} () const
+\item 
+\mbox{\Hypertarget{classapsc_1_1_linear_finite_element_ac150a34b123dd00d91855601dc736360}\label{classapsc_1_1_linear_finite_element_ac150a34b123dd00d91855601dc736360}} 
+void {\bfseries update\+Global\+Integrals} (Global\+Vector \&global\+Integrals) const
+\item 
+auto \mbox{\hyperlink{classapsc_1_1_linear_finite_element_a582574bbc2bd06d93739511ba60f1778}{compute\+Local\+Stiffness}} (double factor=1.\+0) const -\/$>$ Local\+Matrix const \&
+\begin{DoxyCompactList}\small\item\em Compute the local stiffness matrix. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classapsc_1_1_linear_finite_element_a83607cb8694ef8798dd844c6e60efe1e}\label{classapsc_1_1_linear_finite_element_a83607cb8694ef8798dd844c6e60efe1e}} 
+auto {\bfseries compute\+Local\+Reaction} (double factor=1.\+0) const -\/$>$ std\+::vector$<$ std\+::vector$<$ Eigen\+::\+Matrix$<$ double, N, 1 $>$$>$$>$ const \&
+\item 
+auto \mbox{\hyperlink{classapsc_1_1_linear_finite_element_acd80cb6e9298fa012fa2e480be697d29}{compute\+Local\+Mass}} (double factor=1.\+0) const -\/$>$ Local\+Matrix const \&
+\begin{DoxyCompactList}\small\item\em Compute the local mass matrix. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classapsc_1_1_linear_finite_element_a7b6385d14869f275510fd95ad6ff5726}\label{classapsc_1_1_linear_finite_element_a7b6385d14869f275510fd95ad6ff5726}} 
+auto {\bfseries compute\+Gradient\+Coeff} () const -\/$>$ Eigen\+::\+Matrix$<$ double, N, N $>$ const
+\item 
+\mbox{\Hypertarget{classapsc_1_1_linear_finite_element_ad0af0428aba5c4c6636393ac5c2bf2e3}\label{classapsc_1_1_linear_finite_element_ad0af0428aba5c4c6636393ac5c2bf2e3}} 
+auto {\bfseries compute\+Gradient} (const Local\+Vector \&values) const
+\item 
+\mbox{\Hypertarget{classapsc_1_1_linear_finite_element_aa1a64cbd370efe0b10312a103e3ab7d8}\label{classapsc_1_1_linear_finite_element_aa1a64cbd370efe0b10312a103e3ab7d8}} 
+auto \mbox{\hyperlink{classapsc_1_1_linear_finite_element_aa1a64cbd370efe0b10312a103e3ab7d8}{measure}} () const -\/$>$ double
+\begin{DoxyCompactList}\small\item\em Get the measure of the simplex. \end{DoxyCompactList}\item 
+auto \mbox{\hyperlink{classapsc_1_1_linear_finite_element_af4c79b9d2efceafca3538a25b25f32f7}{compute\+Lumped\+Mass}} (double factor=1.\+0) const -\/$>$ Local\+Matrix const \&
+\begin{DoxyCompactList}\small\item\em Compute lumped mass matrix. \end{DoxyCompactList}\item 
+auto \mbox{\hyperlink{classapsc_1_1_linear_finite_element_adb5adc81649c6e108931bb1633287728}{compute\+Mass\+With\+Source}} (const Local\+Vector \&source) const -\/$>$ Local\+Matrix const \&
+\begin{DoxyCompactList}\small\item\em Compute the mass matrix using a source term. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classapsc_1_1_linear_finite_element_afc554c70bf97410723a2bd93e5ffd4b9}\label{classapsc_1_1_linear_finite_element_afc554c70bf97410723a2bd93e5ffd4b9}} 
+auto \mbox{\hyperlink{classapsc_1_1_linear_finite_element_afc554c70bf97410723a2bd93e5ffd4b9}{local\+Stiffness}} () const -\/$>$ Local\+Matrix const \&
+\begin{DoxyCompactList}\small\item\em Get the chached stiffness matrix. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classapsc_1_1_linear_finite_element_a757886c618a6e268f75a97f22850df9a}\label{classapsc_1_1_linear_finite_element_a757886c618a6e268f75a97f22850df9a}} 
+auto \mbox{\hyperlink{classapsc_1_1_linear_finite_element_a757886c618a6e268f75a97f22850df9a}{local\+Reaction}} () const -\/$>$ Local\+Matrix const \&
+\begin{DoxyCompactList}\small\item\em Get the chached reaction matrix. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classapsc_1_1_linear_finite_element_a26db9b34988df1f92579dca52319a449}\label{classapsc_1_1_linear_finite_element_a26db9b34988df1f92579dca52319a449}} 
+auto \mbox{\hyperlink{classapsc_1_1_linear_finite_element_a26db9b34988df1f92579dca52319a449}{local\+Mass}} () const -\/$>$ Local\+Matrix const \&
+\begin{DoxyCompactList}\small\item\em Get the chached mass matrix. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classapsc_1_1_linear_finite_element_accc577b35fb7ad59e8a2689c41d4baa2}{update\+Global\+Stiffness\+Matrix}} (Global\+Matrix \&global\+Stiffness\+Matrix) const
+\begin{DoxyCompactList}\small\item\em Get the gradients of the element. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classapsc_1_1_linear_finite_element_a008c1bd3e4c709343f9fc192e3bf1289}\label{classapsc_1_1_linear_finite_element_a008c1bd3e4c709343f9fc192e3bf1289}} 
+void {\bfseries update\+Global\+Reaction\+Matrix} (std\+::vector$<$ std\+::vector$<$ Eigen\+::\+Matrix$<$ double, N, 1 $>$$>$$>$ \&global\+Reaction\+Matrix) const
+\item 
+void \mbox{\hyperlink{classapsc_1_1_linear_finite_element_a59e268631178d2f5b17e20c5c30a259f}{update\+Global\+Mass\+Matrix}} (Global\+Matrix \&global\+Mass\+Matrix) const
+\begin{DoxyCompactList}\small\item\em Update global mass matrix with the cached local mass matrix. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classapsc_1_1_linear_finite_element_a1806e99a1213aa330a0d9cf7d6c25766}{update\+Matrix\+With\+Dirichlet\+Boundary}} (Global\+Matrix \&global\+Matrix, const std\+::vector$<$ long int $>$ \&indices)
+\begin{DoxyCompactList}\small\item\em Impose Dirichlet boundary condition on stiffness/mass matrix. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classapsc_1_1_linear_finite_element_a4a670c4193c2569d7f162f32802963de}{update\+Twin\+Point}} (Global\+Matrix \&global\+Matrix, const std\+::vector$<$ long int $>$ \&N\+\_\+i\+\_\+plus, const std\+::vector$<$ long int $>$ \&Z\+\_\+i\+\_\+minus, const Global\+Matrix \&alpha)
+\begin{DoxyCompactList}\small\item\em Update the global matrix with the twin point conditions. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$unsigned int N$>$\newline
+class apsc\+::\+Linear\+Finite\+Element$<$ N $>$}
+
+A class for linear finite elements on a simplex 
+\begin{DoxyTemplParams}{Template Parameters}
+{\em N} & The dimension of the space \\
+\hline
+\end{DoxyTemplParams}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classapsc_1_1_linear_finite_element_a86f653fc06571b389403bff5c6dcd236}\label{classapsc_1_1_linear_finite_element_a86f653fc06571b389403bff5c6dcd236}} 
+\index{apsc::LinearFiniteElement$<$ N $>$@{apsc::LinearFiniteElement$<$ N $>$}!LinearFiniteElement@{LinearFiniteElement}}
+\index{LinearFiniteElement@{LinearFiniteElement}!apsc::LinearFiniteElement$<$ N $>$@{apsc::LinearFiniteElement$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{LinearFiniteElement()}{LinearFiniteElement()}}
+{\footnotesize\ttfamily template$<$unsigned int N$>$ \\
+\mbox{\hyperlink{classapsc_1_1_linear_finite_element}{apsc\+::\+Linear\+Finite\+Element}}$<$ N $>$\+::\mbox{\hyperlink{classapsc_1_1_linear_finite_element}{Linear\+Finite\+Element}} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+
+
+Constructor. 
+
+The class has only a default constructor You should use the update method to set the nodes 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classapsc_1_1_linear_finite_element_acd80cb6e9298fa012fa2e480be697d29}\label{classapsc_1_1_linear_finite_element_acd80cb6e9298fa012fa2e480be697d29}} 
+\index{apsc::LinearFiniteElement$<$ N $>$@{apsc::LinearFiniteElement$<$ N $>$}!computeLocalMass@{computeLocalMass}}
+\index{computeLocalMass@{computeLocalMass}!apsc::LinearFiniteElement$<$ N $>$@{apsc::LinearFiniteElement$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{computeLocalMass()}{computeLocalMass()}}
+{\footnotesize\ttfamily template$<$unsigned int N$>$ \\
+auto \mbox{\hyperlink{classapsc_1_1_linear_finite_element}{apsc\+::\+Linear\+Finite\+Element}}$<$ N $>$\+::compute\+Local\+Mass (\begin{DoxyParamCaption}\item[{double}]{factor = {\ttfamily 1.0} }\end{DoxyParamCaption}) const -\/$>$ Local\+Matrix const \& \hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Compute the local mass matrix. 
+
+It computes the (consistent) mass matrix for a linear finite element on an N dimensional simplex given the measure of the simplex, and a possible constant elemental multiplicative factor. 
+\begin{DoxyParams}{Parameters}
+{\em factor} & The constant multiplicative factor \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The elemental mass matrix 
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+It also caches the result so it can be accessed later 
+\end{DoxyNote}
+\mbox{\Hypertarget{classapsc_1_1_linear_finite_element_a582574bbc2bd06d93739511ba60f1778}\label{classapsc_1_1_linear_finite_element_a582574bbc2bd06d93739511ba60f1778}} 
+\index{apsc::LinearFiniteElement$<$ N $>$@{apsc::LinearFiniteElement$<$ N $>$}!computeLocalStiffness@{computeLocalStiffness}}
+\index{computeLocalStiffness@{computeLocalStiffness}!apsc::LinearFiniteElement$<$ N $>$@{apsc::LinearFiniteElement$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{computeLocalStiffness()}{computeLocalStiffness()}}
+{\footnotesize\ttfamily template$<$unsigned int N$>$ \\
+auto \mbox{\hyperlink{classapsc_1_1_linear_finite_element}{apsc\+::\+Linear\+Finite\+Element}}$<$ N $>$\+::compute\+Local\+Stiffness (\begin{DoxyParamCaption}\item[{double}]{factor = {\ttfamily 1.0} }\end{DoxyParamCaption}) const -\/$>$ Local\+Matrix const \& \hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Compute the local stiffness matrix. 
+
+It computes the local stiffness matrix for a linear finite element on an N dimensional simplex given the coordinate of the vertices, the measure of the simplex, and a possible constant elemental multiplicative factor. 
+\begin{DoxyParams}{Parameters}
+{\em factor} & The constant multiplicative factor \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The elemental stiffness matrix 
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+It also caches the result so it can be accessed later 
+\end{DoxyNote}
+\mbox{\Hypertarget{classapsc_1_1_linear_finite_element_af4c79b9d2efceafca3538a25b25f32f7}\label{classapsc_1_1_linear_finite_element_af4c79b9d2efceafca3538a25b25f32f7}} 
+\index{apsc::LinearFiniteElement$<$ N $>$@{apsc::LinearFiniteElement$<$ N $>$}!computeLumpedMass@{computeLumpedMass}}
+\index{computeLumpedMass@{computeLumpedMass}!apsc::LinearFiniteElement$<$ N $>$@{apsc::LinearFiniteElement$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{computeLumpedMass()}{computeLumpedMass()}}
+{\footnotesize\ttfamily template$<$unsigned int N$>$ \\
+auto \mbox{\hyperlink{classapsc_1_1_linear_finite_element}{apsc\+::\+Linear\+Finite\+Element}}$<$ N $>$\+::compute\+Lumped\+Mass (\begin{DoxyParamCaption}\item[{double}]{factor = {\ttfamily 1.0} }\end{DoxyParamCaption}) const -\/$>$ Local\+Matrix const \& \hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Compute lumped mass matrix. 
+
+It computes the lumped mass matrix for a linear finite element on an N dimensional simplex given the measure of the simplex, and a possible constant elemental multiplicative factor. 
+\begin{DoxyParams}{Parameters}
+{\em factor} & The constant multiplicative factor \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The lumped mass matrix 
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+It also caches the result so it can be accessed later 
+\end{DoxyNote}
+\mbox{\Hypertarget{classapsc_1_1_linear_finite_element_adb5adc81649c6e108931bb1633287728}\label{classapsc_1_1_linear_finite_element_adb5adc81649c6e108931bb1633287728}} 
+\index{apsc::LinearFiniteElement$<$ N $>$@{apsc::LinearFiniteElement$<$ N $>$}!computeMassWithSource@{computeMassWithSource}}
+\index{computeMassWithSource@{computeMassWithSource}!apsc::LinearFiniteElement$<$ N $>$@{apsc::LinearFiniteElement$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{computeMassWithSource()}{computeMassWithSource()}}
+{\footnotesize\ttfamily template$<$unsigned int N$>$ \\
+auto \mbox{\hyperlink{classapsc_1_1_linear_finite_element}{apsc\+::\+Linear\+Finite\+Element}}$<$ N $>$\+::compute\+Mass\+With\+Source (\begin{DoxyParamCaption}\item[{const Local\+Vector \&}]{source }\end{DoxyParamCaption}) const -\/$>$ Local\+Matrix const \& \hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Compute the mass matrix using a source term. 
+
+It computes the mass matrix for a linear finite element with an additional source term given by its nodal values. \[ M_{ij} = \int_{K} \phi_i(x) \phi_j(x) (\sum_{k=1}^{N+1} \phi_k(x) s_k) \, dx \] where $ \phi_i $ are the basis functions of the linear finite element. 
+\begin{DoxyParams}{Parameters}
+{\em source} & The source term \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The mass matrix 
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+It also caches the result so it can be accessed later 
+\end{DoxyNote}
+\mbox{\Hypertarget{classapsc_1_1_linear_finite_element_a59e268631178d2f5b17e20c5c30a259f}\label{classapsc_1_1_linear_finite_element_a59e268631178d2f5b17e20c5c30a259f}} 
+\index{apsc::LinearFiniteElement$<$ N $>$@{apsc::LinearFiniteElement$<$ N $>$}!updateGlobalMassMatrix@{updateGlobalMassMatrix}}
+\index{updateGlobalMassMatrix@{updateGlobalMassMatrix}!apsc::LinearFiniteElement$<$ N $>$@{apsc::LinearFiniteElement$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{updateGlobalMassMatrix()}{updateGlobalMassMatrix()}}
+{\footnotesize\ttfamily template$<$unsigned int N$>$ \\
+void \mbox{\hyperlink{classapsc_1_1_linear_finite_element}{apsc\+::\+Linear\+Finite\+Element}}$<$ N $>$\+::update\+Global\+Mass\+Matrix (\begin{DoxyParamCaption}\item[{Global\+Matrix \&}]{global\+Mass\+Matrix }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Update global mass matrix with the cached local mass matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em global\+Mass\+Matrix} & The global mass matrix \\
+\hline
+\end{DoxyParams}
+\begin{DoxyNote}{Note}
+It is assumed that the global mass matrix is already correctly initialized! Being a sparse matrix it means that the non-\/zero elements are already set. 
+\end{DoxyNote}
+\mbox{\Hypertarget{classapsc_1_1_linear_finite_element_accc577b35fb7ad59e8a2689c41d4baa2}\label{classapsc_1_1_linear_finite_element_accc577b35fb7ad59e8a2689c41d4baa2}} 
+\index{apsc::LinearFiniteElement$<$ N $>$@{apsc::LinearFiniteElement$<$ N $>$}!updateGlobalStiffnessMatrix@{updateGlobalStiffnessMatrix}}
+\index{updateGlobalStiffnessMatrix@{updateGlobalStiffnessMatrix}!apsc::LinearFiniteElement$<$ N $>$@{apsc::LinearFiniteElement$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{updateGlobalStiffnessMatrix()}{updateGlobalStiffnessMatrix()}}
+{\footnotesize\ttfamily template$<$unsigned int N$>$ \\
+void \mbox{\hyperlink{classapsc_1_1_linear_finite_element}{apsc\+::\+Linear\+Finite\+Element}}$<$ N $>$\+::update\+Global\+Stiffness\+Matrix (\begin{DoxyParamCaption}\item[{Global\+Matrix \&}]{global\+Stiffness\+Matrix }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the gradients of the element. 
+
+Update global stiffness matrix with the cached local stiffness matrix 
+\begin{DoxyParams}{Parameters}
+{\em global\+Stiffness\+Matrix} & The global stiffness matrix \\
+\hline
+\end{DoxyParams}
+\begin{DoxyNote}{Note}
+It is assumed that the global stiffness matrix is already correctly initialized! Being a sparse matrix it means that the non-\/zero elements are already set. 
+\end{DoxyNote}
+\mbox{\Hypertarget{classapsc_1_1_linear_finite_element_a1806e99a1213aa330a0d9cf7d6c25766}\label{classapsc_1_1_linear_finite_element_a1806e99a1213aa330a0d9cf7d6c25766}} 
+\index{apsc::LinearFiniteElement$<$ N $>$@{apsc::LinearFiniteElement$<$ N $>$}!updateMatrixWithDirichletBoundary@{updateMatrixWithDirichletBoundary}}
+\index{updateMatrixWithDirichletBoundary@{updateMatrixWithDirichletBoundary}!apsc::LinearFiniteElement$<$ N $>$@{apsc::LinearFiniteElement$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{updateMatrixWithDirichletBoundary()}{updateMatrixWithDirichletBoundary()}}
+{\footnotesize\ttfamily template$<$unsigned int N$>$ \\
+void \mbox{\hyperlink{classapsc_1_1_linear_finite_element}{apsc\+::\+Linear\+Finite\+Element}}$<$ N $>$\+::update\+Matrix\+With\+Dirichlet\+Boundary (\begin{DoxyParamCaption}\item[{Global\+Matrix \&}]{global\+Matrix,  }\item[{const std\+::vector$<$ long int $>$ \&}]{indices }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Impose Dirichlet boundary condition on stiffness/mass matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em global\+Matrix} & The global matrix. \\
+\hline
+{\em indices} & A vector of indices corresponding to boundary nodes. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyNote}{Note}
+It is assumed that the global matrix is already correctly initialized and that the diagonal elements at the specified indices exist. 
+\end{DoxyNote}
+\mbox{\Hypertarget{classapsc_1_1_linear_finite_element_a4a670c4193c2569d7f162f32802963de}\label{classapsc_1_1_linear_finite_element_a4a670c4193c2569d7f162f32802963de}} 
+\index{apsc::LinearFiniteElement$<$ N $>$@{apsc::LinearFiniteElement$<$ N $>$}!updateTwinPoint@{updateTwinPoint}}
+\index{updateTwinPoint@{updateTwinPoint}!apsc::LinearFiniteElement$<$ N $>$@{apsc::LinearFiniteElement$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{updateTwinPoint()}{updateTwinPoint()}}
+{\footnotesize\ttfamily template$<$unsigned int N$>$ \\
+void \mbox{\hyperlink{classapsc_1_1_linear_finite_element}{apsc\+::\+Linear\+Finite\+Element}}$<$ N $>$\+::update\+Twin\+Point (\begin{DoxyParamCaption}\item[{Global\+Matrix \&}]{global\+Matrix,  }\item[{const std\+::vector$<$ long int $>$ \&}]{N\+\_\+i\+\_\+plus,  }\item[{const std\+::vector$<$ long int $>$ \&}]{Z\+\_\+i\+\_\+minus,  }\item[{const Global\+Matrix \&}]{alpha }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Update the global matrix with the twin point conditions. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em global\+Matrix} & The global matrix. \\
+\hline
+{\em N\+\_\+i\+\_\+plus} & A vector of indices. \\
+\hline
+{\em Z\+\_\+i\+\_\+minus} & A vector of indices. \\
+\hline
+{\em alpha} & A sparse eigen matrix that provides coefficients for the update. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyNote}{Note}
+It is assumed that the global matrix is already correctly initialized. 
+\end{DoxyNote}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/Linear\+Finite\+Element.\+hpp\end{DoxyCompactItemize}

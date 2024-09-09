@@ -1,0 +1,50 @@
+\hypertarget{index_autotoc_md1}{}\doxysubsection{Author\+: Francesco Fainello, Francesca Venturi}\label{index_autotoc_md1}
+\hypertarget{index_autotoc_md2}{}\doxysection{Project Overview}\label{index_autotoc_md2}
+\hypertarget{index_autotoc_md3}{}\doxysection{Problem Statement}\label{index_autotoc_md3}
+\hypertarget{index_autotoc_md4}{}\doxysection{Usage Instructions}\label{index_autotoc_md4}
+To set up and run the solver, follow these steps\+:
+
+
+\begin{DoxyEnumerate}
+\item {\bfseries{Create a Project Directory\+:}}
+\begin{DoxyItemize}
+\item First, create a directory where all the necessary files will be created and dowloaded\+: \`{}\`{}\`{}bash mkdir project \`{}\`{}\`{}
+\end{DoxyItemize}
+\item {\bfseries{Clone the Repositories\+:}}
+\begin{DoxyItemize}
+\item Then, clone the necessary repositories with the following command\+: \`{}\`{}\`{}bash cd project git clone --recursive \href{mailto:git@github.com}{\texttt{ git@github.\+com}}\+:pacs-\/course/pacs-\/examples.\+git git clone --recursive \href{mailto:git@github.com}{\texttt{ git@github.\+com}}\+:frafainello/pacs\+\_\+fainello\+\_\+venturi.\+git \`{}\`{}{\ttfamily }
+\item {\ttfamily This will load the}pacs-\/examples{\ttfamily and}pacs\+\_\+fainello\+\_\+venturi\`{} folders into your project directory.
+\end{DoxyItemize}
+\item {\bfseries{Modify Makefile\+:}}
+\begin{DoxyItemize}
+\item After cloning, modify the {\ttfamily P\+A\+C\+S\+\_\+\+R\+O\+OT} variable in the {\ttfamily Makefile} to point to the {\ttfamily pacs-\/examples} folder. This step ensures that the project is correctly configured with the necessary paths. Then navigate into the {\ttfamily pacs\+\_\+fainello\+\_\+venturi} folder\+: \`{}\`{}\`{}bash cd pacs\+\_\+fainello\+\_\+venturi \`{}\`{}\`{}
+\end{DoxyItemize}
+\item {\bfseries{Load Necessary Modules\+:}}
+\begin{DoxyItemize}
+\item Before proceeding with the installation, load the required modules by running\+: \`{}\`{}\`{}bash chmod +x scripts/load\+\_\+modules.\+sh scripts/load\+\_\+modules.\+sh \`{}\`{}\`{}
+\end{DoxyItemize}
+\item {\bfseries{Installation\+:}}
+\begin{DoxyItemize}
+\item Run\+: \`{}\`{}\`{}bash make install \`{}\`{}\`{}
+\item This command installs the necessary dependencies and prepares the environment.
+\end{DoxyItemize}
+\item {\bfseries{Compilation\+:}}
+\begin{DoxyItemize}
+\item Compile the code by running\+: \`{}\`{}\`{}bash make \`{}\`{}\`{}
+\item This will generate the executable files needed to run simulations.
+\end{DoxyItemize}
+\item {\bfseries{Execution\+:}}
+\begin{DoxyItemize}
+\item Execute the main simulation by running\+: \`{}\`{}\`{}bash ./main\+\_\+executable \`{}\`{}\`{}
+\end{DoxyItemize}
+\item {\bfseries{Generating Documentation\+:}}
+\begin{DoxyItemize}
+\item To generate documentation, run\+: \`{}\`{}\`{}bash make docs \`{}\`{}\`{}
+\end{DoxyItemize}
+\item {\bfseries{Cleaning the Build\+:}}
+\begin{DoxyItemize}
+\item To clean up the build files, use\+: \`{}\`{}\`{}bash make clean \`{}\`{}\`{}
+\end{DoxyItemize}
+\end{DoxyEnumerate}
+
+These steps will guide you through setting up, compiling, and running the solver, along with generating documentation and cleaning up your build environment.\hypertarget{index_autotoc_md5}{}\doxysection{Folder Structure}\label{index_autotoc_md5}

@@ -1,0 +1,106 @@
+\hypertarget{class_initial_conditions}{}\doxysection{Initial\+Conditions$<$ P\+H\+D\+IM, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM $>$ Class Template Reference}
+\label{class_initial_conditions}\index{InitialConditions$<$ PHDIM, INTRINSIC\_DIM $>$@{InitialConditions$<$ PHDIM, INTRINSIC\_DIM $>$}}
+
+
+This class provides methods for setting initial conditions and solving equations for a finite element mesh.  
+
+
+
+
+{\ttfamily \#include $<$Initial\+Conditions.\+hpp$>$}
+
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_initial_conditions_a3d9f0da7e875d7223292606311ddec57}\label{class_initial_conditions_a3d9f0da7e875d7223292606311ddec57}} 
+using {\bfseries Traits} = \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits}{Eikonal\+::\+Eikonal\+\_\+traits}}$<$ P\+H\+D\+IM, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM $>$
+\item 
+\mbox{\Hypertarget{class_initial_conditions_a37f2effe190ce32719167e0b7ca9cfdf}\label{class_initial_conditions_a37f2effe190ce32719167e0b7ca9cfdf}} 
+using {\bfseries Values} = typename \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_a6a7bd3509ab3d3b9d4c935f57b405050}{Traits\+::\+Values}}
+\item 
+\mbox{\Hypertarget{class_initial_conditions_a8ca519b2a319d954b2e493cd9869d209}\label{class_initial_conditions_a8ca519b2a319d954b2e493cd9869d209}} 
+using {\bfseries Indexes} = typename \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_ac57339576b8924742a0b8c5ea70731ce}{Traits\+::\+Indexes}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_initial_conditions_a4a72f367adb9951f0db6a4622ad23d28}\label{class_initial_conditions_a4a72f367adb9951f0db6a4622ad23d28}} 
+\mbox{\hyperlink{class_initial_conditions_a4a72f367adb9951f0db6a4622ad23d28}{Initial\+Conditions}} ()=default
+\begin{DoxyCompactList}\small\item\em Default constructor for \mbox{\hyperlink{class_initial_conditions}{Initial\+Conditions}}. \end{DoxyCompactList}\item 
+Values \mbox{\hyperlink{class_initial_conditions_a2f44711bda4859c347d86c7ab280b113}{Heat\+Equation}} (const Eigen\+::\+Sparse\+Matrix$<$ double $>$ \&stiffness\+Matrix, const Values \&Integrals, const Values \&forcing\+Term, const Indexes \&boundary\+Indices) const
+\begin{DoxyCompactList}\small\item\em Solves the heat equation using a sparse linear solver. \end{DoxyCompactList}\item 
+Values \mbox{\hyperlink{class_initial_conditions_a57e018a201aa03eb6e6edb87a35f6914}{like\+BC}} (const int num\+Nodes, const Indexes \&boundary\+Indices) const
+\begin{DoxyCompactList}\small\item\em Returns initial solution constant = 1, except for = 0 where Dirichlet BC are applied. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$std\+::size\+\_\+t P\+H\+D\+IM, std\+::size\+\_\+t I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM = P\+H\+D\+IM$>$\newline
+class Initial\+Conditions$<$ P\+H\+D\+I\+M, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+I\+M $>$}
+
+This class provides methods for setting initial conditions and solving equations for a finite element mesh. 
+
+The class is templated to handle dimensions P\+H\+D\+IM and I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM, allowing for flexibility in different physical and geometric configurations. It includes methods for computing initial conditions, such as those for solving the heat equation.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em P\+H\+D\+IM} & The physical dimension of the problem. \\
+\hline
+{\em I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM} & The intrinsic dimension of the elements in the mesh (defaults to P\+H\+D\+IM). \\
+\hline
+\end{DoxyTemplParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_initial_conditions_a2f44711bda4859c347d86c7ab280b113}\label{class_initial_conditions_a2f44711bda4859c347d86c7ab280b113}} 
+\index{InitialConditions$<$ PHDIM, INTRINSIC\_DIM $>$@{InitialConditions$<$ PHDIM, INTRINSIC\_DIM $>$}!HeatEquation@{HeatEquation}}
+\index{HeatEquation@{HeatEquation}!InitialConditions$<$ PHDIM, INTRINSIC\_DIM $>$@{InitialConditions$<$ PHDIM, INTRINSIC\_DIM $>$}}
+\doxysubsubsection{\texorpdfstring{HeatEquation()}{HeatEquation()}}
+{\footnotesize\ttfamily template$<$std\+::size\+\_\+t P\+H\+D\+IM, std\+::size\+\_\+t I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM = P\+H\+D\+IM$>$ \\
+Values \mbox{\hyperlink{class_initial_conditions}{Initial\+Conditions}}$<$ P\+H\+D\+IM, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM $>$\+::Heat\+Equation (\begin{DoxyParamCaption}\item[{const Eigen\+::\+Sparse\+Matrix$<$ double $>$ \&}]{stiffness\+Matrix,  }\item[{const Values \&}]{Integrals,  }\item[{const Values \&}]{forcing\+Term,  }\item[{const Indexes \&}]{boundary\+Indices }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Solves the heat equation using a sparse linear solver. 
+
+This method computes the solution for a heat equation by solving a linear system of equations, taking into account boundary conditions provided as input. The solution is obtained using LU decomposition for sparse matrices.
+
+
+\begin{DoxyParams}{Parameters}
+{\em stiffness\+Matrix} & The global stiffness matrix of the mesh. \\
+\hline
+{\em Integrals} & Vector of integral values for each node. \\
+\hline
+{\em forcing\+Term} & Vector representing the forcing term in the heat equation. \\
+\hline
+{\em boundary\+Indices} & Indices of the nodes where boundary conditions are applied. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The computed values of the solution at each node. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_initial_conditions_a57e018a201aa03eb6e6edb87a35f6914}\label{class_initial_conditions_a57e018a201aa03eb6e6edb87a35f6914}} 
+\index{InitialConditions$<$ PHDIM, INTRINSIC\_DIM $>$@{InitialConditions$<$ PHDIM, INTRINSIC\_DIM $>$}!likeBC@{likeBC}}
+\index{likeBC@{likeBC}!InitialConditions$<$ PHDIM, INTRINSIC\_DIM $>$@{InitialConditions$<$ PHDIM, INTRINSIC\_DIM $>$}}
+\doxysubsubsection{\texorpdfstring{likeBC()}{likeBC()}}
+{\footnotesize\ttfamily template$<$std\+::size\+\_\+t P\+H\+D\+IM, std\+::size\+\_\+t I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM = P\+H\+D\+IM$>$ \\
+Values \mbox{\hyperlink{class_initial_conditions}{Initial\+Conditions}}$<$ P\+H\+D\+IM, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM $>$\+::like\+BC (\begin{DoxyParamCaption}\item[{const int}]{num\+Nodes,  }\item[{const Indexes \&}]{boundary\+Indices }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns initial solution constant = 1, except for = 0 where Dirichlet BC are applied. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em num\+Nodes} & Length of required vector \\
+\hline
+{\em boundary\+Indices} & Indices of the nodes where boundary conditions are applied. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The computed values of the solution at each node. 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/Initial\+Conditions.\+hpp\end{DoxyCompactItemize}
