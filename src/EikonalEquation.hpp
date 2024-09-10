@@ -98,6 +98,16 @@ public:
         // Broadcast the updated value of w from rank 0 to all other ranks
         MPI_Bcast(w.data(), w.size(), MPI_DOUBLE, 0, MPI_COMM_WORLD);
         
+        // Broadcast the maximum value of maxGrad across all ranks
+        double global_maxGrad;
+        MPI_Allreduce(&maxGrad, &global_maxGrad, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
+        maxGrad = global_maxGrad;
+
+        // Broadcast the minimum value of minGrad across all ranks
+        double global_minGrad;
+        MPI_Allreduce(&minGrad, &global_minGrad, 1, MPI_DOUBLE, MPI_MIN, MPI_COMM_WORLD);
+        minGrad = global_minGrad;
+        
         return localConverged;
     }
 
