@@ -1,14 +1,48 @@
-\hypertarget{index_autotoc_md1}{}\doxysubsection{Author\+: Francesco Fainello, Francesca Venturi}\label{index_autotoc_md1}
+\hypertarget{index_autotoc_md1}{}\doxysubsection{Authors\+: Francesco Fainello, Francesca Venturi}\label{index_autotoc_md1}
 \hypertarget{index_autotoc_md2}{}\doxysection{Project Overview}\label{index_autotoc_md2}
-\hypertarget{index_autotoc_md3}{}\doxysection{Problem Statement}\label{index_autotoc_md3}
-\hypertarget{index_autotoc_md4}{}\doxysection{Usage Instructions}\label{index_autotoc_md4}
+This project focuses on developing efficient, implicit numerical methods for solving the {\bfseries{Eikonal equation}}, a fundamental equation in modeling wave propagation and computing distance functions. The Eikonal equation has broad applications across fields such as\+: seismology, geospatial physics and computer vision.
+
+The {\bfseries{Eikonal Equation}} is given by\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\(\backslash\)|\(\backslash\)nabla u(x)\(\backslash\)| = F(x)}
+\end{DoxyCode}
+
+
+Where\+:
+\begin{DoxyItemize}
+\item ( u(x) ) is the distance function.
+\item ( F(x) ) represents the wavefront propagation speed.
+\end{DoxyItemize}
+
+To solve this, we derive the following {\bfseries{variational formulation}}\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{E(u(x)) = \(\backslash\)int\_\{\(\backslash\)Omega\} \(\backslash\)left( \(\backslash\)|\(\backslash\)nabla u(x)\(\backslash\)| -\/ 1 \(\backslash\)right)\string^2 \(\backslash\), dx}
+\end{DoxyCode}
+
+
+This energy functional is minimized to compute the solution for the Eikonal equation.\hypertarget{index_autotoc_md3}{}\doxysection{Problem Statement}\label{index_autotoc_md3}
+This project addresses the numerical solution of this equation by employing {\bfseries{energy minimization principles}} and applying {\bfseries{iterative methods}} such as\+:
+\begin{DoxyItemize}
+\item {\bfseries{Method of Laplacian Iterations}}
+\item {\bfseries{Relaxation of Laplacian Iterations}}
+\item {\bfseries{Alternating Direction Method of Lagrange Multipliers (A\+D\+MM)}}
+\end{DoxyItemize}
+
+These methods allow for efficient, scalable solutions applicable to a variety of complex scenarios.
+
+\DoxyHorRuler{0}
+ \hypertarget{index_autotoc_md5}{}\doxysection{Usage Instructions}\label{index_autotoc_md5}
 To set up and run the solver, follow these steps\+:
 
 
 \begin{DoxyEnumerate}
 \item {\bfseries{Create a Project Directory\+:}}
 \begin{DoxyItemize}
-\item First, create a directory where all the necessary files will be created and dowloaded\+: \`{}\`{}\`{}bash mkdir project \`{}\`{}\`{}
+\item First, create a directory where all the necessary files will be created and downloaded\+: \`{}\`{}\`{}bash mkdir project \`{}\`{}\`{}
 \end{DoxyItemize}
 \item {\bfseries{Clone the Repositories\+:}}
 \begin{DoxyItemize}
@@ -19,23 +53,59 @@ To set up and run the solver, follow these steps\+:
 \begin{DoxyItemize}
 \item After cloning, modify the {\ttfamily P\+A\+C\+S\+\_\+\+R\+O\+OT} variable in the {\ttfamily Makefile} to point to the {\ttfamily pacs-\/examples} folder. This step ensures that the project is correctly configured with the necessary paths. Then navigate into the {\ttfamily pacs\+\_\+fainello\+\_\+venturi} folder\+: \`{}\`{}\`{}bash cd pacs\+\_\+fainello\+\_\+venturi \`{}\`{}\`{}
 \end{DoxyItemize}
-\item {\bfseries{Load Necessary Modules\+:}}
-\begin{DoxyItemize}
-\item Before proceeding with the installation, load the required modules by running\+: \`{}\`{}\`{}bash chmod +x scripts/load\+\_\+modules.\+sh scripts/load\+\_\+modules.\+sh \`{}\`{}\`{}
-\end{DoxyItemize}
-\item {\bfseries{Installation\+:}}
-\begin{DoxyItemize}
-\item Run\+: \`{}\`{}\`{}bash make install \`{}\`{}\`{}
-\item This command installs the necessary dependencies and prepares the environment.
-\end{DoxyItemize}
 \item {\bfseries{Compilation\+:}}
 \begin{DoxyItemize}
 \item Compile the code by running\+: \`{}\`{}\`{}bash make \`{}\`{}\`{}
 \item This will generate the executable files needed to run simulations.
 \end{DoxyItemize}
-\item {\bfseries{Execution\+:}}
+\item {\bfseries{Execution}}
+
+a. {\bfseries{Prepare the Environment}}\+: ~\newline
+ Make sure that all the necessary libraries and dependencies are installed. The simulation is designed to be run in a parallel computing environment using {\bfseries{M\+PI}}.
+
+b. {\bfseries{Run the Simulation}}\+: ~\newline
+ To execute the main simulation, use the following command\+:
+
+\`{}\`{}\`{}bash mpirun -\/np $<$num\+\_\+processes$>$ ./main\+\_\+executable \`{}\`{}\`{}
+\end{DoxyEnumerate}\hypertarget{index_autotoc_md6}{}\doxysubsubsection{Input Configuration}\label{index_autotoc_md6}
+During execution, the user will be prompted to provide input options for the simulation setup. The steps are outlined below\+:
+
+c. {\bfseries{Mesh Input}}\+: ~\newline
+ You will be asked to input the name of the {\ttfamily .vtk} file containing the mesh data. If no input is provided, the default file {\ttfamily mesh\+\_\+10.\+vtk} will be used. This default mesh represents a {\bfseries{unitary cube}} divided into 10 uniform intervals along each edge.
+
+Example prompt\+: \`{}\`{}\`{} Enter the name of the .vtk file containing the mesh (default\+: mesh\+\_\+10.\+vtk)\+: \`{}\`{}\`{}
+
+d. {\bfseries{Boundary Conditions}}\+: ~\newline
+ You will be asked to choose the boundary conditions to impose on the problem. The available options are\+:
 \begin{DoxyItemize}
-\item Execute the main simulation by running\+: \`{}\`{}\`{}bash ./main\+\_\+executable \`{}\`{}\`{}
+\item {\bfseries{1}}\+: Dirichlet Null B\+Cs on the bottom face (z=0) ~\newline
+
+\item {\bfseries{2}}\+: Dirichlet Null B\+Cs on the central point of the bottom face (z=0, x=0.\+5, y=0.\+5) ~\newline
+
+\item {\bfseries{3}}\+: Dirichlet Null B\+Cs on one vertex (x=0, y=0, z=0) ~\newline
+
+\item {\bfseries{4}}\+: Dirichlet Null B\+Cs on the whole boundary ~\newline
+
+\end{DoxyItemize}
+
+If no input is provided, {\bfseries{Option 1}} is used by default.
+
+e. {\bfseries{Method Selection}}\+: ~\newline
+ Next, you will be asked to select the method for solving the Eikonal equation. The possible options are\+:
+\begin{DoxyItemize}
+\item {\bfseries{1}}\+: Standard Eikonal (Method of Laplacian Iterations)
+\item {\bfseries{2}}\+: Penalty Eikonal (Relaxation of Laplacian Iterations)
+\item {\bfseries{3}}\+: Lagrangian Eikonal (Alternating Direction Method of Lagrange Multipliers)
+\end{DoxyItemize}
+
+If no input is provided, {\bfseries{Option 1 (Standard Eikonal)}} is selected by default.
+
+
+\begin{DoxyEnumerate}
+\item {\bfseries{Generating Plots\+:}}
+\begin{DoxyItemize}
+\item To generate the plots you will find in the report, run\+: \`{}\`{}\`{}bash cd plots ./plots.sh \`{}\`{}\`{} ~\newline
+
 \end{DoxyItemize}
 \item {\bfseries{Generating Documentation\+:}}
 \begin{DoxyItemize}
@@ -47,4 +117,4 @@ To set up and run the solver, follow these steps\+:
 \end{DoxyItemize}
 \end{DoxyEnumerate}
 
-These steps will guide you through setting up, compiling, and running the solver, along with generating documentation and cleaning up your build environment.\hypertarget{index_autotoc_md5}{}\doxysection{Folder Structure}\label{index_autotoc_md5}
+These steps will guide you through setting up, compiling, and running the solver, along with generating documentation and cleaning up your build environment. 

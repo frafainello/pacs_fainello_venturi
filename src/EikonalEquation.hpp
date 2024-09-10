@@ -3,6 +3,16 @@
 
 #include <mpi.h>
 
+/// @brief Abstract base class for solving the Eikonal equation.
+/// 
+/// This class defines the general framework for solving the Eikonal equation using 
+/// finite element methods in a parallelized MPI environment. It provides the core 
+/// functionalities and methods that need to be overridden by derived classes to 
+/// implement specific solution techniques, such as Standard Eikonal, Penalty Eikonal,
+/// and Lagrangian Eikonal methods.
+///
+/// @tparam PHDIM The physical dimension of the problem.
+/// @tparam INTRINSIC_DIM The intrinsic dimension of the problem (default is equal to PHDIM).
 template<std::size_t PHDIM, std::size_t INTRINSIC_DIM=PHDIM>
 class EikonalEquation {
 
@@ -249,7 +259,14 @@ private:
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-// Method of Laplacian Iterations (Standard Eikonal)
+/// @brief Implementation of the Standard Eikonal method.
+/// 
+/// This class solves the Eikonal equation using the standard method of Laplacian iterations.
+/// It overrides the necessary virtual methods to provide the specific implementation for 
+/// computing the stiffness term. This method does not use a reaction term or Lagrangian updates.
+///
+/// @tparam PHDIM The physical dimension of the problem.
+/// @tparam INTRINSIC_DIM The intrinsic dimension of the problem (default is equal to PHDIM).
 template<std::size_t PHDIM, std::size_t INTRINSIC_DIM=PHDIM>
 class StandardEikonal : public EikonalEquation<PHDIM> {
 public:
@@ -285,7 +302,15 @@ public:
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-// Relaxation of the Method of Laplacian Iterations (Penalty Eikonal)
+/// @brief Implementation of the Penalty Eikonal method.
+/// 
+/// This class solves the Eikonal equation using a relaxation of the Laplacian iterations method
+/// with a penalty parameter. It overrides the necessary virtual methods to provide the specific 
+/// implementation for computing the stiffness term. This method does not use a reaction term or 
+/// Lagrangian updates.
+///
+/// @tparam PHDIM The physical dimension of the problem.
+/// @tparam INTRINSIC_DIM The intrinsic dimension of the problem (default is equal to PHDIM).
 template<std::size_t PHDIM, std::size_t INTRINSIC_DIM=PHDIM>
 class PenaltyEikonal : public EikonalEquation<PHDIM> {
 public:
@@ -324,7 +349,14 @@ private:
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-// Alternating Direction Method of Lagrange Multipliers (Lagrangian Eikonal)
+/// @brief Implementation of the Lagrangian Eikonal method.
+/// 
+/// This class solves the Eikonal equation using the Alternating Direction Method of Lagrange Multipliers 
+/// (ADMM). It overrides the necessary virtual methods to provide the specific implementations for 
+/// computing both the stiffness and reaction terms, and for updating the Lagrangian multipliers.
+///
+/// @tparam PHDIM The physical dimension of the problem.
+/// @tparam INTRINSIC_DIM The intrinsic dimension of the problem (default is equal to PHDIM).
 template<std::size_t PHDIM, std::size_t INTRINSIC_DIM=PHDIM>
 class LagrangianEikonal : public EikonalEquation<PHDIM> {
 public:

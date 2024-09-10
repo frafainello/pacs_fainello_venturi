@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['initialconditions_102',['InitialConditions',['../class_initial_conditions.html#a4a72f367adb9951f0db6a4622ad23d28',1,'InitialConditions']]]
+  ['heatequation_128',['HeatEquation',['../class_initial_conditions.html#a2f44711bda4859c347d86c7ab280b113',1,'InitialConditions']]]
 ];

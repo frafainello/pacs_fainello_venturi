@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.17"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Implicit Methods for the Eikonal Equation: PACS Project - Eikonal Equation</title>
+<title>Implicit Methods for the Eikonal Equation: PACS Project - Eikonal Equation Solver</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -62,21 +62,38 @@ $(function() {
 
 <div class="PageDoc"><div class="header">
   <div class="headertitle">
-<div class="title">PACS Project - Eikonal Equation </div>  </div>
+<div class="title">PACS Project - Eikonal Equation Solver </div>  </div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><h2><a class="anchor" id="autotoc_md1"></a>
-Author: Francesco Fainello, Francesca Venturi</h2>
+Authors: Francesco Fainello, Francesca Venturi</h2>
 <h1><a class="anchor" id="autotoc_md2"></a>
 Project Overview</h1>
+<p>This project focuses on developing efficient, implicit numerical methods for solving the <b>Eikonal equation</b>, a fundamental equation in modeling wave propagation and computing distance functions. The Eikonal equation has broad applications across fields such as: seismology, geospatial physics and computer vision.</p>
+<p>The <b>Eikonal Equation</b> is given by:</p>
+<div class="fragment"><div class="line">\|\nabla u(x)\| = F(x)</div>
+</div><!-- fragment --><p>Where:</p><ul>
+<li>( u(x) ) is the distance function.</li>
+<li>( F(x) ) represents the wavefront propagation speed.</li>
+</ul>
+<p>To solve this, we derive the following <b>variational formulation</b>:</p>
+<div class="fragment"><div class="line">E(u(x)) = \int_{\Omega} \left( \|\nabla u(x)\| - 1 \right)^2 \, dx</div>
+</div><!-- fragment --><p>This energy functional is minimized to compute the solution for the Eikonal equation.</p>
 <h1><a class="anchor" id="autotoc_md3"></a>
 Problem Statement</h1>
-<h1><a class="anchor" id="autotoc_md4"></a>
+<p>This project addresses the numerical solution of this equation by employing <b>energy minimization principles</b> and applying <b>iterative methods</b> such as:</p><ul>
+<li><b>Method of Laplacian Iterations</b></li>
+<li><b>Relaxation of Laplacian Iterations</b></li>
+<li><b>Alternating Direction Method of Lagrange Multipliers (ADMM)</b></li>
+</ul>
+<p>These methods allow for efficient, scalable solutions applicable to a variety of complex scenarios.</p>
+<hr  />
+ <h1><a class="anchor" id="autotoc_md5"></a>
 Usage Instructions</h1>
 <p>To set up and run the solver, follow these steps:</p>
 <ol type="1">
 <li><b>Create a Project Directory:</b><ul>
-<li>First, create a directory where all the necessary files will be created and dowloaded: ```bash mkdir project ```</li>
+<li>First, create a directory where all the necessary files will be created and downloaded: ```bash mkdir project ```</li>
 </ul>
 </li>
 <li><b>Clone the Repositories:</b><ul>
@@ -88,22 +105,48 @@ Usage Instructions</h1>
 <li>After cloning, modify the <code>PACS_ROOT</code> variable in the <code>Makefile</code> to point to the <code>pacs-examples</code> folder. This step ensures that the project is correctly configured with the necessary paths. Then navigate into the <code>pacs_fainello_venturi</code> folder: ```bash cd pacs_fainello_venturi ```</li>
 </ul>
 </li>
-<li><b>Load Necessary Modules:</b><ul>
-<li>Before proceeding with the installation, load the required modules by running: ```bash chmod +x scripts/load_modules.sh scripts/load_modules.sh ```</li>
-</ul>
-</li>
-<li><b>Installation:</b><ul>
-<li>Run: ```bash make install ```</li>
-<li>This command installs the necessary dependencies and prepares the environment.</li>
-</ul>
-</li>
 <li><b>Compilation:</b><ul>
 <li>Compile the code by running: ```bash make ```</li>
 <li>This will generate the executable files needed to run simulations.</li>
 </ul>
 </li>
-<li><b>Execution:</b><ul>
-<li>Execute the main simulation by running: ```bash ./main_executable ```</li>
+<li><p class="startli"><b>Execution</b></p>
+<p class="startli">a. <b>Prepare the Environment</b>: <br  />
+ Make sure that all the necessary libraries and dependencies are installed. The simulation is designed to be run in a parallel computing environment using <b>MPI</b>.</p>
+<p class="startli">b. <b>Run the Simulation</b>: <br  />
+ To execute the main simulation, use the following command:</p>
+<p class="startli">```bash mpirun -np &lt;num_processes&gt; ./main_executable ```</p>
+</li>
+</ol>
+<h3><a class="anchor" id="autotoc_md6"></a>
+Input Configuration</h3>
+<p>During execution, the user will be prompted to provide input options for the simulation setup. The steps are outlined below:</p>
+<p>c. <b>Mesh Input</b>: <br  />
+ You will be asked to input the name of the <code>.vtk</code> file containing the mesh data. If no input is provided, the default file <code>mesh_10.vtk</code> will be used. This default mesh represents a <b>unitary cube</b> divided into 10 uniform intervals along each edge.</p>
+<p>Example prompt: ``` Enter the name of the .vtk file containing the mesh (default: mesh_10.vtk): ```</p>
+<p>d. <b>Boundary Conditions</b>: <br  />
+ You will be asked to choose the boundary conditions to impose on the problem. The available options are:</p><ul>
+<li><b>1</b>: Dirichlet Null BCs on the bottom face (z=0) <br  />
+</li>
+<li><b>2</b>: Dirichlet Null BCs on the central point of the bottom face (z=0, x=0.5, y=0.5) <br  />
+</li>
+<li><b>3</b>: Dirichlet Null BCs on one vertex (x=0, y=0, z=0) <br  />
+</li>
+<li><b>4</b>: Dirichlet Null BCs on the whole boundary <br  />
+</li>
+</ul>
+<p>If no input is provided, <b>Option 1</b> is used by default.</p>
+<p>e. <b>Method Selection</b>: <br  />
+ Next, you will be asked to select the method for solving the Eikonal equation. The possible options are:</p><ul>
+<li><b>1</b>: Standard Eikonal (Method of Laplacian Iterations)</li>
+<li><b>2</b>: Penalty Eikonal (Relaxation of Laplacian Iterations)</li>
+<li><b>3</b>: Lagrangian Eikonal (Alternating Direction Method of Lagrange Multipliers)</li>
+</ul>
+<p>If no input is provided, <b>Option 1 (Standard Eikonal)</b> is selected by default.</p>
+<ol type="1">
+<li><b>Generating Plots:</b><ul>
+<li>To generate the plots you will find in the report, run: ```bash cd plots ./plots.sh ``` <br  />
+</li>
 </ul>
 </li>
 <li><b>Generating Documentation:</b><ul>
@@ -115,9 +158,7 @@ Usage Instructions</h1>
 </ul>
 </li>
 </ol>
-<p>These steps will guide you through setting up, compiling, and running the solver, along with generating documentation and cleaning up your build environment.</p>
-<h1><a class="anchor" id="autotoc_md5"></a>
-Folder Structure</h1>
+<p>These steps will guide you through setting up, compiling, and running the solver, along with generating documentation and cleaning up your build environment. </p>
 </div></div><!-- PageDoc -->
 </div><!-- contents -->
 <!-- start footer part -->

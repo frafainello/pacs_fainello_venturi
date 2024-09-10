@@ -1,5 +1,14 @@
 \hypertarget{class_eikonal_equation}{}\doxysection{Eikonal\+Equation$<$ P\+H\+D\+IM, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM $>$ Class Template Reference}
 \label{class_eikonal_equation}\index{EikonalEquation$<$ PHDIM, INTRINSIC\_DIM $>$@{EikonalEquation$<$ PHDIM, INTRINSIC\_DIM $>$}}
+
+
+Abstract base class for solving the Eikonal equation.  
+
+
+
+
+{\ttfamily \#include $<$Eikonal\+Equation.\+hpp$>$}
+
 \doxysubsection*{Public Types}
 \begin{DoxyCompactItemize}
 \item 
@@ -20,197 +29,241 @@ using {\bfseries Values} = typename \mbox{\hyperlink{struct_eikonal_1_1_eikonal_
 \item 
 \mbox{\Hypertarget{class_eikonal_equation_ac8a6f4dee1fe2b3dde990e4d6a9419df}\label{class_eikonal_equation_ac8a6f4dee1fe2b3dde990e4d6a9419df}} 
 using {\bfseries AnisotropyM} = typename \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_a82b9cb4a479b63c0b3bf50df3108fb6e}{Traits\+::\+AnisotropyM}}
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_a7ab4fdb65620e1ff7a02b6a4291a6a0d}\label{class_eikonal_equation_a7ab4fdb65620e1ff7a02b6a4291a6a0d}} 
-using {\bfseries Traits} = \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits}{Eikonal\+::\+Eikonal\+\_\+traits}}$<$ P\+H\+D\+IM, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM $>$
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_a6fefc62c6f602ba4382976b94c52e022}\label{class_eikonal_equation_a6fefc62c6f602ba4382976b94c52e022}} 
-using {\bfseries Index} = typename \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_a9e09a19a6eb361cd966698099ada27ec}{Traits\+::\+Index}}
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_a3bed5a14bd30e3b754282441571d57b7}\label{class_eikonal_equation_a3bed5a14bd30e3b754282441571d57b7}} 
-using {\bfseries Indexes} = typename \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_ac57339576b8924742a0b8c5ea70731ce}{Traits\+::\+Indexes}}
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_ace9f513b3514ac6cac74d108cc467c57}\label{class_eikonal_equation_ace9f513b3514ac6cac74d108cc467c57}} 
-using {\bfseries Nodes} = typename \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_a030f2b2ca768b68ed56c06983c573240}{Traits\+::\+Nodes}}
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_aa03e811bfaed97ec16b002359bea960e}\label{class_eikonal_equation_aa03e811bfaed97ec16b002359bea960e}} 
-using {\bfseries Elements} = typename Traits\+::\+Elements
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_a71b5b20d2f6186a8ffe0f3ff97525523}\label{class_eikonal_equation_a71b5b20d2f6186a8ffe0f3ff97525523}} 
-using {\bfseries Values} = typename \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_a6a7bd3509ab3d3b9d4c935f57b405050}{Traits\+::\+Values}}
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_a7ab4fdb65620e1ff7a02b6a4291a6a0d}\label{class_eikonal_equation_a7ab4fdb65620e1ff7a02b6a4291a6a0d}} 
-using {\bfseries Traits} = \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits}{Eikonal\+::\+Eikonal\+\_\+traits}}$<$ P\+H\+D\+IM, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM $>$
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_a6fefc62c6f602ba4382976b94c52e022}\label{class_eikonal_equation_a6fefc62c6f602ba4382976b94c52e022}} 
-using {\bfseries Index} = typename \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_a9e09a19a6eb361cd966698099ada27ec}{Traits\+::\+Index}}
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_a3bed5a14bd30e3b754282441571d57b7}\label{class_eikonal_equation_a3bed5a14bd30e3b754282441571d57b7}} 
-using {\bfseries Indexes} = typename \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_ac57339576b8924742a0b8c5ea70731ce}{Traits\+::\+Indexes}}
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_ace9f513b3514ac6cac74d108cc467c57}\label{class_eikonal_equation_ace9f513b3514ac6cac74d108cc467c57}} 
-using {\bfseries Nodes} = typename \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_a030f2b2ca768b68ed56c06983c573240}{Traits\+::\+Nodes}}
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_aa03e811bfaed97ec16b002359bea960e}\label{class_eikonal_equation_aa03e811bfaed97ec16b002359bea960e}} 
-using {\bfseries Elements} = typename Traits\+::\+Elements
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_a71b5b20d2f6186a8ffe0f3ff97525523}\label{class_eikonal_equation_a71b5b20d2f6186a8ffe0f3ff97525523}} 
-using {\bfseries Values} = typename \mbox{\hyperlink{struct_eikonal_1_1_eikonal__traits_a6a7bd3509ab3d3b9d4c935f57b405050}{Traits\+::\+Values}}
 \end{DoxyCompactItemize}
 \doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{class_eikonal_equation_a076b91b8c18319508f6ec24bbeec2009}\label{class_eikonal_equation_a076b91b8c18319508f6ec24bbeec2009}} 
-{\bfseries Eikonal\+Equation} (const \mbox{\hyperlink{class_mesh_data}{Mesh\+Data}}$<$ P\+H\+D\+IM $>$ \&mesh, Values \&w, const Eigen\+::\+Sparse\+Matrix$<$ double $>$ \&stiffness\+Matrix, const Eigen\+::\+Sparse\+LU$<$ Eigen\+::\+Sparse\+Matrix$<$ double $>$$>$ \&solver, double gamma=1e-\/3, double tol=1e-\/3)
+bool \mbox{\hyperlink{class_eikonal_equation_a6c639adc9755a455c777143d58f1efc9}{update\+Solution}} (const int rank, const int size)
 \item 
-\mbox{\Hypertarget{class_eikonal_equation_a6c639adc9755a455c777143d58f1efc9}\label{class_eikonal_equation_a6c639adc9755a455c777143d58f1efc9}} 
-bool {\bfseries update\+Solution} (const int rank, const int size)
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_aafb4611d369b269ce7320e70b6624863}\label{class_eikonal_equation_aafb4611d369b269ce7320e70b6624863}} 
-std\+::tuple$<$ double, double, double $>$ {\bfseries get\+Metrics} ()
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_ae46a37a0515016815dc1c9a8bf2b1707}\label{class_eikonal_equation_ae46a37a0515016815dc1c9a8bf2b1707}} 
-{\bfseries Eikonal\+Equation} (const \mbox{\hyperlink{class_mesh_data}{Mesh\+Data}}$<$ P\+H\+D\+IM $>$ \&mesh, Values \&w, const Eigen\+::\+Sparse\+Matrix$<$ double $>$ \&stiffness\+Matrix, const std\+::vector$<$ Eigen\+::\+Matrix$<$ double, P\+H\+D\+IM, P\+H\+D\+IM $>$$>$ \&gradient\+Coeff, const Eigen\+::\+Sparse\+LU$<$ Eigen\+::\+Sparse\+Matrix$<$ double $>$$>$ \&solver, double gamma=1e-\/3, double tol=1e-\/3)
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_ace84bccafe1e5837240834fca19e4e76}\label{class_eikonal_equation_ace84bccafe1e5837240834fca19e4e76}} 
-void {\bfseries reset\+\_\+attributes} ()
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_a78a2f8a878cd4ad51a27c803f7e68849}\label{class_eikonal_equation_a78a2f8a878cd4ad51a27c803f7e68849}} 
-double {\bfseries anisotropic\+Norm} (const Eigen\+::\+Matrix$<$ double, 1, P\+H\+D\+IM $>$ \&u) const
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_afce07807d75984fab6244e8dbe25c395}\label{class_eikonal_equation_afce07807d75984fab6244e8dbe25c395}} 
-void {\bfseries compute\+Local\+Reaction\+And\+Stiffness} (int i)
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_abecce00559da4b576579bf741255e651}\label{class_eikonal_equation_abecce00559da4b576579bf741255e651}} 
-void {\bfseries compute\+Local\+Rhs} (int i)
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_a753e97b99a51a084fafa25c7a8e6f458}\label{class_eikonal_equation_a753e97b99a51a084fafa25c7a8e6f458}} 
-void {\bfseries update\+Global\+Rhs} (int i)
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_a55f994125bf0782125c2a3e067c6ce7d}\label{class_eikonal_equation_a55f994125bf0782125c2a3e067c6ce7d}} 
-bool {\bfseries update\+Solution} ()
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_a8c8242c7d41ccfa6bcfdb98e0288fb5a}\label{class_eikonal_equation_a8c8242c7d41ccfa6bcfdb98e0288fb5a}} 
-virtual Values {\bfseries compute\+Stiffness\+Term} (int i)=0
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_aecfd9c23b0e2643c86eaf54c1615cf21}\label{class_eikonal_equation_aecfd9c23b0e2643c86eaf54c1615cf21}} 
-virtual Values {\bfseries compute\+Reaction\+Term} (int i)=0
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_ae040889d2ecb7bb969c7664b890bbe63}\label{class_eikonal_equation_ae040889d2ecb7bb969c7664b890bbe63}} 
-virtual void {\bfseries update\+Lagrangians} (const Values \&z)=0
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_a076b91b8c18319508f6ec24bbeec2009}\label{class_eikonal_equation_a076b91b8c18319508f6ec24bbeec2009}} 
-{\bfseries Eikonal\+Equation} (const \mbox{\hyperlink{class_mesh_data}{Mesh\+Data}}$<$ P\+H\+D\+IM $>$ \&mesh, Values \&w, const Eigen\+::\+Sparse\+Matrix$<$ double $>$ \&stiffness\+Matrix, const Eigen\+::\+Sparse\+LU$<$ Eigen\+::\+Sparse\+Matrix$<$ double $>$$>$ \&solver, double gamma=1e-\/3, double tol=1e-\/3)
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_ace84bccafe1e5837240834fca19e4e76}\label{class_eikonal_equation_ace84bccafe1e5837240834fca19e4e76}} 
-void {\bfseries reset\+\_\+attributes} ()
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_a78a2f8a878cd4ad51a27c803f7e68849}\label{class_eikonal_equation_a78a2f8a878cd4ad51a27c803f7e68849}} 
-double {\bfseries anisotropic\+Norm} (const Eigen\+::\+Matrix$<$ double, 1, P\+H\+D\+IM $>$ \&u) const
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_abecce00559da4b576579bf741255e651}\label{class_eikonal_equation_abecce00559da4b576579bf741255e651}} 
-void {\bfseries compute\+Local\+Rhs} (int i)
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_a753e97b99a51a084fafa25c7a8e6f458}\label{class_eikonal_equation_a753e97b99a51a084fafa25c7a8e6f458}} 
-void {\bfseries update\+Global\+Rhs} (int i)
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_a6c639adc9755a455c777143d58f1efc9}\label{class_eikonal_equation_a6c639adc9755a455c777143d58f1efc9}} 
-bool {\bfseries update\+Solution} (const int rank, const int size)
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_aafb4611d369b269ce7320e70b6624863}\label{class_eikonal_equation_aafb4611d369b269ce7320e70b6624863}} 
-std\+::tuple$<$ double, double, double $>$ {\bfseries get\+Metrics} ()
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_a8c8242c7d41ccfa6bcfdb98e0288fb5a}\label{class_eikonal_equation_a8c8242c7d41ccfa6bcfdb98e0288fb5a}} 
-virtual Values {\bfseries compute\+Stiffness\+Term} (int i)=0
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_aecfd9c23b0e2643c86eaf54c1615cf21}\label{class_eikonal_equation_aecfd9c23b0e2643c86eaf54c1615cf21}} 
-virtual Values {\bfseries compute\+Reaction\+Term} (int i)=0
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_ae040889d2ecb7bb969c7664b890bbe63}\label{class_eikonal_equation_ae040889d2ecb7bb969c7664b890bbe63}} 
-virtual void {\bfseries update\+Lagrangians} (const Values \&z)=0
+std\+::tuple$<$ double, double, double $>$ \mbox{\hyperlink{class_eikonal_equation_aafb4611d369b269ce7320e70b6624863}{get\+Metrics}} ()
 \end{DoxyCompactItemize}
 \doxysubsection*{Protected Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{class_eikonal_equation_a8c8242c7d41ccfa6bcfdb98e0288fb5a}\label{class_eikonal_equation_a8c8242c7d41ccfa6bcfdb98e0288fb5a}} 
-virtual Values {\bfseries compute\+Stiffness\+Term} (int i)=0
+\mbox{\hyperlink{class_eikonal_equation_a076b91b8c18319508f6ec24bbeec2009}{Eikonal\+Equation}} (const \mbox{\hyperlink{class_mesh_data}{Mesh\+Data}}$<$ P\+H\+D\+IM $>$ \&\mbox{\hyperlink{class_eikonal_equation_ad025b54edfd779a5c603091aba99da5f}{mesh}}, Values \&\mbox{\hyperlink{class_eikonal_equation_a60f9cf24e1faeb3ccfc8f8dcbf6dd220}{w}}, const Eigen\+::\+Sparse\+Matrix$<$ double $>$ \&\mbox{\hyperlink{class_eikonal_equation_a9525bd04ba7fe749f247b013221cc72f}{stiffness\+Matrix}}, const Eigen\+::\+Sparse\+LU$<$ Eigen\+::\+Sparse\+Matrix$<$ double $>$$>$ \&\mbox{\hyperlink{class_eikonal_equation_ae7249a7c6c655607b0b42524ea358e8c}{solver}}, double \mbox{\hyperlink{class_eikonal_equation_ae93e834dd3b5a048fc1adf75de7dbc76}{gamma}}=1e-\/3, double \mbox{\hyperlink{class_eikonal_equation_a238267785c555f4a0f7203eab73e60c7}{tol}}=1e-\/3)
 \item 
-\mbox{\Hypertarget{class_eikonal_equation_aecfd9c23b0e2643c86eaf54c1615cf21}\label{class_eikonal_equation_aecfd9c23b0e2643c86eaf54c1615cf21}} 
-virtual Values {\bfseries compute\+Reaction\+Term} (int i)=0
+virtual Values \mbox{\hyperlink{class_eikonal_equation_a8c8242c7d41ccfa6bcfdb98e0288fb5a}{compute\+Stiffness\+Term}} (int i)=0
 \item 
-\mbox{\Hypertarget{class_eikonal_equation_ae040889d2ecb7bb969c7664b890bbe63}\label{class_eikonal_equation_ae040889d2ecb7bb969c7664b890bbe63}} 
-virtual void {\bfseries update\+Lagrangians} (const Values \&z)=0
+virtual Values \mbox{\hyperlink{class_eikonal_equation_aecfd9c23b0e2643c86eaf54c1615cf21}{compute\+Reaction\+Term}} (int i)=0
 \item 
-\mbox{\Hypertarget{class_eikonal_equation_a78a2f8a878cd4ad51a27c803f7e68849}\label{class_eikonal_equation_a78a2f8a878cd4ad51a27c803f7e68849}} 
-double {\bfseries anisotropic\+Norm} (const Eigen\+::\+Matrix$<$ double, 1, P\+H\+D\+IM $>$ \&u) const
+virtual void \mbox{\hyperlink{class_eikonal_equation_ae040889d2ecb7bb969c7664b890bbe63}{update\+Lagrangians}} (const Values \&\mbox{\hyperlink{class_eikonal_equation_a3217a88c6437f8e54bdfd50d0c1b6a84}{z}})=0
+\item 
+double \mbox{\hyperlink{class_eikonal_equation_a78a2f8a878cd4ad51a27c803f7e68849}{anisotropic\+Norm}} (const Eigen\+::\+Matrix$<$ double, 1, P\+H\+D\+IM $>$ \&u) const
 \end{DoxyCompactItemize}
 \doxysubsection*{Protected Attributes}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{class_eikonal_equation_a27354b18d074efc710f96c431647afc9}\label{class_eikonal_equation_a27354b18d074efc710f96c431647afc9}} 
-\mbox{\hyperlink{class_mesh_data}{Mesh\+Data}}$<$ P\+H\+D\+IM $>$ {\bfseries mesh}
-\item 
+\mbox{\hyperlink{class_mesh_data}{Mesh\+Data}}$<$ P\+H\+D\+IM $>$ \mbox{\hyperlink{class_eikonal_equation_ad025b54edfd779a5c603091aba99da5f}{mesh}}
+\begin{DoxyCompactList}\small\item\em Attributes related to mesh, values, and solver. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{class_eikonal_equation_a16d2c5e0941039d0c96099fdf490f86c}\label{class_eikonal_equation_a16d2c5e0941039d0c96099fdf490f86c}} 
-Values {\bfseries rhs}
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_aace3b0556b7346d7d46a82cbc77def91}\label{class_eikonal_equation_aace3b0556b7346d7d46a82cbc77def91}} 
-Values \& {\bfseries w}
-\item 
+Values \mbox{\hyperlink{class_eikonal_equation_a16d2c5e0941039d0c96099fdf490f86c}{rhs}}
+\begin{DoxyCompactList}\small\item\em Global right-\/hand side. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_eikonal_equation_a60f9cf24e1faeb3ccfc8f8dcbf6dd220}\label{class_eikonal_equation_a60f9cf24e1faeb3ccfc8f8dcbf6dd220}} 
+Values \& \mbox{\hyperlink{class_eikonal_equation_a60f9cf24e1faeb3ccfc8f8dcbf6dd220}{w}}
+\begin{DoxyCompactList}\small\item\em Solution. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{class_eikonal_equation_a3217a88c6437f8e54bdfd50d0c1b6a84}\label{class_eikonal_equation_a3217a88c6437f8e54bdfd50d0c1b6a84}} 
-Values {\bfseries z}
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_af2c7cfbe780dd60f95482ebe948e904e}\label{class_eikonal_equation_af2c7cfbe780dd60f95482ebe948e904e}} 
-const Eigen\+::\+Sparse\+Matrix$<$ double $>$ \& {\bfseries stiffness\+Matrix}
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_a76cb57475595a5688c05997c65b2618c}\label{class_eikonal_equation_a76cb57475595a5688c05997c65b2618c}} 
-const Eigen\+::\+Sparse\+LU$<$ Eigen\+::\+Sparse\+Matrix$<$ double $>$ $>$ \& {\bfseries solver}
-\item 
+Values \mbox{\hyperlink{class_eikonal_equation_a3217a88c6437f8e54bdfd50d0c1b6a84}{z}}
+\begin{DoxyCompactList}\small\item\em Incremental update. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_eikonal_equation_a9525bd04ba7fe749f247b013221cc72f}\label{class_eikonal_equation_a9525bd04ba7fe749f247b013221cc72f}} 
+const Eigen\+::\+Sparse\+Matrix$<$ double $>$ \& \mbox{\hyperlink{class_eikonal_equation_a9525bd04ba7fe749f247b013221cc72f}{stiffness\+Matrix}}
+\begin{DoxyCompactList}\small\item\em Global stiffness matrix. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_eikonal_equation_ae7249a7c6c655607b0b42524ea358e8c}\label{class_eikonal_equation_ae7249a7c6c655607b0b42524ea358e8c}} 
+const Eigen\+::\+Sparse\+LU$<$ Eigen\+::\+Sparse\+Matrix$<$ double $>$ $>$ \& \mbox{\hyperlink{class_eikonal_equation_ae7249a7c6c655607b0b42524ea358e8c}{solver}}
+\begin{DoxyCompactList}\small\item\em Sparse solver for the system. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{class_eikonal_equation_ae93e834dd3b5a048fc1adf75de7dbc76}\label{class_eikonal_equation_ae93e834dd3b5a048fc1adf75de7dbc76}} 
-double {\bfseries gamma}
-\item 
+double \mbox{\hyperlink{class_eikonal_equation_ae93e834dd3b5a048fc1adf75de7dbc76}{gamma}}
+\begin{DoxyCompactList}\small\item\em Stabilization parameter. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{class_eikonal_equation_a238267785c555f4a0f7203eab73e60c7}\label{class_eikonal_equation_a238267785c555f4a0f7203eab73e60c7}} 
-double {\bfseries tol}
-\item 
+double \mbox{\hyperlink{class_eikonal_equation_a238267785c555f4a0f7203eab73e60c7}{tol}}
+\begin{DoxyCompactList}\small\item\em Convergence tolerance. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{class_eikonal_equation_a21f25c6304ec02f1ffd23fc0ac6e9dd3}\label{class_eikonal_equation_a21f25c6304ec02f1ffd23fc0ac6e9dd3}} 
-Values {\bfseries local\+\_\+w}
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_a443ae696bb14108f4ddea73b4e6c0989}\label{class_eikonal_equation_a443ae696bb14108f4ddea73b4e6c0989}} 
-Eigen\+::\+Sparse\+Matrix$<$ double $>$ {\bfseries local\+Stiffness}
-\item 
+Values \mbox{\hyperlink{class_eikonal_equation_a21f25c6304ec02f1ffd23fc0ac6e9dd3}{local\+\_\+w}}
+\begin{DoxyCompactList}\small\item\em Local solution vector. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_eikonal_equation_a50824faa9139ef5912d6e8471a10959d}\label{class_eikonal_equation_a50824faa9139ef5912d6e8471a10959d}} 
+Eigen\+::\+Sparse\+Matrix$<$ double $>$ \mbox{\hyperlink{class_eikonal_equation_a50824faa9139ef5912d6e8471a10959d}{local\+Stiffness}}
+\begin{DoxyCompactList}\small\item\em Local stiffness matrix. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{class_eikonal_equation_a33a8d91e8e135f17081b79b50ed8f36d}\label{class_eikonal_equation_a33a8d91e8e135f17081b79b50ed8f36d}} 
-Values {\bfseries local\+\_\+rhs}
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_a54bb61c92341901eb3a7905704a983b1}\label{class_eikonal_equation_a54bb61c92341901eb3a7905704a983b1}} 
-Eigen\+::\+Matrix$<$ double, Eigen\+::\+Dynamic, P\+H\+D\+IM $>$ {\bfseries grad\+\_\+w}
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_a3d2625b41642596508347047e92e3803}\label{class_eikonal_equation_a3d2625b41642596508347047e92e3803}} 
-\mbox{\hyperlink{classapsc_1_1_linear_finite_element}{apsc\+::\+Linear\+Finite\+Element}}$<$ P\+H\+D\+IM $>$ {\bfseries linear\+Finite\+Element}
-\item 
+Values \mbox{\hyperlink{class_eikonal_equation_a33a8d91e8e135f17081b79b50ed8f36d}{local\+\_\+rhs}}
+\begin{DoxyCompactList}\small\item\em Local right-\/hand side vector. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_eikonal_equation_a2f4fff50446e09e0674649ef7aa5885c}\label{class_eikonal_equation_a2f4fff50446e09e0674649ef7aa5885c}} 
+Eigen\+::\+Matrix$<$ double, Eigen\+::\+Dynamic, P\+H\+D\+IM $>$ \mbox{\hyperlink{class_eikonal_equation_a2f4fff50446e09e0674649ef7aa5885c}{grad\+\_\+w}}
+\begin{DoxyCompactList}\small\item\em Gradient of w for each element. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_eikonal_equation_a3a307b5782a06184435dc09a1d4bde82}\label{class_eikonal_equation_a3a307b5782a06184435dc09a1d4bde82}} 
+\mbox{\hyperlink{classapsc_1_1_linear_finite_element}{apsc\+::\+Linear\+Finite\+Element}}$<$ P\+H\+D\+IM $>$ \mbox{\hyperlink{class_eikonal_equation_a3a307b5782a06184435dc09a1d4bde82}{linear\+Finite\+Element}}
+\begin{DoxyCompactList}\small\item\em Linear finite element for local operations. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{class_eikonal_equation_a7d7754aa2a05f1d365c87dd37128caae}\label{class_eikonal_equation_a7d7754aa2a05f1d365c87dd37128caae}} 
-Nodes {\bfseries local\+Nodes}
-\item 
+Nodes \mbox{\hyperlink{class_eikonal_equation_a7d7754aa2a05f1d365c87dd37128caae}{local\+Nodes}}
+\begin{DoxyCompactList}\small\item\em Local nodes for each element. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{class_eikonal_equation_a448d6e7f595b093c066db95dab814912}\label{class_eikonal_equation_a448d6e7f595b093c066db95dab814912}} 
-Indexes {\bfseries global\+Node\+Numbers}
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_a606eaeb3daee0df550d2a9136840c5c9}\label{class_eikonal_equation_a606eaeb3daee0df550d2a9136840c5c9}} 
-AnisotropyM {\bfseries M}
-\item 
+Indexes \mbox{\hyperlink{class_eikonal_equation_a448d6e7f595b093c066db95dab814912}{global\+Node\+Numbers}}
+\begin{DoxyCompactList}\small\item\em Global node numbers corresponding to local nodes. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_eikonal_equation_a9a17b88911f5e85470d60992e92d3a52}\label{class_eikonal_equation_a9a17b88911f5e85470d60992e92d3a52}} 
+AnisotropyM \mbox{\hyperlink{class_eikonal_equation_a9a17b88911f5e85470d60992e92d3a52}{M}}
+\begin{DoxyCompactList}\small\item\em Anisotropy matrix for the problem. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{class_eikonal_equation_a9ea30dc2ed5641feea048827297dbaa3}\label{class_eikonal_equation_a9ea30dc2ed5641feea048827297dbaa3}} 
-double {\bfseries max\+Grad}
-\item 
+double \mbox{\hyperlink{class_eikonal_equation_a9ea30dc2ed5641feea048827297dbaa3}{max\+Grad}}
+\begin{DoxyCompactList}\small\item\em Maximum gradient norm. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{class_eikonal_equation_ac5fba813ed29264e09734d2fab7c6ad8}\label{class_eikonal_equation_ac5fba813ed29264e09734d2fab7c6ad8}} 
-double {\bfseries min\+Grad}
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_ab6106396a7b1d20255e440aaadc0e489}\label{class_eikonal_equation_ab6106396a7b1d20255e440aaadc0e489}} 
-const std\+::vector$<$ Eigen\+::\+Matrix$<$ double, P\+H\+D\+IM, P\+H\+D\+IM $>$ $>$ \& {\bfseries gradient\+Coeff}
-\item 
-\mbox{\Hypertarget{class_eikonal_equation_a5b4523bb4c19241ca71262bafe16b622}\label{class_eikonal_equation_a5b4523bb4c19241ca71262bafe16b622}} 
-Eigen\+::\+Matrix$<$ double, P\+H\+D\+IM, P\+H\+D\+IM $>$ {\bfseries M}
-\end{DoxyCompactItemize}
+double \mbox{\hyperlink{class_eikonal_equation_ac5fba813ed29264e09734d2fab7c6ad8}{min\+Grad}}
+\begin{DoxyCompactList}\small\item\em Minimum gradient norm. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
-The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$std\+::size\+\_\+t P\+H\+D\+IM, std\+::size\+\_\+t I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM = P\+H\+D\+IM$>$\newline
+class Eikonal\+Equation$<$ P\+H\+D\+I\+M, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+I\+M $>$}
+
+Abstract base class for solving the Eikonal equation. 
+
+This class defines the general framework for solving the Eikonal equation using finite element methods in a parallelized M\+PI environment. It provides the core functionalities and methods that need to be overridden by derived classes to implement specific solution techniques, such as Standard Eikonal, Penalty Eikonal, and Lagrangian Eikonal methods.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em P\+H\+D\+IM} & The physical dimension of the problem. \\
+\hline
+{\em I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM} & The intrinsic dimension of the problem (default is equal to P\+H\+D\+IM). \\
+\hline
+\end{DoxyTemplParams}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_eikonal_equation_a076b91b8c18319508f6ec24bbeec2009}\label{class_eikonal_equation_a076b91b8c18319508f6ec24bbeec2009}} 
+\index{EikonalEquation$<$ PHDIM, INTRINSIC\_DIM $>$@{EikonalEquation$<$ PHDIM, INTRINSIC\_DIM $>$}!EikonalEquation@{EikonalEquation}}
+\index{EikonalEquation@{EikonalEquation}!EikonalEquation$<$ PHDIM, INTRINSIC\_DIM $>$@{EikonalEquation$<$ PHDIM, INTRINSIC\_DIM $>$}}
+\doxysubsubsection{\texorpdfstring{EikonalEquation()}{EikonalEquation()}}
+{\footnotesize\ttfamily template$<$std\+::size\+\_\+t P\+H\+D\+IM, std\+::size\+\_\+t I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM = P\+H\+D\+IM$>$ \\
+\mbox{\hyperlink{class_eikonal_equation}{Eikonal\+Equation}}$<$ P\+H\+D\+IM, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM $>$\+::\mbox{\hyperlink{class_eikonal_equation}{Eikonal\+Equation}} (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_mesh_data}{Mesh\+Data}}$<$ P\+H\+D\+IM $>$ \&}]{mesh,  }\item[{Values \&}]{w,  }\item[{const Eigen\+::\+Sparse\+Matrix$<$ double $>$ \&}]{stiffness\+Matrix,  }\item[{const Eigen\+::\+Sparse\+LU$<$ Eigen\+::\+Sparse\+Matrix$<$ double $>$$>$ \&}]{solver,  }\item[{double}]{gamma = {\ttfamily 1e-\/3},  }\item[{double}]{tol = {\ttfamily 1e-\/3} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}}
+
+
+\begin{DoxyParams}{Parameters}
+{\em mesh} & The mesh data for the problem. \\
+\hline
+{\em w} & Reference to the solution vector. \\
+\hline
+{\em stiffness\+Matrix} & The global stiffness matrix. \\
+\hline
+{\em solver} & The sparse solver to be used. \\
+\hline
+{\em gamma} & Stabilization parameter. \\
+\hline
+{\em tol} & Convergence tolerance. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_eikonal_equation_a78a2f8a878cd4ad51a27c803f7e68849}\label{class_eikonal_equation_a78a2f8a878cd4ad51a27c803f7e68849}} 
+\index{EikonalEquation$<$ PHDIM, INTRINSIC\_DIM $>$@{EikonalEquation$<$ PHDIM, INTRINSIC\_DIM $>$}!anisotropicNorm@{anisotropicNorm}}
+\index{anisotropicNorm@{anisotropicNorm}!EikonalEquation$<$ PHDIM, INTRINSIC\_DIM $>$@{EikonalEquation$<$ PHDIM, INTRINSIC\_DIM $>$}}
+\doxysubsubsection{\texorpdfstring{anisotropicNorm()}{anisotropicNorm()}}
+{\footnotesize\ttfamily template$<$std\+::size\+\_\+t P\+H\+D\+IM, std\+::size\+\_\+t I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM = P\+H\+D\+IM$>$ \\
+double \mbox{\hyperlink{class_eikonal_equation}{Eikonal\+Equation}}$<$ P\+H\+D\+IM, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM $>$\+::anisotropic\+Norm (\begin{DoxyParamCaption}\item[{const Eigen\+::\+Matrix$<$ double, 1, P\+H\+D\+IM $>$ \&}]{u }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}}
+
+
+\begin{DoxyParams}{Parameters}
+{\em u} & The input vector. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The anisotropic norm. ~\newline
+ 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_eikonal_equation_aecfd9c23b0e2643c86eaf54c1615cf21}\label{class_eikonal_equation_aecfd9c23b0e2643c86eaf54c1615cf21}} 
+\index{EikonalEquation$<$ PHDIM, INTRINSIC\_DIM $>$@{EikonalEquation$<$ PHDIM, INTRINSIC\_DIM $>$}!computeReactionTerm@{computeReactionTerm}}
+\index{computeReactionTerm@{computeReactionTerm}!EikonalEquation$<$ PHDIM, INTRINSIC\_DIM $>$@{EikonalEquation$<$ PHDIM, INTRINSIC\_DIM $>$}}
+\doxysubsubsection{\texorpdfstring{computeReactionTerm()}{computeReactionTerm()}}
+{\footnotesize\ttfamily template$<$std\+::size\+\_\+t P\+H\+D\+IM, std\+::size\+\_\+t I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM = P\+H\+D\+IM$>$ \\
+virtual Values \mbox{\hyperlink{class_eikonal_equation}{Eikonal\+Equation}}$<$ P\+H\+D\+IM, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM $>$\+::compute\+Reaction\+Term (\begin{DoxyParamCaption}\item[{int}]{i }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [pure virtual]}}
+
+Virtual function to compute the reaction term for the i-\/th element. Must be implemented by derived classes. 
+\begin{DoxyParams}{Parameters}
+{\em i} & The index of the element. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The computed reaction term. 
+\end{DoxyReturn}
+
+
+Implemented in \mbox{\hyperlink{class_lagrangian_eikonal_ab7c450c72619abddf3a9529a7ea47a69}{Lagrangian\+Eikonal$<$ P\+H\+D\+I\+M, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+I\+M $>$}}, \mbox{\hyperlink{class_penalty_eikonal_a8ed7fe6acf99b303a622f52848c58a61}{Penalty\+Eikonal$<$ P\+H\+D\+I\+M, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+I\+M $>$}}, and \mbox{\hyperlink{class_standard_eikonal_add77b8c41e1d27498aec50d3c2ffd22b}{Standard\+Eikonal$<$ P\+H\+D\+I\+M, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+I\+M $>$}}.
+
+\mbox{\Hypertarget{class_eikonal_equation_a8c8242c7d41ccfa6bcfdb98e0288fb5a}\label{class_eikonal_equation_a8c8242c7d41ccfa6bcfdb98e0288fb5a}} 
+\index{EikonalEquation$<$ PHDIM, INTRINSIC\_DIM $>$@{EikonalEquation$<$ PHDIM, INTRINSIC\_DIM $>$}!computeStiffnessTerm@{computeStiffnessTerm}}
+\index{computeStiffnessTerm@{computeStiffnessTerm}!EikonalEquation$<$ PHDIM, INTRINSIC\_DIM $>$@{EikonalEquation$<$ PHDIM, INTRINSIC\_DIM $>$}}
+\doxysubsubsection{\texorpdfstring{computeStiffnessTerm()}{computeStiffnessTerm()}}
+{\footnotesize\ttfamily template$<$std\+::size\+\_\+t P\+H\+D\+IM, std\+::size\+\_\+t I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM = P\+H\+D\+IM$>$ \\
+virtual Values \mbox{\hyperlink{class_eikonal_equation}{Eikonal\+Equation}}$<$ P\+H\+D\+IM, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM $>$\+::compute\+Stiffness\+Term (\begin{DoxyParamCaption}\item[{int}]{i }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [pure virtual]}}
+
+Virtual function to compute the stiffness term for the i-\/th element. Must be implemented by derived classes. 
+\begin{DoxyParams}{Parameters}
+{\em i} & The index of the element. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The computed stiffness term. 
+\end{DoxyReturn}
+
+
+Implemented in \mbox{\hyperlink{class_lagrangian_eikonal_af39d82d242b280a617d2a1c4e3812e00}{Lagrangian\+Eikonal$<$ P\+H\+D\+I\+M, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+I\+M $>$}}, \mbox{\hyperlink{class_penalty_eikonal_af5947c6fca78dfd057b200a41839b25d}{Penalty\+Eikonal$<$ P\+H\+D\+I\+M, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+I\+M $>$}}, and \mbox{\hyperlink{class_standard_eikonal_ac9415702731945af51ba17586bb20d3a}{Standard\+Eikonal$<$ P\+H\+D\+I\+M, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+I\+M $>$}}.
+
+\mbox{\Hypertarget{class_eikonal_equation_aafb4611d369b269ce7320e70b6624863}\label{class_eikonal_equation_aafb4611d369b269ce7320e70b6624863}} 
+\index{EikonalEquation$<$ PHDIM, INTRINSIC\_DIM $>$@{EikonalEquation$<$ PHDIM, INTRINSIC\_DIM $>$}!getMetrics@{getMetrics}}
+\index{getMetrics@{getMetrics}!EikonalEquation$<$ PHDIM, INTRINSIC\_DIM $>$@{EikonalEquation$<$ PHDIM, INTRINSIC\_DIM $>$}}
+\doxysubsubsection{\texorpdfstring{getMetrics()}{getMetrics()}}
+{\footnotesize\ttfamily template$<$std\+::size\+\_\+t P\+H\+D\+IM, std\+::size\+\_\+t I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM = P\+H\+D\+IM$>$ \\
+std\+::tuple$<$double, double, double$>$ \mbox{\hyperlink{class_eikonal_equation}{Eikonal\+Equation}}$<$ P\+H\+D\+IM, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM $>$\+::get\+Metrics (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Computes solution metrics like max/min values of z and gradient norms. This method should be called only by rank 0. \begin{DoxyReturn}{Returns}
+A tuple containing the norm of z, maximum gradient norm, and minimum gradient norm. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_eikonal_equation_ae040889d2ecb7bb969c7664b890bbe63}\label{class_eikonal_equation_ae040889d2ecb7bb969c7664b890bbe63}} 
+\index{EikonalEquation$<$ PHDIM, INTRINSIC\_DIM $>$@{EikonalEquation$<$ PHDIM, INTRINSIC\_DIM $>$}!updateLagrangians@{updateLagrangians}}
+\index{updateLagrangians@{updateLagrangians}!EikonalEquation$<$ PHDIM, INTRINSIC\_DIM $>$@{EikonalEquation$<$ PHDIM, INTRINSIC\_DIM $>$}}
+\doxysubsubsection{\texorpdfstring{updateLagrangians()}{updateLagrangians()}}
+{\footnotesize\ttfamily template$<$std\+::size\+\_\+t P\+H\+D\+IM, std\+::size\+\_\+t I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM = P\+H\+D\+IM$>$ \\
+virtual void \mbox{\hyperlink{class_eikonal_equation}{Eikonal\+Equation}}$<$ P\+H\+D\+IM, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM $>$\+::update\+Lagrangians (\begin{DoxyParamCaption}\item[{const Values \&}]{z }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [pure virtual]}}
+
+Virtual function to update the Lagrangian multipliers for each element. Must be implemented by derived classes. 
+\begin{DoxyParams}{Parameters}
+{\em z} & The incremental update to the solution. \\
+\hline
+\end{DoxyParams}
+
+
+Implemented in \mbox{\hyperlink{class_lagrangian_eikonal_a9a10f0e9ddca4ad6443b76997d761b9a}{Lagrangian\+Eikonal$<$ P\+H\+D\+I\+M, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+I\+M $>$}}, \mbox{\hyperlink{class_penalty_eikonal_aca20cdc5f9c9c0efefc51a03a1257d41}{Penalty\+Eikonal$<$ P\+H\+D\+I\+M, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+I\+M $>$}}, and \mbox{\hyperlink{class_standard_eikonal_abc6b49eb18ef4ebb484283a6b4c5e679}{Standard\+Eikonal$<$ P\+H\+D\+I\+M, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+I\+M $>$}}.
+
+\mbox{\Hypertarget{class_eikonal_equation_a6c639adc9755a455c777143d58f1efc9}\label{class_eikonal_equation_a6c639adc9755a455c777143d58f1efc9}} 
+\index{EikonalEquation$<$ PHDIM, INTRINSIC\_DIM $>$@{EikonalEquation$<$ PHDIM, INTRINSIC\_DIM $>$}!updateSolution@{updateSolution}}
+\index{updateSolution@{updateSolution}!EikonalEquation$<$ PHDIM, INTRINSIC\_DIM $>$@{EikonalEquation$<$ PHDIM, INTRINSIC\_DIM $>$}}
+\doxysubsubsection{\texorpdfstring{updateSolution()}{updateSolution()}}
+{\footnotesize\ttfamily template$<$std\+::size\+\_\+t P\+H\+D\+IM, std\+::size\+\_\+t I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM = P\+H\+D\+IM$>$ \\
+bool \mbox{\hyperlink{class_eikonal_equation}{Eikonal\+Equation}}$<$ P\+H\+D\+IM, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM $>$\+::update\+Solution (\begin{DoxyParamCaption}\item[{const int}]{rank,  }\item[{const int}]{size }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Distributes computation of rhs across M\+PI processes and updates solution. 
+\begin{DoxyParams}{Parameters}
+{\em rank} & The rank of the current M\+PI process. \\
+\hline
+{\em size} & The total number of M\+PI processes. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if the local solution converged; otherwise, false. 
+\end{DoxyReturn}
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{class_eikonal_equation_ad025b54edfd779a5c603091aba99da5f}\label{class_eikonal_equation_ad025b54edfd779a5c603091aba99da5f}} 
+\index{EikonalEquation$<$ PHDIM, INTRINSIC\_DIM $>$@{EikonalEquation$<$ PHDIM, INTRINSIC\_DIM $>$}!mesh@{mesh}}
+\index{mesh@{mesh}!EikonalEquation$<$ PHDIM, INTRINSIC\_DIM $>$@{EikonalEquation$<$ PHDIM, INTRINSIC\_DIM $>$}}
+\doxysubsubsection{\texorpdfstring{mesh}{mesh}}
+{\footnotesize\ttfamily template$<$std\+::size\+\_\+t P\+H\+D\+IM, std\+::size\+\_\+t I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM = P\+H\+D\+IM$>$ \\
+\mbox{\hyperlink{class_mesh_data}{Mesh\+Data}}$<$P\+H\+D\+IM$>$ \mbox{\hyperlink{class_eikonal_equation}{Eikonal\+Equation}}$<$ P\+H\+D\+IM, I\+N\+T\+R\+I\+N\+S\+I\+C\+\_\+\+D\+IM $>$\+::mesh\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+Attributes related to mesh, values, and solver. 
+
+Mesh data for the problem. 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 
-src/Eikonal\+Equation.\+hpp\item 
-src/Eikonal\+Equation\+\_\+old.\+hpp\item 
-src/Eikonal\+Equation\+F\+F.\+hpp\end{DoxyCompactItemize}
+src/Eikonal\+Equation.\+hpp\end{DoxyCompactItemize}
