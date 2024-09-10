@@ -71,6 +71,17 @@ To set up and run the solver, follow these steps:
    a. **Prepare the Environment**:  
       Make sure that all the necessary libraries and dependencies are installed. The simulation is designed to be run in a parallel computing environment using **MPI**.
 
+      Ubuntu/Linux:
+      ```bash
+      sudo apt-get update
+      sudo apt-get install openmpi-bin libopenmpi-dev
+      ```
+
+      MacOS:
+      ```bash
+      brew install open-mpi
+      ```
+
    b. **Run the Simulation**:  
       To execute the main simulation, use the following command:
 
